@@ -13,6 +13,9 @@
 This really deletes. It is the teardown the workshop ends with, and the
 confirmation screens only exist while it happens - which is also why the four
 "measured in the pre-test" headings in 3-4 can only be filled in here.
+
+`confirm_dialog()` and `body()` come from tools/console.py, which owns what the
+console's confirmation dialogs look like.
 """
 import os
 
@@ -26,13 +29,6 @@ WAIT = 8000
 NOISE = ["Account ID", "Network function groups", "NAT gateway support",
          "NAT system route support", "Resource ID",
          "Attachment policy rule number"]
-
-
-def body(f):
-    try:
-        return f.locator("body").inner_text()
-    except Exception:
-        return ""
 
 
 def heads(f):
@@ -62,40 +58,6 @@ def nav(name, must=None, tries=3):
             return f
         page.wait_for_timeout(WAIT)
     return app()
-
-
-def confirm_dialog(shot_name, type_name=None):
-    """Shoot the confirmation and then go through with it.
-
-    Two shapes of dialog turn up. An attachment's wants nothing typed and its
-    button says Delete. A stack's says `Type "<stack name>" to confirm deletion
-    of the stack.`, keeps its button disabled until that exact name is in the
-    box, and labels the button Delete stack, not Delete. Pass `type_name` for
-    the second kind.
-    """
-    page.wait_for_timeout(2500)
-    f = app()
-    dlg = f.get_by_role("dialog")
-    print("dialogs:", dlg.count(), "| headings:", heads(f))
-    print("dialog text:", body(f)[:500].replace("\n", " | "))
-    if dlg.count():
-        shot(shot_name, clip=dlg.last)
-    else:
-        shot(shot_name)
-    # A stack dialog keeps its button disabled until the name is in the box.
-    box = f.locator('[role=dialog] input[type=text], [role=dialog] input:not([type])')
-    if box.count() and type_name:
-        box.first.fill(type_name)
-        page.wait_for_timeout(1200)
-    elif box.count():
-        print("!! dialog has an input and no type_name was given; placeholder:",
-              box.first.get_attribute("placeholder"))
-    btn = f.locator("button").filter(has_text=re.compile(r"^(Delete stack|Delete|Confirm)$"))
-    print("confirm buttons:", btn.count())
-    if btn.count():
-        btn.last.click()
-        page.wait_for_timeout(6000)
-        print("after confirm:", body(app())[:300].replace("\n", " | "))
 
 
 if KIND == "attachment":

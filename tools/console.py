@@ -2,8 +2,8 @@
 
     uv run --with playwright --with boto3 python tools/console.py <script.py>
 
-The script file is executed with `page`, `shot(name)`, `goto(path)` and
-`mask()` in scope. Login: GetFederationToken for the IAM user of
+The script file is executed with `page`, `shot(name)`, `goto(path)`,
+`mask()` and `confirm_dialog(shot, type_name)` in scope. Login: GetFederationToken for the IAM user of
 $AWS_PROFILE, then a federation sign-in URL. The browser storage state is kept
 in $CONSOLE_STATE (default: a file outside the repo) so later runs reuse the
 session. Screenshots go to docs/images/console/<name>.png with the account ID
@@ -525,6 +525,68 @@ def main() -> int:
                 shutil.copy(raw, path)
             print(f"shot {path.relative_to(ROOT)}", flush=True)
 
+        def body(f=None):
+            """The frame's visible text, or "" while it is still swapping."""
+            try:
+                return (f or app()).locator("body").inner_text()
+            except Exception:
+                return ""
+
+        def confirm_dialog(shot_name=None, type_name=None, probe=False):
+            """Shoot a confirmation dialog, type what it asks for, and go through with it.
+
+            The console has two shapes of confirmation and this is the one place
+            that knows them. An attachment's dialog wants nothing typed and its
+            button says Delete. A stack's says `Type "<stack name>" to confirm
+            deletion of the stack.`, keeps the button disabled until that exact
+            name is in the box, and labels the button Delete stack. Pass
+            `type_name` for the second kind. `probe=True` prints whether the
+            button was enabled before and after typing and takes no screenshot,
+            which is how the stack dialog was worked out in the first place.
+
+            Returns the number of confirm buttons it found, 0 meaning it did
+            nothing - the caller decides whether that is a failure.
+            """
+            page.wait_for_timeout(2500)
+            f = app()
+            dlg = f.get_by_role("dialog")
+            print("dialogs:", dlg.count())
+            text = dlg.last.inner_text() if dlg.count() else body(f)[:800]
+            print("dialog text:", " | ".join(t for t in text.split("\n") if t.strip()))
+            if shot_name:
+                shot(shot_name, clip=dlg.last if dlg.count() else None)
+            box = f.locator('[role=dialog] input[type=text], [role=dialog] input:not([type])')
+            print("text inputs in the dialog:", box.count())
+            for i in range(box.count()):
+                print("   placeholder:", box.nth(i).get_attribute("placeholder"),
+                      "| aria-label:", box.nth(i).get_attribute("aria-label"))
+            btn = f.locator('[role=dialog] button').filter(
+                has_text=re.compile(r"^(Delete stack|Delete|Confirm)$"))
+            if not btn.count():
+                btn = f.locator("button").filter(
+                    has_text=re.compile(r"^(Delete stack|Delete|Confirm)$"))
+            print("confirm buttons:", btn.count())
+
+            def enabled():
+                return (btn.last.get_attribute("disabled") is None
+                        and btn.last.get_attribute("aria-disabled") != "true")
+
+            if probe and btn.count():
+                print("  confirm enabled before typing:", enabled())
+            if box.count() and type_name:
+                box.first.fill(type_name)
+                page.wait_for_timeout(1200)
+                if probe and btn.count():
+                    print("  confirm enabled after typing the name:", enabled())
+            elif box.count():
+                print("!! the dialog has an input and no type_name was given")
+            if btn.count():
+                btn.last.click()
+                page.wait_for_timeout(8000)
+                print("after confirm:",
+                      " | ".join(t for t in body().split("\n")[:14] if t.strip()))
+            return btn.count()
+
         if not STATE.exists():
             page.goto(signin_url(), wait_until="domcontentloaded")
             page.wait_for_url(re.compile(r".*console\.aws\.amazon\.com.*"), timeout=60000)
@@ -532,7 +594,9 @@ def main() -> int:
             exec(script, {"page": page, "use": use, "app": app, "goto": goto, "close_tours": close_tours, "shot": shot, "mask": mask,
                           "collapse_nav": collapse_nav, "expand_nav": expand_nav, "select_row": select_row,
                           "table_columns": table_columns, "resize_column": resize_column,
-                          "card": card, "span": span, "panel": panel, "REGION": REGION, "ROOT": ROOT, "re": re})
+                          "card": card, "span": span, "panel": panel, "body": body,
+                          "confirm_dialog": confirm_dialog,
+                          "REGION": REGION, "ROOT": ROOT, "re": re})
         finally:
             STATE.parent.mkdir(parents=True, exist_ok=True)
             ctx.storage_state(path=str(STATE))

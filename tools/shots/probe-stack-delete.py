@@ -6,25 +6,20 @@
 
 3-4-d and 3-4-e tell the participant to press Delete and confirm, but the
 rehearsal deleted both stacks from the CLI because the Delete button never
-resolved by role or name (PLAN 15-6). The open question is whether the
-confirmation wants a word typed before it enables, which is where a participant
-would get stuck. This runs against a throwaway stack, prints every button with
-its Cloudscape classes, opens the dialog, prints what is in it, and goes
-through with the delete so the whole path is actually walked.
+resolved by role or name (PLAN 15-6). The cause turned out to be the name:
+the button says **Delete stack**. The lesson is the method - when a control
+cannot be found, print every button on that screen before reaching for a
+cleverer selector. That is what this script is for, and why it stays after
+the question it was written for was answered (PLAN 15-10).
 
-It really deletes - point CWAN_STACK at a stack you mean to lose.
+It really deletes - point CWAN_STACK at a stack you mean to lose. The dialog
+itself is handled by `confirm_dialog()` in tools/console.py, so the console's
+confirmation behaviour is described in one place.
 """
 import os
 
 STACK = os.environ["CWAN_STACK"]
 WAIT = 8000
-
-
-def body(f):
-    try:
-        return f.locator("body").inner_text()
-    except Exception:
-        return ""
 
 
 def buttons(f, label):
@@ -37,8 +32,7 @@ def buttons(f, label):
         .filter(b => b.vis && (b.t || b.aria))""")
     print(f"\n-- {label}: {len(out)} buttons")
     for b in out:
-        if "Delete" in b["t"] or "Delete" in b["aria"] or "primary-button" in b["cls"]:
-            print("   *", b)
+        print("   ", b)
     return out
 
 
@@ -51,12 +45,12 @@ f = app()
 print("headings:", [h.strip() for h in f.get_by_role("heading").all_inner_texts() if h.strip()][:10])
 buttons(f, "stack detail page")
 
-# What the rehearsal tried, and the class-based match PLAN 15-6 predicted would work.
+# Each way of asking for the button, so a future failure shows which ones miss.
 tries = [
-    ("role+name", lambda: f.get_by_role("button", name="Delete", exact=True)),
-    ("text", lambda: f.locator("button").filter(has_text=re.compile(r"^Delete$"))),
-    ("awsui class", lambda: f.locator('button[class*="awsui_button"]').filter(
-        has_text=re.compile(r"^Delete$"))),
+    ("role+name Delete", lambda: f.get_by_role("button", name="Delete", exact=True)),
+    ("text ^Delete$", lambda: f.locator("button").filter(has_text=re.compile(r"^Delete$"))),
+    ("text ^Delete stack$", lambda: f.locator("button").filter(
+        has_text=re.compile(r"^Delete stack$"))),
     ("any button Delete", lambda: f.locator("button", has_text=re.compile(r"Delete"))),
 ]
 btn = None
@@ -72,34 +66,5 @@ if btn is None:
     raise SystemExit("!! no Delete control found at all")
 
 btn.click()
-page.wait_for_timeout(3000)
-
-g = app()
-dlg = g.get_by_role("dialog")
-print("\ndialogs:", dlg.count())
-text = dlg.last.inner_text() if dlg.count() else body(g)[:800]
-print("dialog text:", " | ".join(t for t in text.split("\n") if t.strip()))
-
-# The question: does it want something typed first?
-box = g.locator('[role=dialog] input[type=text], [role=dialog] input:not([type])')
-print("text inputs in the dialog:", box.count())
-for i in range(box.count()):
-    print("   placeholder:", box.nth(i).get_attribute("placeholder"),
-          "| aria-label:", box.nth(i).get_attribute("aria-label"))
-
-# The confirm button carries the same words as the one on the page: "Delete stack".
-confirm = g.locator('[role=dialog] button').filter(has_text=re.compile(r"^Delete stack$"))
-print("confirm buttons:", confirm.count())
-if confirm.count():
-    def state(when):
-        dis = confirm.last.get_attribute("disabled")
-        aria = confirm.last.get_attribute("aria-disabled")
-        print(f"  confirm enabled {when}:", dis is None and aria != "true")
-    state("before typing")
-    if box.count():
-        box.first.fill(STACK)
-        page.wait_for_timeout(1200)
-        state("after typing the stack name")
-    confirm.last.click()
-    page.wait_for_timeout(8000)
-    print("after confirm:", " | ".join(t for t in body(app()).split("\n")[:14] if t.strip()))
+if not confirm_dialog(type_name=STACK, probe=True):
+    raise SystemExit("!! the dialog opened with no confirm button")

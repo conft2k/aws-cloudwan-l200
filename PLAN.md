@@ -674,7 +674,11 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 
 **막히는 패턴이 일정하다.** 표의 행 선택과 행 단위 메뉴는 잘 되는데, **툴바의 단일 동작 버튼**(`Delete`, `Connect`, `Submit`)은 역할+이름으로 잡히지 않을 때가 많다. 해결책도 일정했다. Cloudscape가 붙이는 클래스(`button[class*="awsui_primary-button"]`)로 찾거나, 전용 해시 URL로 바로 들어가는 것이다(`#ConnectToInstance:instanceId=` 가 그랬다). 남은 세 장도 같은 방법으로 풀릴 것으로 본다.
 
-**백로그 (2026-11-16 리뷰에서 나온 판단 사안, 고치지 않음).** `tools/shots/extra-delete.py` 의 `confirm_dialog()` 와 `tools/shots/probe-stack-delete.py` 가 확인 창 입력 선택자와 "이름 입력 → 대기 → 버튼 클릭" 순서를 똑같이 갖고 있다. 콘솔 확인 절차가 바뀌면 두 곳을 함께 고쳐야 한다. 지금 합치지 않은 이유는 두 파일이 `tools/console.py` 가 `exec` 으로 돌리는 스크립트라 서로 import 할 수 없고, 공통으로 뺄 부분이 두 줄이라서다. 합친다면 `console.py` 의 exec 전역에 넣는 것이 맞다. 목적도 다르다 — 하나는 캡처용이고 하나는 "이 화면의 버튼 이름이 진짜 무엇인가"를 찍어 보는 진단용이다.
+**확인 창 중복은 해소했다 (2026-11-16).** 2026-11-16 리뷰가 판단 사안으로 올린 것이다 — `tools/shots/extra-delete.py` 의 `confirm_dialog()` 와 `tools/shots/probe-stack-delete.py` 가 확인 창 입력 선택자와 "이름 입력 → 대기 → 버튼 클릭" 순서를 똑같이 갖고 있어서, 콘솔 확인 절차가 바뀌면 두 곳을 함께 고쳐야 했다. 두 파일은 `tools/console.py` 가 `exec` 으로 돌리는 스크립트라 서로 import 할 수 없으므로, 리뷰 때 적어 둔 대로 **`console.py` 의 exec 전역으로 옮겼다.** 이제 `confirm_dialog(shot_name, type_name, probe)` 와 `body(f)` 는 `page`·`app`·`shot` 과 같은 자리에서 주입된다.
+
+- `probe=True` 는 스크린샷 대신 **버튼이 입력 전후에 활성인지**를 찍는다. 15-10을 알아낸 방식이 인자 하나로 남았다.
+- 두 파일에 똑같이 있던 `body(f)` 도 같이 올렸다.
+- 두 스크립트의 **목적은 여전히 다르다.** `extra-delete.py` 는 캡처와 삭제를, `probe-stack-delete.py` 는 "이 화면의 버튼 이름이 진짜 무엇인가"를 찍는 진단을 맡는다. 진단 쪽에는 그 일을 하는 `buttons()` 만 남았고, 찾기를 시도하는 선택자 목록에 `^Delete stack$` 을 넣어 두어 다음에 같은 일이 생기면 어느 방식이 빗나가는지 한눈에 보인다.
 
 `lab1-core-03-attachment-tags` 는 **해결했다.** 행의 선택 버튼으로 고르면(`select_row()`) 상세 창이 열리고 **Tags** 탭이 있다. 이름 셀을 클릭하던 것이 원인이었다. **Name** 열의 글자는 링크가 아니다.
 
@@ -776,7 +780,7 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 
 | 축 | 1차 | 최종 |
 |---|---|---|
-| Standards (`CLAUDE.md` 집필 규칙 + Fowler 냄새) | 하드 1, 판단 2 | **차단 0.** 중복 1건은 백로그 수용 |
+| Standards (`CLAUDE.md` 집필 규칙 + Fowler 냄새) | 하드 1, 판단 2 | **차단 0.** 백로그로 받았던 중복 1건도 뒤에 해소했다(15-6) |
 | Spec (`PLAN.md` 대조) | 4건 | **전부 해소, 새 차단 0** |
 | L200 수준 | 15건 | **전부 해소** (해소 8 → 13 → 15, 재리뷰 3회) |
 
