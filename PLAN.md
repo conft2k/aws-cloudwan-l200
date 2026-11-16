@@ -594,6 +594,15 @@ STATE: PENDING cannot be modified by ACTION: DELETE
 | **21:19:17** | **core network `AVAILABLE`, 정책 1 `LIVE`/`EXECUTION_SUCCEEDED` — 15분 14초** |
 | 21:22~21:25 | 서울 VPC attachment 3개 `CREATING` → `PENDING_NETWORK_UPDATE` → `AVAILABLE`. 관측 시작부터 2분 48초 |
 | 21:24 | 서울 스택 `CREATE_COMPLETE` (시작부터 약 21분) |
+| 21:38~21:42 | 오레곤 prod VPC attachment: 콘솔로 생성, **4분 15초** 만에 `AVAILABLE` |
+| 21:50~21:54 | Site-to-Site VPN attachment: **3분 30초** 만에 `AVAILABLE` |
+| 21:54 | `setup-tunnels.sh` 실행. 끝났을 때 이미 IPsec 2개 `ESTABLISHED`, BGP 이웃 2개 연결, `10.30.1.0/24` 수신 |
+| 22:00:50 | 정책 버전 2 생성 |
+| **22:01:28** | **change set `READY_TO_EXECUTE` — 38초** |
+
+통신 확인은 모두 `tools/ec2run.sh` 로 실제 출력을 받아 문서에 넣었다. 서울 prod→dev `100% packet loss`, prod→shared `0%` 약 1.1ms, prod→오레곤 prod `0%` 약 116ms, 온프레미스→shared `0%` 약 2.7ms, 온프레미스→prod `100%`.
+
+**정책 버전을 만들기만 해서는 아무것도 바뀌지 않는다.** 버전 2가 `READY_TO_EXECUTE` 인 상태에서 온프레미스→prod ping이 그대로 `100% packet loss` 였다. 2-4-b의 설명을 실측으로 확인했다.
 
 core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 공식 문서 상한(30분)의 절반 근처**이고, 이론 강의 1시간 안에 끝난다는 진행표 전제가 두 번 확인됐다.
 

@@ -38,8 +38,12 @@ CN = core_network_id()
 
 
 def live_policy() -> dict:
+    """The LIVE policy. PolicyDocument comes back as JSON text, not a mapping."""
     p = nm.get_core_network_policy(CoreNetworkId=CN, Alias="LIVE")["CoreNetworkPolicy"]
-    return {"version": p["PolicyVersionId"], "doc": p["PolicyDocument"]}
+    doc = p["PolicyDocument"]
+    if isinstance(doc, str):
+        doc = json.loads(doc)
+    return {"version": p["PolicyVersionId"], "doc": doc}
 
 
 def put(doc: dict, description: str) -> int:

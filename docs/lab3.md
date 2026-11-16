@@ -65,14 +65,25 @@
 3. 의도하지 않은 항목(세그먼트 삭제 등)이 없는지 확인합니다.
 
 !!! info "이 단계에서는 아직 반영되지 않습니다"
-    정책 버전은 만들기만 해서는 배포되지 않습니다. 다음 단계에서 change set을 실행해야 적용됩니다. 그전까지 통신 범위는 그대로입니다.
+    정책 버전은 만들기만 해서는 배포되지 않습니다. 다음 단계에서 change set을 실행해야 적용됩니다. 그전까지 통신 범위는 그대로입니다. 사전 테스트에서 버전을 만들고 **Ready to execute** 가 된 상태로 온프레미스 VM에서 prod로 ping을 해 봤더니 그대로 `100% packet loss` 였습니다.
+
+    change set이 **Ready to execute** 가 되기까지는 사전 테스트에서 **38초** 걸렸습니다. 그동안 상태는 `Pending generation` 입니다.
 
 !!! tip "세그먼트를 추가·삭제하거나 격리 옵션을 바꿀 때"
     세그먼트를 추가·삭제하거나 격리 옵션을 바꾸면 그 세그먼트의 모든 edge에 작업이 생깁니다. 이번 변경은 share 추가입니다.
 
 <!-- shot: lab3-policy-03-changeset -->
 
-**성공 확인**: change set 목록에 `onprem`과 `prod` 사이의 변경이 보입니다. 상태는 **Ready to execute**입니다.
+`share` 한 줄을 넣었을 뿐인데 사전 테스트에서는 변경이 **7건** 나왔습니다. 무엇이 바뀌는지 읽어 보면 이렇습니다.
+
+| 종류 | 개수 | 내용 |
+|---|---|---|
+| `CORE_NETWORK_SEGMENT` `MODIFY` | 4 | 세그먼트 네 개의 정의가 바뀝니다. 공유 관계는 세그먼트 설정의 일부라서 `onprem` 과 `prod` 만이 아니라 네 개가 모두 비교 대상에 들어옵니다 |
+| `ATTACHMENT_ROUTE_PROPAGATION` `ADD` | 3 | 경로가 새로 전파되는 연결입니다. VPN attachment 하나(온프레미스 대역이 `prod` 로 들어감), 그리고 서울 prod와 오레곤 prod attachment 둘(두 대역이 `onprem` 으로 들어감) |
+
+**정책 한 줄이 리전 양쪽에 동시에 적용된다**는 것이 여기서 보입니다. 오레곤 prod attachment는 여러분이 따로 건드리지 않았는데 목록에 들어 있습니다.
+
+**성공 확인**: change set에 `ATTACHMENT_ROUTE_PROPAGATION` `ADD` 가 보이고, 그중에 VPN attachment와 prod attachment들이 들어 있습니다. 세그먼트를 지우거나 만드는 항목은 없습니다.
 
 ## 2-4-c. change set 실행하기 { #lab3-c }
 
@@ -82,7 +93,7 @@ change set을 실행해 새 버전을 적용합니다.
 2. 상태가 **Ready to execute** → **Executing policy** → **Execution succeeded**로 바뀌는 것을 지켜봅니다.
 3. 새 정책이 **LIVE**가 되었는지 확인합니다.
 
-반영에 걸리는 시간은 사전 테스트에서 측정합니다. 상태가 **Executing policy**에 머무르는 동안에는 다음 단계로 가지 말고 기다립니다.
+반영은 사전 테스트에서 **약 1분** 걸렸습니다. 상태가 **Executing policy** 에 머무르는 동안에는 다음 단계로 가지 말고 기다립니다.
 
 <!-- shot: lab3-policy-04-executing -->
 <!-- shot: lab3-policy-05-live -->
@@ -105,9 +116,21 @@ change set을 실행해 새 버전을 적용합니다.
     ping -c 4 10.11.1.10
     ```
 
-<!-- shot: lab3-policy-06-ping-prod -->
+사전 테스트에서 나온 출력입니다.
 
-**성공 확인**: 두 ping 모두 응답이 오고 **0% packet loss**입니다. 오레곤은 따로 설정하지 않았는데도 함께 열렸습니다. 정책이 `prod` 세그먼트 전체에 적용되기 때문입니다.
+```text
+$ ping -c 5 10.10.1.10            # 서울 prod
+5 packets transmitted, 5 received, 0% packet loss, time 4005ms
+rtt min/avg/max/mdev = 3.043/4.455/7.496/1.780 ms
+
+$ ping -c 5 10.11.1.10            # 오레곤 prod
+5 packets transmitted, 5 received, 0% packet loss, time 4006ms
+rtt min/avg/max/mdev = 123.230/123.789/125.858/1.035 ms
+```
+
+**성공 확인**: 두 ping 모두 응답이 오고 **0% packet loss**입니다. 조금 전 [2-3-f](lab2.md#lab2-f)에서 `100% packet loss` 였던 그 명령입니다. 바뀐 것은 정책 한 줄뿐입니다.
+
+오레곤은 따로 설정하지 않았는데도 함께 열렸습니다. 정책이 `prod` 세그먼트 전체에 적용되기 때문이고, [2-4-b](#lab3-b)의 change set에 오레곤 prod attachment가 들어 있던 것이 그 예고였습니다. 왕복 123밀리초는 온프레미스에서 서울을 거쳐 오레곤까지 간 거리입니다.
 
 3. dev EC2로 ping을 보냅니다. 고객 요구사항대로 실패해야 합니다.
 
@@ -117,7 +140,14 @@ change set을 실행해 새 버전을 적용합니다.
 
 **결과(실패가 맞습니다)**: **100% packet loss**입니다. `onprem`과 `dev` 사이에는 share가 없습니다.
 
-<!-- shot: lab3-policy-07-ping-dev -->
+```text
+PING 10.20.1.10 (10.20.1.10) 56(84) bytes of data.
+
+--- 10.20.1.10 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2108ms
+```
+
+**같은 터널로 prod는 되고 dev는 안 됩니다.** 고객 요구사항이 정확히 그것이었고, 정책의 `share-with` 에 `prod` 만 적고 `dev` 를 적지 않은 결과입니다.
 
 prod ↔ dev도 여전히 막혀 있습니다. 서울 prod EC2에서 dev EC2 `10.20.1.10`으로 ping을 보내 확인해 보세요(2-2에서 쓴 방법과 같습니다). 이쪽도 **결과(실패가 맞습니다)**입니다.
 

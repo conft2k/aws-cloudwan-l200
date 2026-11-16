@@ -185,7 +185,8 @@ BGP routing table entry for 172.16.1.0/24, version 1
 
 **성공 확인**
 
-- `onprem` 세그먼트에 `10.30.1.0/24`(shared)가 있습니다. `10.10.1.0/24`(prod)는 **없습니다**.
+- `onprem` 세그먼트에 경로가 **2개뿐**입니다. `10.30.1.0/24`(shared)와 자기 대역 `172.16.1.0/24` 입니다. `10.10.1.0/24`(prod)는 **없습니다**.
+- `172.16.1.0/24` 의 **Destinations** 는 `attachment-… | vpn | vpn-…` 입니다. VPN attachment를 통해 들어온 경로라는 뜻이고, 괄호 안은 AWS 쪽 터널 주소입니다.
 - `shared` 세그먼트에 `172.16.1.0/24`(온프레미스)가 있습니다. **Route type** 이 `PROPAGATED`, **Route state** 가 `ACTIVE` 이고 **Destinations** 는 VPN attachment입니다. 온프레미스 라우터가 BGP로 광고한 대역이 Cloud WAN까지 전파된 것입니다.
 
 !!! info "이 두 줄이 다음 두 소절의 답입니다"
