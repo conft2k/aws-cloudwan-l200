@@ -59,10 +59,14 @@ def retouch(im: Image.Image, spec: dict) -> Image.Image:
     for a, b in keep:
         out.paste(im.crop((0, a, w, b)), (0, at))
         at += b - a
-    for box in spec.get("erase", []):
-        # [x0, y0, x1, y1] fills with white; a fifth item gives another colour,
-        # for a strip whose background is not white (the top navigation is #F9F9F9).
-        out.paste(box[4] if len(box) > 4 else "white", tuple(box[:4]))
+    for item in spec.get("erase", []):
+        # A bare [x0, y0, x1, y1] fills with white. Where the background is not
+        # white - the top navigation strip is #F9F9F9 - the entry names its
+        # colour instead: {"box": [...], "fill": "#F9F9F9"}.
+        if isinstance(item, dict):
+            out.paste(item["fill"], tuple(item["box"]))
+        else:
+            out.paste("white", tuple(item))
     return out
 
 

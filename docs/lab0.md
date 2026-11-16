@@ -10,8 +10,8 @@
 
     ![콘솔 오른쪽 위를 잘라낸 화면. 위쪽 줄에 CloudShell, 알림, 도움말 아이콘에 이어 파란색으로 켜진 톱니바퀴 아이콘이 있고 그 오른쪽에 리전 선택 메뉴 Asia Pacific (Seoul)이 있다. 톱니바퀴 아래로 Current user settings 창이 열려 있다. 창 안에는 Language 항목에 Browser default가 선택된 드롭다운이 있고, 그 아래 Visual mode - beta 항목에 Browser default, Light, Dark 세 개의 라디오 버튼이 있으며 Light가 선택되어 있다. 맨 아래에는 See all user settings 링크가 있다. 언어는 이 창에서 바꾸고, 콘솔 아래쪽 푸터에는 언어를 바꾸는 항목이 없다](images/console/lab0-login-01-region-language.png){ .shot }
 
-    !!! tip "언어 설정은 콘솔 아래쪽이 아니라 오른쪽 위입니다"
-        사전 테스트에서 확인했습니다. 푸터(화면 맨 아래)에는 **Privacy**, **Terms**, **Cookie preferences** 와 서비스 바로가기만 있고 언어를 바꾸는 항목이 없습니다. 언어는 오른쪽 위 톱니바퀴의 **Current user settings** 에서 바꿉니다. 기본값은 **Browser default** 라서, 브라우저가 한국어면 콘솔도 한국어로 나옵니다. 더 많은 설정은 같은 창의 **See all user settings** 에 있습니다.
+    !!! tip "기본값이 **Browser default** 라서 이 단계가 필요합니다"
+        브라우저가 한국어면 콘솔도 한국어로 나옵니다. 콘솔 **아래쪽 푸터에는 언어를 바꾸는 항목이 없습니다**(사전 테스트에서 확인했습니다). 더 많은 설정은 같은 창의 **See all user settings** 에 있습니다.
 
 **성공 확인**: 콘솔 오른쪽 위에 **Asia Pacific (Seoul)** 이 보이고, 메뉴가 영어로 나옵니다.
 
@@ -79,7 +79,7 @@
 
     ![Network Manager의 Global networks 목록. 스택이 만든 global network 한 개가 ID와 이름 cwan-ws-global, 상태와 함께 한 줄로 보인다. 오른쪽 위에는 Create global network 버튼이 있다](images/console/lab0-cnet-00-global-networks.png){ .shot }
 
-2. `cwan-ws-global`을 엽니다. 스택 배포 직후에는 아직 목록에 없거나 생성 중으로 보일 수 있습니다.
+2. `cwan-ws-global`을 엽니다. **global network** 는 Cloud WAN 리소스를 담는 바깥 상자입니다. 그 안에 core network가 들어 있습니다. 스택 배포 직후에는 아직 목록에 없거나 생성 중으로 보일 수 있습니다.
 3. 왼쪽 메뉴에서 **Policy versions** 를 엽니다.
 
     ![core network의 Policy versions 화면. 버전이 하나뿐이고, Policy version - 1 행의 Alias가 LIVE, LATEST, Change set state가 초록색 Execution succeeded, Description이 Initial version.이다. 이 두 값이 core network를 쓸 준비가 끝났다는 신호다](images/console/lab0-cnet-01-policy-versions.png){ .shot }

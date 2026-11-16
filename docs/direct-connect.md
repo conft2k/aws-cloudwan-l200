@@ -10,7 +10,7 @@
 
 Cloud WAN은 **Direct Connect gateway attachment**를 지원합니다. 공식 문서의 문장은 "directly attach your Direct Connect gateways to Cloud WAN without the need for an intermediate AWS Transit Gateway"입니다. 중간의 Transit Gateway가 필요 없습니다.
 
-- 연결에는 **전송 가상 인터페이스(transit VIF, Virtual Interface)** 를 씁니다. 공식 문서의 문장은 "The Cloud WAN Direct Connect gateway attachment uses the transit virtual interface type for connectivity."입니다.
+- 연결에는 **전송 가상 인터페이스(transit VIF, Virtual Interface)** 를 씁니다. **VIF는 물리 회선 하나 위에 논리적으로 나누어 만드는 연결**입니다. 회선 하나에 여러 VIF를 만들 수 있고 종류마다 닿는 곳이 다릅니다. 그중 DX gateway에 붙는 종류가 transit VIF이고, Cloud WAN은 이것을 씁니다. 공식 문서의 문장은 "The Cloud WAN Direct Connect gateway attachment uses the transit virtual interface type for connectivity."입니다.
 - 경로는 BGP(Border Gateway Protocol)로 주고받습니다. Cloud WAN은 DX gateway와 transit VIF를 통해 온프레미스가 광고한 경로를 배웁니다.
 - 세그먼트 배정은 다른 연결과 똑같습니다. [4-1-e](concepts.md#attachment)의 attachment policy가 그대로 적용되므로, 실습에서 쓴 `segment` 태그 규칙이 DX 연결에도 그대로 동작합니다.
 

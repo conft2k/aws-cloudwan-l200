@@ -96,7 +96,12 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
     sudo /opt/onprem/setup-tunnels.sh <VPN 연결 ID>
     ```
 
-스크립트는 `aws ec2 describe-vpn-connections`로 터널 정보(AWS 쪽 주소 2개, 사전 공유 키, BGP 주소)를 받아 IPsec 터널 2개와 BGP 세션 2개를 설정하고, 온프레미스 LAN `172.16.1.0/24`를 광고합니다. 다시 실행해도 됩니다.
+스크립트가 세우는 것은 두 층입니다.
+
+- **IPsec 터널**: 인터넷 위에 뚫는 암호화된 통로입니다. 트래픽이 실제로 지나가는 길입니다.
+- **BGP**: 그 통로로 "내 쪽에는 이런 대역이 있다"고 서로 알려 주는 약속입니다. 이렇게 알려 주는 것을 **광고(advertise)** 라고 합니다. 길이 뚫려도 서로 어떤 대역이 있는지 모르면 트래픽을 보낼 수 없기 때문에 두 층이 다 필요합니다.
+
+스크립트는 `aws ec2 describe-vpn-connections` 로 터널 정보(AWS 쪽 주소 2개, 사전 공유 키, BGP 주소)를 받아 **터널 2개**를 세우고, 그 위에 **BGP 연결 2개**를 올린 다음, 온프레미스 대역 `172.16.1.0/24` 를 AWS 쪽에 광고합니다. 터널이 2개인 것은 AWS Site-to-Site VPN이 늘 두 개를 주기 때문입니다. 하나가 끊겨도 다른 하나로 이어집니다. 스크립트는 다시 실행해도 됩니다.
 
 사전 테스트에서는 스크립트가 끝나는 시점에 이미 터널과 BGP가 올라와 있었습니다. 마지막 몇 줄이 이렇게 나옵니다.
 
@@ -124,7 +129,7 @@ Next:
     # IPsec 터널 상태 (aws-tunnel1, aws-tunnel2가 ESTABLISHED이어야 합니다)
     sudo swanctl --list-sas
 
-    # BGP 이웃 상태 (이웃 2개가 Established이어야 합니다)
+    # BGP 이웃(= BGP 상대) 상태. 두 줄이 나오면 됩니다
     sudo vtysh -c 'show bgp summary'
 
     # Cloud WAN에서 받은 경로 (10.30.1.0/24 한 줄이 보여야 합니다)
@@ -169,6 +174,9 @@ BGP routing table entry for 172.16.1.0/24, version 1
 ```
 
 이웃 주소 `169.254.x.x` 는 **여러분 계정에서는 다른 값**입니다. AWS가 VPN 연결마다 새로 배정합니다.
+
+!!! info "`show bgp summary` 에는 `Established` 라는 글자가 나오지 않습니다"
+    올라온 이웃은 **Up/Down** 열이 시간(`00:00:21`)으로 세어지는 것으로 알 수 있습니다. 아직이면 그 자리에 `Active` 나 `Connect` 가 나옵니다. 맨 오른쪽 **State/PfxRcd** 는 그 이웃에게서 **받은 경로 수**입니다. 위 출력은 터널이 올라온 지 21초밖에 안 된 시점이라 한 줄은 `1`, 다른 줄은 `0` 입니다. 두 값이 달라도 괜찮습니다. 봐야 할 것은 이 숫자가 아니라 다음 명령(`show ip route bgp`)에 `10.30.1.0/24` 가 보이는지입니다.
 
 **성공 확인**
 

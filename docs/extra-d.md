@@ -59,7 +59,7 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 3. **Delete stack?** 창이 열립니다. **스택 이름을 그대로 입력해야** 삭제 버튼이 눌립니다. 입력 칸에 `cloudwan-workshop-oregon` 을 적고 **Delete stack** 을 누릅니다.
 
     !!! warning "이름을 입력하기 전에는 버튼이 회색입니다"
-        사전 테스트에서 확인했습니다. 창에 `Type "cloudwan-workshop-oregon" to confirm deletion of the stack.` 이라고 적혀 있고, 그 칸을 채우기 전에는 **Delete stack** 버튼이 **비활성**입니다. 이름을 정확히 입력하면 활성화됩니다. [3-4-a](#d-a)·[3-4-b](#d-b)의 attachment 삭제 창은 **Delete** 만 누르면 됐지만, **스택 삭제 창은 입력을 요구합니다.** 창에는 `Delete stack <이름> permanently? This action cannot be undone.` 과 `Deleting this stack will delete all stack resources.` 도 함께 적혀 있습니다.
+        [3-4-a](#d-a)·[3-4-b](#d-b)의 attachment 삭제 창은 **Delete** 만 누르면 됐습니다. 두 단계 만에 요령이 바뀌는 자리라 적어 둡니다. 창에는 `Type "cloudwan-workshop-oregon" to confirm deletion of the stack.` 이라고 적혀 있고, 그 칸이 비어 있는 동안 버튼은 회색입니다(사전 테스트에서 확인했습니다).
 
     !!! info "**Express mode** 는 켜지 마세요"
         같은 창에 **Express mode - new** 라는 선택지가 있고 `Delete this stack faster.` 라고 적혀 있습니다. 리소스가 안정될 때까지 기다리지 않고 정리한다는 뜻입니다. **이 워크숍에서는 시험해 보지 않았습니다.** 기본값(꺼짐) 그대로 두세요.
@@ -83,7 +83,7 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 
 1. **Events** 탭에서 실패한 리소스와 이유를 봅니다.
 2. core network에 연결이 남아 있는지 **Network Manager** → **Core network** → **Attachments**에서 봅니다. 참가자가 만든 오레곤 VPC 연결이나 VPN 연결이 남아 있으면 3-4-a, 3-4-b로 돌아가 지웁니다.
-3. 연결이 모두 사라졌으면 스택에서 **Delete**를 다시 누릅니다.
+3. 연결이 모두 사라졌으면 스택에서 **Delete stack** 을 다시 누릅니다. 이때도 창의 입력 칸에 스택 이름을 적어야 버튼이 눌립니다([3-4-d](#d-d)).
 
 !!! warning "오레곤 스택을 먼저 지우지 않았다면"
     오레곤 VPC 연결을 먼저 지우지 않고 오레곤 스택을 지우면 VPC가 지워지지 않을 수 있습니다. 연결을 지운 뒤 스택 삭제를 다시 시도하세요.

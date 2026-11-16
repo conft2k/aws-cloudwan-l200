@@ -41,7 +41,7 @@
 승인이 필요한 연결은 만들면 **Network Manager** 콘솔의 core network 화면에서 승인 대기 상태로 보입니다. 승인 흐름은 다음과 같습니다.
 
 !!! info "아래 두 그림은 승인을 켠 뒤의 화면입니다"
-    기본 정책은 네 세그먼트 모두 `require-attachment-acceptance` 가 `false` 라서, [2-2-d](lab1.md#lab1-d)처럼 그냥 만들면 이 **Pending attachment acceptance** 상태를 볼 수 없습니다. 아래 그림은 사전 테스트에서 `dev` 세그먼트만 승인 요구로 바꾼 뒤 오레곤 dev 연결을 만들어 찍은 것입니다. 직접 보려면 [3-1-f](#a-f)와 같은 방법으로 `dev` 의 그 값을 `true` 로 바꿔 새 정책 버전을 적용한 다음 연결을 만드세요.
+    기본 정책은 네 세그먼트 모두 `require-attachment-acceptance` 가 `false` 라서, [2-2-d](lab1.md#lab1-d)처럼 그냥 만들면 이 **Pending attachment acceptance** 상태를 볼 수 없습니다. 아래 그림은 사전 테스트에서 `dev` 세그먼트만 승인 요구로 바꾼 뒤 오레곤 dev 연결을 만들어 찍은 것입니다. 직접 보고 싶으면 [3-1-d](#a-d)에서 연결을 **만들기 전에** `dev` 의 그 값을 `true` 로 바꿔 두세요. 바꾸는 방법은 [3-1-f](#a-f)와 같습니다. 그러면 3-1-d에서 만든 연결이 이 상태로 멈춰 서고, 아래 순서대로 승인하면 됩니다. 연결을 따로 더 만들 필요는 없습니다.
 
 1. **Network Manager** → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** → **Attachments** 로 갑니다.
 2. **State** 가 **Pending attachment acceptance** 인 연결의 행을 선택합니다.
@@ -68,7 +68,7 @@
 - **static route**(정적 경로)
 
 !!! info "Transit Gateway route table attachment는 예외입니다"
-    Transit Gateway route table attachment를 통해 들어오는 경로는 `isolate-attachments`의 영향을 받지 않습니다. 이 옵션을 켠 세그먼트에서도 그런 경로는 그대로 남습니다.
+    **Transit Gateway route table attachment** 는 이미 있는 Transit Gateway의 라우팅 테이블을 Cloud WAN 세그먼트에 이어 주는 연결입니다. 이 워크숍에서는 쓰지 않습니다. 이 연결을 통해 들어오는 경로는 `isolate-attachments`의 영향을 받지 않아서, 옵션을 켠 세그먼트에서도 그런 경로는 그대로 남습니다.
 
 이 과제에서는 `dev` 세그먼트에 연결을 두 개 둡니다. 서울 dev VPC(`10.20.1.0/24`)는 이미 붙어 있고, 오레곤 dev VPC(`10.21.1.0/24`)를 직접 붙입니다. 오레곤 스택이 VPC와 EC2(`10.21.1.10`)는 만들었지만 attachment는 만들지 않았습니다.
 
@@ -143,7 +143,7 @@ rtt min/avg/max/mdev = 120.849/122.037/126.761/2.361 ms
     { "name": "dev", "description": "Development", "require-attachment-acceptance": false, "isolate-attachments": true }
     ```
 
-3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). 2-4에서 잰 값으로 change set 생성에 **38초**, 실행에 **1분 4초** 걸렸습니다. 이 과제의 change set은 따로 재지 않았지만 같은 종류의 변경입니다.
+3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). 2-4에서 잰 값으로 change set 생성에 **38초**, 실행에 **1분쯤** 걸렸습니다. 이 과제의 change set은 따로 재지 않았지만 같은 종류의 변경입니다.
 
 ![isolate-attachments를 켠 정책 버전을 실행하는 중의 Policy versions 목록. 새 버전의 Alias가 LATEST이고 Change set state가 파란색 Executing이며, 그 전 버전이 아직 LIVE를 달고 있다. 실행이 끝나야 LIVE가 새 버전으로 넘어온다. 사전 테스트에서는 2-4와 승인 과제까지 했기 때문에 버전이 네 개이고 3번이 LIVE, 4번이 Executing이다. 만든 버전 수는 어떤 과제를 했는지에 따라 다릅니다](images/console/extraA-04b-isolate-executing.png){ .shot }
 

@@ -137,7 +137,10 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
 }
 ```
 
-`shared` 세그먼트의 경로를 `prod`, `dev`, `onprem` 세그먼트에 공유한다는 뜻입니다. 그래서 세 세그먼트는 `shared`에 닿습니다. 하지만 `prod`와 `dev`는 서로 공유하지 않으므로 여전히 닿지 않습니다. 공유 서비스 패턴은 이 비대칭을 이용합니다.
+`shared` 세그먼트를 `prod`, `dev`, `onprem` 세 세그먼트와 공유한다는 뜻입니다. 여기서 두 가지를 짚어 둡니다.
+
+- **공유는 양방향입니다.** `shared` 의 경로가 세 세그먼트로 가고, 세 세그먼트의 경로도 `shared` 로 옵니다. 한쪽으로만 가면 요청은 가도 응답이 돌아오지 못합니다.
+- **받는 쪽끼리는 공유되지 않습니다.** `prod` 와 `dev` 는 둘 다 `shared` 와 통신하지만, 서로는 여전히 닿지 않습니다. 공유 서비스 패턴은 바로 이 비대칭을 이용합니다. 공유 서비스는 모두가 쓰되, 운영과 개발은 서로 막혀 있는 것입니다.
 
 **성공 확인**: `0% packet loss`이고 5개 모두 응답합니다.
 
@@ -226,8 +229,9 @@ attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행
 
 ![오레곤 스택 cloudwan-workshop-oregon의 Outputs 탭. 왼쪽 스택 목록에서 이 스택이 선택되어 있고 CREATE_COMPLETE다. Outputs (13) 표는 Key 오름차순이라 DevAppRouteTableId, DevCwanSubnetAId, DevCwanSubnetBId, DevInstanceId, DevInstancePrivateIp, DevVpcId 여섯 줄이 먼저 보이고, ProdAppRouteTableId는 화면 맨 아래에서 반쯤 잘려 있다. Description 열에 각 값을 어디에 쓰는지가 적혀 있다. 예를 들어 라우트 테이블 항목에는 attachment가 준비된 뒤 10.0.0.0/8과 172.16.0.0/12 경로를 이 테이블에 넣으라고 적혀 있다](images/console/lab1-route-01-outputs.png){ .shot }
 
-    !!! tip "`Prod…` 값은 아래로 스크롤해야 보입니다"
-        표가 **Key** 오름차순이라 `Dev…` 로 시작하는 여섯 줄이 먼저 나옵니다. 위 그림에서도 `ProdAppRouteTableId` 는 맨 아래에 반쯤 걸려 있습니다. 표를 아래로 내리거나 **Search outputs** 에 `Prod` 를 넣어 거르세요.
+!!! tip "`Prod…` 값은 아래로 스크롤해야 보입니다"
+    표가 **Key** 오름차순이라 `Dev…` 로 시작하는 여섯 줄이 먼저 나옵니다. 위 그림에서도 `ProdAppRouteTableId` 는 맨 아래에 반쯤 걸려 있습니다. 표를 아래로 내리거나 **Search outputs** 에 `Prod` 를 넣어 거르세요.
+
 ![오레곤 앱 서브넷 라우트 테이블의 Edit routes 화면. 제목이 Edit routes: rtb-… / cwan-ws-prod-app이다. 첫 줄은 원래 있던 10.11.1.0/24가 Target local, Status Active로 있고, 그 아래 Add route로 추가한 두 줄이 Destination 10.0.0.0/8과 172.16.0.0/12, Target 종류는 모두 Core Network로 되어 있다. 새로 추가한 줄의 Status는 아직 비어 있고, 화면 아래에 Cancel, Preview, Save changes 버튼이 있다](images/console/lab1-route-02-edit.png){ .shot }
 ![저장이 끝난 라우트 테이블의 Routes 탭. 경로 세 개가 모두 Status Active다. 10.0.0.0/8과 172.16.0.0/12는 Target이 arn:aws:networkmanager로 시작하는 core network이고 Route Origin이 CreateRoute, 10.11.1.0/24는 Target이 local이고 Route Origin이 CreateRouteTable이다](images/console/lab1-route-03-saved.png){ .shot }
 

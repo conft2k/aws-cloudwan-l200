@@ -131,13 +131,15 @@
   "why": "The settings popover reaches further left than the search box ends, so any crop holding all of it clips the search box. That sliver comes out; the Region selector and the gear, which 2-1-a steps 2 and 3 point at, are what the shot is for.",
   "drop_rows": [],
   "erase": [
-   [
-    0,
-    0,
-    57,
-    45,
-    "#F9F9F9"
-   ]
+   {
+    "box": [
+     0,
+     0,
+     57,
+     45
+    ],
+    "fill": "#F9F9F9"
+   }
   ]
  }
 }

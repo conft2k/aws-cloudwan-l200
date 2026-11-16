@@ -84,7 +84,14 @@ core network가 **어디에 생길지**를 정하는 덩어리입니다. 여기�
 !!! info "ASN 범위는 끝 값을 포함하지 않습니다"
     콘솔 설명에 따르면 ASN 범위는 왼쪽은 포함하고 오른쪽은 제외합니다. 예를 들어 `64900-64903`은 `64900`~`64902`입니다. 실습의 `64512-64520`은 `64512`~`64519`를 뜻합니다.
 
-`inside-cidr-blocks`는 Connect attachment를 쓸 때만 필요합니다. 공식 문서는 "an Inside CIDR block is required for attaching Connect attachments to a Core Network Edge"라고 적습니다. 최소 크기는 IPv4 `/24`, IPv6 `/64`입니다. 큰 범위를 적어 두면 새 edge가 생길 때마다 `/24`와 `/64`를 자동으로 떼어 갑니다. 한 번 edge에 배정된 inside CIDR은 지울 수 없고, 큰 범위에 남은 공간이 없으면 정책 예외(policy exception)가 납니다. 이 워크숍은 Connect attachment를 쓰지 않으므로 이 필드를 비워 두었습니다.
+**이 워크숍은 Connect attachment를 쓰지 않으므로 `inside-cidr-blocks` 를 비워 두었습니다.** 읽고 넘어가도 됩니다.
+
+**Connect attachment** 는 SD-WAN 장비 같은 외부 장비를 Cloud WAN에 잇는 연결 방식이고, **GRE**(Generic Routing Encapsulation)는 이미 있는 연결 위에 패킷을 한 번 더 감싸 보내는 터널 방식입니다. `inside-cidr-blocks` 는 그 GRE 터널의 양 끝에 줄 주소를 떼어 오는 **주소 풀**입니다.
+
+!!! info "용어집의 **inside CIDR block** 과 이름만 비슷합니다"
+    [용어집](glossary.md)의 `inside CIDR block`(`169.254.x.x/30`)은 **Site-to-Site VPN 터널 하나가 BGP 대화에 쓰는 주소**입니다. 여기 `inside-cidr-blocks` 는 **Connect attachment에 떼어 줄 주소 풀**이고 크기도 훨씬 큽니다. 쓰이는 곳이 다릅니다.
+
+쓰게 될 때를 위해 적어 둡니다. 공식 문서는 "an Inside CIDR block is required for attaching Connect attachments to a Core Network Edge"라고 적습니다. 최소 크기는 IPv4 `/24`, IPv6 `/64`입니다. 큰 범위를 적어 두면 새 edge가 생길 때마다 `/24`와 `/64`를 자동으로 떼어 갑니다. 한 번 edge에 배정된 inside CIDR은 지울 수 없고, 큰 범위에 남은 공간이 없으면 정책 예외(policy exception)가 납니다.
 
 리전은 그 리전에 걸린 연결을 모두 지우기 전에는 `edge-locations`에서 뺄 수 없습니다.
 
@@ -286,7 +293,7 @@ Cloud WAN에서 정책을 바꾸는 것은 파일을 저장하는 일이 아니�
 | 계정당 global network | 5 | 가능 |
 | global network당 core network | 1 | **불가** |
 | 리전당 core network edge | 1 | **불가** |
-| core network당 세그먼트 | 40 | 문서에 "Contact your SA or TAM"으로 적혀 있습니다 |
+| core network당 세그먼트 | 40 | 문서에 "Contact your SA or TAM"으로 적혀 있습니다. SA는 솔루션 아키텍트(Solutions Architect), TAM은 기술 계정 관리자(Technical Account Manager)로, AWS 쪽 담당자입니다 |
 | core network당 연결(attachment) | 5,000 | 가능 |
 | VPC당 core network 연결 | 5 | **불가** |
 | core network당 경로 | 10,000 | 문서에 "Contact your SA or TAM"으로 적혀 있습니다 |
