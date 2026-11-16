@@ -226,17 +226,12 @@ def attachments(expect):
     print("prod-apne2 rows:", row.count())
     try:
       if row.count():
-          # Prefer the row's link - the Attachment ID cell - because that opens
-          # the attachment itself. Clicking the name cell only ticks the row.
-          # (An earlier probe saw no link in the row because that run had the
-          # Attachment ID column hidden.)
-          link = row.first.get_by_role("link")
-          if link.count():
-              print("   opening via the row link:", link.first.inner_text().strip()[:30])
-              link.first.click()
-          else:
-              cell = row.first.locator("td").filter(has_text="cwan-ws-att-prod-apne2")
-              (cell.first if cell.count() else row.first.locator("td").nth(1)).click()
+          # Select the row through its own control. Clicking the name cell does
+          # not open anything; select_row() does, and the detail pane appears
+          # below the table with a Tags tab in it.
+          att = row.first.locator('label[aria-label^="attachment-"]').get_attribute("aria-label")
+          print("   selecting", att)
+          select_row(att)
           page.wait_for_timeout(WAIT)
           # The detail pane opens below the table and takes a moment to appear.
           tags = None

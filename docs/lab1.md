@@ -40,7 +40,14 @@
 
     <!-- shot: lab1-core-02-attachments -->
 
-5. **Segment** 열의 값은 여러분이 고른 것이 아닙니다. 스택이 각 연결에 붙인 `segment` 태그를 보고 core network policy가 정한 것입니다. 이름이 `cwan-ws-att-prod-apne2` 인 연결에는 `segment` = `prod` 태그가 붙어 있고, 그래서 **Segment** 가 `prod` 입니다. 태그로 세그먼트가 정해지는 규칙은 [2-2-d](#lab1-d)에서 직접 붙여 보며 확인합니다.
+5. `cwan-ws-att-prod-apne2` 행의 왼쪽 **선택 버튼**을 누릅니다. 표 아래에 상세 창이 열립니다. **Tags** 탭에서 `segment` = `prod` 태그를 확인합니다.
+
+    <!-- shot: lab1-core-03-attachment-tags -->
+
+    !!! tip "이름을 클릭하지 말고 선택 버튼을 누르세요"
+        **Name** 열의 글자는 링크가 아닙니다. 눌러도 아무것도 열리지 않습니다. 행 맨 왼쪽의 동그란 선택 버튼을 눌러야 상세 창이 열립니다.
+
+    **Segment** 열의 값은 여러분이 고른 것이 아닙니다. 방금 본 `segment` 태그를 보고 core network policy가 정한 것입니다. 태그로 세그먼트가 정해지는 규칙은 [2-2-d](#lab1-d)에서 직접 붙여 보며 확인합니다.
 
 세그먼트는 core network 안의 가상 라우팅 구역입니다. 같은 세그먼트에 있는 연결끼리만 통신하는 것이 기본 동작입니다.
 

@@ -51,13 +51,13 @@
   310,
   107,
   1431,
-  390
+  900
  ],
  "images/console/lab0-cnet-01-policy-versions.png": [
   310,
   107,
   1431,
-  304
+  456
  ],
  "images/console/lab1-attach-01-create.png": [
   8,
@@ -238,5 +238,23 @@
   207,
   1432,
   724
+ ],
+ "images/console/extraD-01-delete-attachment.png": [
+  0,
+  0,
+  1440,
+  900
+ ],
+ "images/console/extraD-02-delete-vpn-attachment.png": [
+  0,
+  0,
+  1440,
+  900
+ ],
+ "images/console/lab1-core-03-attachment-tags.png": [
+  310,
+  569,
+  1431,
+  900
  ]
 }

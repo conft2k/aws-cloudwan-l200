@@ -139,5 +139,23 @@ elif KIND == "vpn":
             d.first.click()
             confirm_dialog(NAME)
 
+elif KIND == "stack":
+    stack = os.environ["CWAN_STACK"]
+    goto(f"/cloudformation/home?region={REGION}#/stacks?filteringText={stack}")
+    page.wait_for_timeout(WAIT)
+    f = app()
+    link = f.get_by_role("link", name=stack, exact=True)
+    print("stack links:", link.count())
+    if link.count():
+        link.first.click()
+        page.wait_for_timeout(WAIT)
+    f = app()
+    print("headings:", heads(f))
+    d = f.get_by_role("button", name="Delete", exact=True)
+    print("Delete button:", d.count())
+    if d.count():
+        d.last.click()
+        confirm_dialog(NAME)
+
 else:
     raise SystemExit(f"unknown CWAN_DEL {KIND!r}")

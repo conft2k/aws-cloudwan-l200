@@ -15,10 +15,10 @@
 
 각 단계의 소요 시간은 사전 테스트에서 측정합니다.
 
-## 3-4-a. 오레곤 VPC attachment 지우기 (사전 테스트에서 측정합니다) { #d-a }
+## 3-4-a. 오레곤 VPC attachment 지우기 { #d-a }
 
 1. **Network Manager** → **Global networks** → `cwan-ws-global` → **Core network** → **Attachments**로 갑니다.
-2. 오레곤(`us-west-2`)의 prod VPC 연결을 고르고 삭제합니다. 확인 창이 나오면 한 번 더 확인합니다.
+2. 오레곤(`us-west-2`)의 prod VPC 연결 행의 **선택 버튼**을 누르고 **Actions** → **Delete** 를 누릅니다. `Delete attachment-…?` 창이 뜨고 `Delete attachment-… permanently? This action cannot be undone.` 이라고 묻습니다. **Delete** 를 눌러 확정합니다.
 3. 추가 과제 [3-1](extra-a.md)을 했다면 오레곤의 **dev VPC 연결도** 같은 방법으로 삭제합니다. 이 연결은 `segment=dev` 태그가 붙어 있습니다.
 
     !!! warning "오레곤 연결을 하나라도 남기면 뒤 단계가 막힙니다"
@@ -28,7 +28,7 @@
 
 **성공 확인**: 연결이 목록에서 사라지거나 삭제된 상태가 됩니다. 오레곤 VPC 연결이 **하나도** 보이지 않을 때까지 기다린 뒤 다음으로 넘어갑니다.
 
-## 3-4-b. Site-to-Site VPN attachment 지우기 (사전 테스트에서 측정합니다) { #d-b }
+## 3-4-b. Site-to-Site VPN attachment 지우기 { #d-b }
 
 같은 **Attachments** 화면에서 온프레미스 쪽 Site-to-Site VPN 연결(`segment=onprem`)을 고르고 삭제합니다.
 
@@ -36,9 +36,15 @@
 
 **성공 확인**: VPN attachment가 목록에서 사라지거나 삭제된 상태가 됩니다. 이 단계가 끝나면 core network에는 서울 VPC 연결 3개만 남습니다(스택이 만든 연결입니다).
 
-## 3-4-c. Site-to-Site VPN 연결 지우기 (사전 테스트에서 측정합니다) { #d-c }
+## 3-4-c. Site-to-Site VPN 연결 지우기 { #d-c }
 
-VPN attachment를 먼저 지워야 VPN 연결을 지울 수 있습니다.
+**VPN attachment가 목록에서 완전히 사라진 뒤에야** VPN 연결을 지울 수 있습니다. 사전 테스트에서 attachment가 아직 지워지는 중일 때 VPN 연결을 지우려 하자 이렇게 거부됐습니다.
+
+```text
+UnsupportedOperation: Unable to delete a vpn that's associated to a Core Network
+```
+
+attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 보입니다. 그 상태가 끝날 때까지 기다리세요.
 
 1. **VPC** 콘솔(서울) → **Site-to-Site VPN connections**로 갑니다.
 2. [2-3-a](lab2.md)에서 만든 VPN 연결을 고르고 **Actions** → **Delete VPN connection**을 누릅니다.
