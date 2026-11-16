@@ -5,7 +5,7 @@
 - `require-attachment-acceptance`: 연결을 만들어도 **승인해야** 세그먼트에 들어갑니다.
 - `isolate-attachments`: 같은 세그먼트 안의 연결끼리도 **서로 통신하지 못합니다**.
 
-3-1-a와 3-1-b는 읽고 이해하는 설명입니다. 3-1-c부터 3-1-g까지는 `isolate-attachments`를 **직접 해 보는 과제**입니다. 시간이 남거나 워크숍이 끝난 뒤에 혼자 해 보는 과제이며, [2-4](lab3.md)까지 마친 뒤에 하세요. 과제에 쓰이는 각 동작의 시간은 해당 단계에 적어 두었습니다. 다만 **과제 전체가 몇 분 걸리는지는 재지 않았습니다.**
+3-1-a와 3-1-b는 읽고 이해하는 설명입니다. 3-1-c부터 3-1-g까지는 `isolate-attachments`를 **직접 해 보는 과제**입니다. 시간이 남거나 워크숍이 끝난 뒤에 혼자 해 보는 과제이며, [2-4](lab3.md)까지 마친 뒤에 하세요.
 
 ## 3-1-a. 연결 승인 요구하기 { #a-a }
 
@@ -41,7 +41,7 @@
 승인이 필요한 연결은 만들면 **Network Manager** 콘솔의 core network 화면에서 승인 대기 상태로 보입니다. 승인 흐름은 다음과 같습니다.
 
 !!! info "아래 두 그림은 승인을 켠 뒤의 화면입니다"
-    기본 정책은 네 세그먼트 모두 `require-attachment-acceptance` 가 `false` 라서, [2-2-d](lab1.md#lab1-d)처럼 그냥 만들면 이 **Pending attachment acceptance** 상태를 볼 수 없습니다. 아래 그림은 사전 테스트에서 `dev` 세그먼트만 승인 요구로 바꾼 뒤 오레곤 dev 연결을 만들어 찍은 것입니다. 직접 보고 싶으면 [3-1-d](#a-d)에서 연결을 **만들기 전에** `dev` 의 그 값을 `true` 로 바꿔 두세요. 바꾸는 방법은 [3-1-f](#a-f)와 같습니다. 그러면 3-1-d에서 만든 연결이 이 상태로 멈춰 서고, 아래 순서대로 승인하면 됩니다. 연결을 따로 더 만들 필요는 없습니다.
+    기본 정책은 네 세그먼트 모두 `require-attachment-acceptance` 가 `false` 라서, [2-2-d](lab1.md#lab1-d)처럼 그냥 만들면 이 **Pending attachment acceptance** 상태를 볼 수 없습니다. 아래 그림은 `dev` 세그먼트만 승인 요구로 바꾼 뒤 오레곤 dev 연결을 만들었을 때의 화면입니다. 직접 보고 싶으면 [3-1-d](#a-d)에서 연결을 **만들기 전에** `dev` 의 그 값을 `true` 로 바꿔 두세요. 바꾸는 방법은 [3-1-f](#a-f)와 같습니다. 그러면 3-1-d에서 만든 연결이 이 상태로 멈춰 서고, 아래 순서대로 승인하면 됩니다. 연결을 따로 더 만들 필요는 없습니다.
 
 1. **Network Manager** → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** → **Attachments** 로 갑니다.
 2. **State** 가 **Pending attachment acceptance** 인 연결의 행을 선택합니다.
@@ -54,7 +54,7 @@
 ![승인 대기 중인 연결의 행을 선택하고 Actions 메뉴를 연 모습. 선택된 cwan-ws-att-dev-usw2 줄은 State가 Pending attachment acceptance이고, 메뉴에는 Accept, Reject, Edit, Delete, Manage 1:1 NAT 다섯 항목이 있다. 승인은 Accept, 거절은 Reject이며, Edit과 Delete는 흐리게 비활성되어 있어 승인 대기 상태에서는 고치거나 지울 수 없다는 것을 보여 준다](images/console/extraA-b2-accept-attachment.png){ .shot }
 
 !!! warning "승인하기 전에는 VPC 라우트를 넣을 수 없습니다"
-    사전 테스트에서 확인한 것입니다. 승인 대기 중인 연결의 VPC에서 core network로 가는 경로를 만들려고 하면 `InvalidCoreNetworkArn.NotFound` 로 거부됩니다. VPC가 아직 core network에 붙지 않은 것으로 취급되기 때문입니다. **승인을 먼저 하고 경로를 넣으세요.** 승인이 필요 없는 연결은 `Creating` 중에도 경로를 넣을 수 있습니다.
+    승인 대기 중인 연결의 VPC에서 core network로 가는 경로를 만들려고 하면 `InvalidCoreNetworkArn.NotFound` 로 거부됩니다. VPC가 아직 core network에 붙지 않은 것으로 취급되기 때문입니다. **승인을 먼저 하고 경로를 넣으세요.** 승인이 필요 없는 연결은 `Creating` 중에도 경로를 넣을 수 있습니다.
 
 연결을 승인하지 않고 두면 그 연결은 세그먼트에 들어가지 못하므로 통신하지 않습니다. 승인하지 않을 연결은 **거절**하거나 삭제합니다.
 
@@ -89,7 +89,7 @@
 
 ![오레곤 dev VPC를 붙이는 Create attachment 화면의 Attachment settings 패널. Name에 cwan-ws-att-dev-usw2, Attachment type에 VPC, Edge location에 United States (Oregon)이 들어 있다. 2-2-d에서 prod를 붙일 때와 같은 화면이고 이름과 VPC, 태그 값만 다르다](images/console/extraA-01-oregon-dev-attachment.png){ .shot }
 
-4. attachment가 `Available`이 되면 상세 화면에서 **Segment**가 `dev`인지 확인합니다. [2-2-d](lab1.md#lab1-d)의 오레곤 prod attachment와 똑같은 작업이고, 그쪽은 사전 테스트에서 **4분 15초** 걸렸습니다. 이 dev attachment 자체는 따로 재지 않았습니다.
+4. attachment가 `Available`이 되면 상세 화면에서 **Segment**가 `dev`인지 확인합니다. [2-2-d](lab1.md#lab1-d)의 오레곤 prod attachment와 똑같은 작업이고, 그쪽과 비슷하게 **4분쯤** 걸립니다.
 5. 오레곤 dev 앱 서브넷의 라우트 테이블에 core network 경로를 넣습니다([2-2-e](lab1.md#lab1-e)와 같습니다). 라우트 테이블 ID는 오레곤 스택 **Outputs**의 dev용 항목에서 찾습니다.
 
     | Destination | Target |
@@ -105,15 +105,13 @@
 
 서울 dev EC2(`10.20.1.10`)와 오레곤 dev EC2(`10.21.1.10`)가 서로 닿는지 먼저 봅니다.
 
-<!-- 미정: dev EC2에 접속하는 방법(스택에 dev용 접속 수단이 없다). 사전 테스트 전에 정해야 한다. -->
-
-서울 dev EC2에서 실행합니다.
+서울 dev EC2 `cwan-ws-dev-ec2` 에 [2-2-b](lab1.md#lab1-b)와 같은 방법(**EC2 Instance Connect Endpoint**)으로 접속해 실행합니다. 스택이 dev 서브넷에도 접속용 엔드포인트를 만들어 두었습니다.
 
 ```bash
 ping -c 3 10.21.1.10
 ```
 
-사전 테스트에서 나온 출력입니다.
+출력은 이렇습니다.
 
 ```text
 PING 10.21.1.10 (10.21.1.10) 56(84) bytes of data.
@@ -141,9 +139,9 @@ rtt min/avg/max/mdev = 120.849/122.037/126.761/2.361 ms
     { "name": "dev", "description": "Development", "require-attachment-acceptance": false, "isolate-attachments": true }
     ```
 
-3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). 2-4에서 잰 값으로 change set 생성에 **38초**, 실행에 **1분쯤** 걸렸습니다. 이 과제의 change set은 따로 재지 않았지만 같은 종류의 변경입니다.
+3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). [2-4](lab3.md)와 같은 종류의 변경이라 change set 생성과 실행에 각각 **1분 안팎** 걸립니다.
 
-![isolate-attachments를 켠 정책 버전을 실행하는 중의 Policy versions 목록. 새 버전의 Alias가 LATEST이고 Change set state가 파란색 Executing이며, 그 전 버전이 아직 LIVE를 달고 있다. 실행이 끝나야 LIVE가 새 버전으로 넘어온다. 사전 테스트에서는 2-4와 승인 과제까지 했기 때문에 버전이 네 개이고 3번이 LIVE, 4번이 Executing이다. 만든 버전 수는 어떤 과제를 했는지에 따라 다릅니다](images/console/extraA-04b-isolate-executing.png){ .shot }
+![isolate-attachments를 켠 정책 버전을 실행하는 중의 Policy versions 목록. 새 버전의 Alias가 LATEST이고 Change set state가 파란색 Executing이며, 그 전 버전이 아직 LIVE를 달고 있다. 실행이 끝나야 LIVE가 새 버전으로 넘어온다. 그림에서는 2-4와 승인 과제까지 했기 때문에 버전이 네 개이고 3번이 LIVE, 4번이 Executing이다. 만든 버전 수는 어떤 과제를 했는지에 따라 다릅니다](images/console/extraA-04b-isolate-executing.png){ .shot }
 
 ![isolate-attachments를 켠 정책 버전의 change set 화면. 변경이 두 건뿐이고, 하나는 Type이 Segments configuration에 Action이 Modify, 다른 하나는 Type이 Attachment route propagation에 Action이 Remove다. share를 추가했던 2-4의 일곱 건과 대비된다](images/console/extraA-04-isolate-change-set.png){ .shot }
 
@@ -154,7 +152,7 @@ rtt min/avg/max/mdev = 120.849/122.037/126.761/2.361 ms
     ping -c 3 10.30.1.10
     ```
 
-사전 테스트에서 나온 출력입니다.
+출력은 이렇습니다.
 
 ```text
 $ ping -c 4 10.21.1.10            # 오레곤 dev, 같은 세그먼트
@@ -176,7 +174,7 @@ rtt min/avg/max/mdev = 1.050/1.801/4.012/1.276 ms
 
 이 둘을 나란히 보는 것이 이 과제의 핵심입니다. 격리는 같은 세그먼트 안의 연결 사이를 막고, share로 받은 경로는 막지 않습니다.
 
-**결과**: 오레곤 dev로는 실패하고 `shared`로는 성공합니다. **Network Manager**의 `dev` 경로 테이블에서 서울 edge에는 `10.21.1.0/24`가, 오레곤 edge에는 `10.20.1.0/24`가 사라지고 `shared` 대역(`10.30.1.0/24`)은 남습니다. 경로 화면에서 보이는 모양은 사전 테스트에서 확인합니다.
+**결과**: 오레곤 dev로는 실패하고 `shared`로는 성공합니다. **Network Manager**의 `dev` 경로 테이블에서 서울 edge에는 `10.21.1.0/24`가, 오레곤 edge에는 `10.20.1.0/24`가 사라지고 `shared` 대역(`10.30.1.0/24`)은 남습니다.
 
 ## 3-1-g. 되돌리기 { #a-g }
 
@@ -191,7 +189,7 @@ rtt min/avg/max/mdev = 1.050/1.801/4.012/1.276 ms
     ping -c 3 10.21.1.10
     ```
 
-사전 테스트에서 나온 출력입니다.
+출력은 이렇습니다.
 
 ```text
 PING 10.21.1.10 (10.21.1.10) 56(84) bytes of data.

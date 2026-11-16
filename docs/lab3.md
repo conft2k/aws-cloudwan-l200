@@ -75,16 +75,16 @@
 3. 의도하지 않은 항목(세그먼트 삭제 등)이 없는지 확인합니다.
 
 !!! info "이 단계에서는 아직 반영되지 않습니다"
-    정책 버전은 만들기만 해서는 배포되지 않습니다. 다음 단계에서 change set을 실행해야 적용됩니다. 그전까지 통신 범위는 그대로입니다. 사전 테스트에서 버전을 만들고 **Ready to execute** 가 된 상태로 온프레미스 VM에서 prod로 ping을 해 봤더니 그대로 `100% packet loss` 였습니다.
+    정책 버전은 만들기만 해서는 배포되지 않습니다. 다음 단계에서 change set을 실행해야 적용됩니다. 그전까지 통신 범위는 그대로입니다. 버전을 만들고 **Ready to execute** 가 된 상태에서 온프레미스 VM에서 prod로 ping을 하면 그대로 `100% packet loss` 입니다.
 
-    change set이 **Ready to execute** 가 되기까지는 사전 테스트에서 **38초** 걸렸습니다. 그동안 상태는 `Pending generation` 입니다.
+    change set이 **Ready to execute** 가 되기까지 **1분 안쪽**입니다. 그동안 상태는 `Pending generation` 입니다.
 
 !!! tip "세그먼트를 추가·삭제하거나 격리 옵션을 바꿀 때"
     세그먼트를 추가·삭제하거나 격리 옵션을 바꾸면 그 세그먼트의 모든 edge에 작업이 생깁니다. 이번 변경은 share 추가입니다.
 
 ![Policy version - 2 change sets 화면. 제목 옆에 변경 개수 7이 적혀 있고 오른쪽 위에 Compare policy versions와 Apply change set 버튼이 있다. 표에는 Type이 Core network segment이고 Action이 Modify인 줄이 네 개, Type이 Attachment route propagation이고 Action이 Add인 줄이 세 개 있다. Identifier 열은 모두 비어 있고, 구체적인 내용은 New values의 Details 링크로 본다](images/console/lab3-policy-03-changeset.png){ .shot }
 
-`share` 한 줄을 넣었을 뿐인데 사전 테스트에서는 변경이 **7건** 나왔습니다. 무엇이 바뀌는지 읽어 보면 이렇습니다.
+`share` 한 줄을 넣었을 뿐인데 변경은 **7건** 나옵니다. 무엇이 바뀌는지 읽어 보면 이렇습니다.
 
 | **Type** | 개수 | **Action** | 내용 |
 |---|---|---|---|
@@ -103,10 +103,10 @@
 change set을 실행해 새 버전을 적용합니다.
 
 1. change set을 실행합니다.
-2. 상태가 **Ready to execute** → **Executing policy** → **Execution succeeded**로 바뀌는 것을 지켜봅니다. 사전 테스트에서 **1분쯤** 걸렸습니다(`Executing` 을 처음 본 시점부터 `Execution succeeded` 까지 1분 4초).
+2. 상태가 **Ready to execute** → **Executing policy** → **Execution succeeded**로 바뀌는 것을 지켜봅니다. **1분쯤** 걸립니다.
 3. 새 정책이 **LIVE**가 되었는지 확인합니다.
 
-반영은 사전 테스트에서 **약 1분** 걸렸습니다. 상태가 **Executing policy** 에 머무르는 동안에는 다음 단계로 가지 말고 기다립니다.
+반영은 **약 1분** 걸립니다. 상태가 **Executing policy** 에 머무르는 동안에는 다음 단계로 가지 말고 기다립니다.
 
 ![change set을 실행한 직후의 Policy versions 목록. Policy version - 2의 Change set state가 Executing으로 바뀌었고 Alias는 아직 LATEST다. Policy version - 1이 여전히 LIVE를 달고 있다](images/console/lab3-policy-04-executing.png){ .shot }
 ![실행이 끝난 뒤의 Policy versions 목록. Policy version - 2의 Alias가 LIVE, LATEST가 되고 Change set state가 Execution succeeded다. Policy version - 1에는 Alias가 없다. 새 정책이 적용됐다는 뜻이다](images/console/lab3-policy-05-live.png){ .shot }
@@ -129,7 +129,7 @@ change set을 실행해 새 버전을 적용합니다.
     ping -c 4 10.11.1.10
     ```
 
-사전 테스트에서 나온 출력입니다.
+출력은 이렇습니다.
 
 ```text
 $ ping -c 5 10.10.1.10            # 서울 prod

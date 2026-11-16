@@ -78,7 +78,7 @@ attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 at
 
 ![core network의 Attachments 목록. 맨 윗줄에 cwan-ws-att-onprem-apne2가 생겨 모두 다섯 줄이다. 이 줄만 Resource type이 VPN이고 나머지 네 줄은 VPC다. 새 줄은 Edge location이 ap-northeast-2, State가 초록색 Available, Segment가 onprem이다. 아래 네 줄은 2-2-d까지 만든 연결로 cwan-ws-att-prod-apne2가 prod, cwan-ws-att-prod-usw2가 us-west-2의 prod, cwan-ws-att-dev-apne2가 dev, cwan-ws-att-shared-apne2가 shared다](images/console/lab2-attach-02-available.png){ .shot }
 
-**결과**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. 사전 테스트에서 `Available` 이 되기까지 **3분 30초** 걸렸습니다.
+**결과**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. `Available` 이 되기까지 **3~4분** 걸립니다.
 
 ## 2-3-c. 온프레미스 라우터에 터널 설정하기 { #lab2-c }
 
@@ -103,7 +103,7 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
 스크립트는 `aws ec2 describe-vpn-connections` 로 터널 정보(AWS 쪽 주소 2개, 사전 공유 키, BGP 주소)를 받아 **터널 2개**를 세우고, 그 위에 **BGP 연결 2개**를 올린 다음, 온프레미스 대역 `172.16.1.0/24` 를 AWS 쪽에 광고합니다. 터널이 2개인 것은 AWS Site-to-Site VPN이 늘 두 개를 주기 때문입니다. 하나가 끊겨도 다른 하나로 이어집니다. 스크립트는 다시 실행해도 됩니다.
 
-사전 테스트에서는 스크립트가 끝나는 시점에 이미 터널과 BGP가 올라와 있었습니다. 마지막 몇 줄이 이렇게 나옵니다.
+스크립트가 끝나는 시점에는 보통 터널과 BGP가 이미 올라와 있습니다. 마지막 몇 줄이 이렇게 나옵니다.
 
 ```text
 Neighbor        V         AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd
@@ -146,7 +146,7 @@ Next:
 
 ![Site-to-Site VPN 연결의 Tunnel details 탭에 있는 Tunnel state 표. 두 줄이 Tunnel 1과 Tunnel 2이고, 각각 AWS 쪽 Outside IP address와 Inside IPv4 CIDR(169.254.x.x/30)을 가진다. 둘 다 Status가 초록색 Up, Provisioning status가 Available이고 Details 열에 1 BGP ROUTES라고 적혀 있다. Inside IPv4 CIDR의 두 대역이 라우터에서 본 BGP 이웃 주소가 나온 자리다](images/console/lab2-vpn-02-tunnels.png){ .shot }
 
-사전 테스트에서 나온 출력입니다.
+출력은 이렇습니다.
 
 ```text
 $ sudo swanctl --list-sas
@@ -190,7 +190,7 @@ BGP routing table entry for 172.16.1.0/24, version 1
     `show ip route bgp` 에 shared 대역만 오고 prod 대역은 오지 않습니다. `onprem` 세그먼트가 `shared` 와만 공유되어 있기 때문입니다. **왜 prod로 통신이 안 되는지가 이 한 줄로 설명됩니다.** [2-3-f](#lab2-f)에서 ping으로 다시 확인하고, [2-4](lab3.md)에서 이 경로가 생기는 것을 봅니다.
 
 !!! warning "경로가 아직 안 보이면 기다립니다"
-    터널과 BGP 세션이 올라와도 경로가 설치되기까지 잠시 걸릴 수 있습니다. **`show ip route bgp` 에 `10.30.1.0/24` 가 나타난 뒤에 다음 소절로 넘어가세요.** 그 전에 ping을 하면 실패합니다. 사전 테스트에서는 스크립트가 끝났을 때 이미 경로가 들어와 있었지만, 늦어지면 같은 명령을 몇 번 더 돌려 보세요. 고장이 아니라 수렴을 기다리는 것입니다.
+    터널과 BGP 세션이 올라와도 경로가 설치되기까지 잠시 걸릴 수 있습니다. **`show ip route bgp` 에 `10.30.1.0/24` 가 나타난 뒤에 다음 소절로 넘어가세요.** 그 전에 ping을 하면 실패합니다. 보통은 스크립트가 끝났을 때 이미 들어와 있습니다. 늦어지면 같은 명령을 몇 번 더 돌려 보세요. 고장이 아니라 수렴을 기다리는 것입니다.
 
 스크립트가 실패하면 화면에 `FAILED at:` 줄과 확인할 명령이 나옵니다. 그 내용을 강사에게 보여 주세요.
 
@@ -228,7 +228,7 @@ BGP routing table entry for 172.16.1.0/24, version 1
     ping -c 5 10.30.1.10
     ```
 
-사전 테스트에서 나온 출력입니다.
+출력은 이렇습니다.
 
 ```text
 PING 10.30.1.10 (10.30.1.10) 56(84) bytes of data.

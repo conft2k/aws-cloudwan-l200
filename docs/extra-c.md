@@ -7,13 +7,10 @@
 Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경로 테이블은 core network edge(리전)별로 볼 수 있습니다.
 
 1. **Network Manager** → **Global networks** → `cwan-ws-global`을 엽니다.
-2. core network를 열고 경로(routes)를 보는 화면으로 갑니다.
-3. 세그먼트(예: `prod`)와 edge 위치(예: `ap-northeast-2`)를 고릅니다.
+2. core network를 열고 **Routes** 탭으로 갑니다.
+3. **Route Filter** 에서 **Segment** 를 고르고(예: `prod`), **Edge location** 을 고른 뒤(예: `ap-northeast-2`) **Search routes** 를 누릅니다.
 
 ![prod 세그먼트를 서울 edge에서 조회한 경로 테이블. 경로가 네 개다. 10.10.1.0/24와 10.30.1.0/24는 Destinations가 서울 attachment와 그 VPC로 직접 적혀 있고, 172.16.1.0/24는 VPN attachment를, 10.11.1.0/24는 prod | us-west-2를 가리킨다. 같은 리전의 것은 attachment 이름으로, 다른 리전의 것은 세그먼트와 리전 이름으로 나타난다는 차이가 보인다](images/console/extraC-01-route-table-prod-seoul.png){ .shot }
-
-!!! info "화면 이름은 사전 테스트에서 확인합니다"
-    경로 화면의 탭 이름과 필터 위치는 사전 테스트에서 확인한 뒤 이 절에 적습니다.
 
 경로 한 줄에서 볼 것은 다음과 같습니다.
 
@@ -23,7 +20,7 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 | 연결(attachment) | 그 경로를 내보낸 연결. 경로가 **어느 연결에서 왔는지** 알려 줍니다 |
 | edge 위치 | 경로를 가진 리전 |
 
-같은 세그먼트라도 edge 위치에 따라 경로 테이블이 다르게 보입니다. 서울 edge의 `prod` 경로 테이블에는 서울 prod VPC(`10.10.1.0/24`)가 서울 연결에서 온 경로로, 오레곤 prod VPC(`10.11.1.0/24`)는 리전을 건너온 경로로 나타납니다. 리전 간 경로가 어떤 모양으로 표시되는지는 사전 테스트에서 확인합니다.
+같은 세그먼트라도 edge 위치에 따라 경로 테이블이 다르게 보입니다. 서울 edge의 `prod` 경로 테이블에는 서울 prod VPC(`10.10.1.0/24`)가 서울 연결에서 온 경로로, 오레곤 prod VPC(`10.11.1.0/24`)는 리전을 건너온 경로로 나타납니다.
 
 **결과**: `prod` 세그먼트의 서울 edge 경로 테이블에서 `10.10.1.0/24`가 어느 연결에서 왔는지 가리킬 수 있습니다.
 
@@ -71,8 +68,5 @@ Cloud WAN은 CloudWatch에 지표를 내보내고, 연결 상태나 정책 변�
 
 - 지표와 이벤트는 **CloudWatch** 콘솔과 **Network Manager** 대시보드에서 확인합니다.
 - 어떤 지표와 이벤트가 있는지는 [Cloud WAN 공식 문서](https://docs.aws.amazon.com/network-manager/latest/cloudwan/what-is-cloudwan.html)에서 확인하세요.
-
-!!! info "지표 이름은 사전 테스트에서 확인합니다"
-    이 워크숍 자료에는 지표 이름과 이벤트 이름을 적지 않았습니다. 사전 테스트에서 확인한 뒤 이 절에 추가합니다.
 
 **결과**: Cloud WAN의 지표를 어느 콘솔에서 찾는지 알고 있습니다.

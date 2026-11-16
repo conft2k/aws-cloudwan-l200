@@ -5,15 +5,15 @@
 
 실습이 끝나면 만든 리소스를 지웁니다. 아래 **순서대로** 진행합니다. **순서가 중요합니다.** 참가자가 직접 만든 것을 먼저 지우고, 그다음에 스택을 지웁니다. core network는 연결이 하나라도 남아 있으면 지워지지 않기 때문입니다.
 
-| 순서 | 지울 것 | 누가 만들었나 | 사전 테스트 소요 시간 |
+| 순서 | 지울 것 | 누가 만들었나 | 소요 시간 |
 |---|---|---|---|
-| 1 | 오레곤 VPC attachment (prod, 그리고 [3-1](extra-a.md)을 했다면 dev도) | 참가자([2-2-d](lab1.md), [3-1-d](extra-a.md#a-d)) | 따로 재지 않음 |
-| 2 | Site-to-Site VPN attachment | 참가자([2-3-b](lab2.md)) | **22초** |
-| 3 | Site-to-Site VPN 연결 | 참가자([2-3-a](lab2.md)) | 따로 재지 않음 |
-| 4 | 오레곤 스택 `cloudwan-workshop-oregon` | CloudFormation | **1분 32초** |
-| 5 | 서울 스택 `cloudwan-workshop-seoul` | CloudFormation | **14분 32초** |
+| 1 | 오레곤 VPC attachment (prod, 그리고 [3-1](extra-a.md)을 했다면 dev도) | 참가자([2-2-d](lab1.md), [3-1-d](extra-a.md#a-d)) | **몇 분 안쪽** |
+| 2 | Site-to-Site VPN attachment | 참가자([2-3-b](lab2.md)) | **1분 안쪽** |
+| 3 | Site-to-Site VPN 연결 | 참가자([2-3-a](lab2.md)) | **몇 분 안쪽** |
+| 4 | 오레곤 스택 `cloudwan-workshop-oregon` | CloudFormation | **2분 안쪽** |
+| 5 | 서울 스택 `cloudwan-workshop-seoul` | CloudFormation | **15분쯤** |
 
-정리 전체는 사전 테스트에서 **약 22분** 걸렸습니다. 첫 삭제부터 서울 스택이 사라질 때까지 재었고, 그중 **14분 32초가 마지막 서울 스택 하나**입니다. 앞의 네 단계는 다 합쳐도 8분이 안 됩니다.
+정리 전체는 **20분 남짓** 걸리고, 그중 **대부분이 마지막 서울 스택 하나**입니다. 앞의 네 단계는 다 합쳐도 몇 분이면 끝납니다.
 
 ## 3-4-a. 오레곤 VPC attachment 지우기 { #d-a }
 
@@ -38,7 +38,7 @@
 
 ## 3-4-c. Site-to-Site VPN 연결 지우기 { #d-c }
 
-**VPN attachment가 목록에서 완전히 사라진 뒤에야** VPN 연결을 지울 수 있습니다. 사전 테스트에서 attachment가 아직 지워지는 중일 때 VPN 연결을 지우려 하자 이렇게 거부됐습니다.
+**VPN attachment가 목록에서 완전히 사라진 뒤에야** VPN 연결을 지울 수 있습니다. attachment가 아직 지워지는 중일 때 VPN 연결을 지우려 하면 이렇게 거부됩니다.
 
 ```text
 UnsupportedOperation: Unable to delete a vpn that's associated to a Core Network
@@ -59,12 +59,12 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 3. **Delete stack?** 창이 열립니다. **스택 이름을 그대로 입력해야** 삭제 버튼이 눌립니다. 입력 칸에 `cloudwan-workshop-oregon` 을 적고 **Delete stack** 을 누릅니다.
 
     !!! warning "이름을 입력하기 전에는 버튼이 회색입니다"
-        [3-4-a](#d-a)·[3-4-b](#d-b)의 attachment 삭제 창은 **Delete** 만 누르면 됐습니다. 두 단계 만에 요령이 바뀌는 자리라 적어 둡니다. 창에는 `Type "cloudwan-workshop-oregon" to confirm deletion of the stack.` 이라고 적혀 있고, 그 칸이 비어 있는 동안 버튼은 회색입니다(사전 테스트에서 확인했습니다).
+        [3-4-a](#d-a)·[3-4-b](#d-b)의 attachment 삭제 창은 **Delete** 만 누르면 됐습니다. 두 단계 만에 요령이 바뀌는 자리라 적어 둡니다. 창에는 `Type "cloudwan-workshop-oregon" to confirm deletion of the stack.` 이라고 적혀 있고, 그 칸이 비어 있는 동안 버튼은 회색입니다.
 
     !!! info "**Express mode** 는 켜지 마세요"
         같은 창에 **Express mode - new** 라는 선택지가 있고 `Delete this stack faster.` 라고 적혀 있습니다. 리소스가 안정될 때까지 기다리지 않고 정리한다는 뜻입니다. **이 워크숍에서는 시험해 보지 않았습니다.** 기본값(꺼짐) 그대로 두세요.
 
-**결과**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). 오레곤 prod VPC와 EC2도 함께 지워집니다. 사전 테스트에서 **1분 32초** 걸렸습니다.
+**결과**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). 오레곤 prod VPC와 EC2도 함께 지워집니다. **2분 안쪽**입니다.
 
 ## 3-4-e. 서울 스택 지우기 { #d-e }
 
@@ -73,7 +73,7 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 3. 창의 입력 칸에 `cloudwan-workshop-seoul` 을 적고 **Delete stack** 을 누릅니다. [3-4-d](#d-d)와 같은 창이며, 이름을 입력하기 전에는 버튼이 눌리지 않습니다.
 
 !!! warning "이 삭제는 15분쯤 걸립니다"
-    사전 테스트에서 **14분 32초** 걸렸습니다. core network를 지우는 데 시간이 걸리기 때문이고, [2-1-b](lab0.md#lab0-b)에서 core network를 만들 때 걸린 15분과 거의 같습니다. 화면을 닫아도 삭제는 계속됩니다.
+    **15분쯤** 걸립니다. core network를 지우는 데 시간이 걸리기 때문이고, [2-1-b](lab0.md#lab0-b)에서 core network를 만들 때 걸린 15분과 거의 같습니다. 화면을 닫아도 삭제는 계속됩니다.
 
 **결과**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). core network, global network, 서울의 VPC와 EC2가 함께 지워집니다.
 

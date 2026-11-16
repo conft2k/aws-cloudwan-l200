@@ -149,7 +149,7 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
 그림 1의 ③과 ④입니다. 오레곤 prod VPC를 core network에 연결합니다. 오레곤 스택은 VPC와 EC2만 만들었고 attachment는 만들지 않았습니다.
 
 !!! warning "attachment 생성에 4분쯤 걸립니다"
-    사전 테스트에서 **4분 15초** 걸렸습니다. 상태가 `Creating` → `Pending network update` → `Available` 순으로 바뀝니다. 기다리는 동안 다음 소절([2-2-e](#lab1-e))의 라우트 작업을 먼저 해 두면 시간을 벌 수 있습니다. 라우트는 attachment가 `Available` 이 아니어도 넣을 수 있습니다.
+    **4분쯤** 걸립니다. 상태가 `Creating` → `Pending network update` → `Available` 순으로 바뀝니다. 기다리는 동안 다음 소절([2-2-e](#lab1-e))의 라우트 작업을 먼저 해 두면 시간을 벌 수 있습니다. 라우트는 attachment가 `Available` 이 아니어도 넣을 수 있습니다.
 
 1. 콘솔 오른쪽 위에서 리전을 **US West (Oregon)** 으로 바꿉니다.
 2. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 를 엽니다. Cloud WAN은 리전에 묶이지 않으므로 이 화면은 서울에서 보던 것과 같습니다. 리전을 바꾼 것은 **VPC와 서브넷 목록**을 오레곤 것으로 보기 위해서입니다.

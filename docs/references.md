@@ -2,18 +2,6 @@
 
 이 워크숍을 만들면서 확인한 공식 문서입니다. 용어의 뜻은 [1-3. 용어 풀이](glossary.md)에 있습니다.
 
-!!! info "사전 테스트에서 답을 얻은 것"
-    아래 문서에 적힌 사양은 2026년 11월에 확인했고, 워크숍 자체는 사전 테스트로 실제로 해 봤습니다.
-
-    - **각 단계의 소요 시간** — 전부 쟀습니다. 값은 해당 소절에 적어 두었습니다.
-    - **CloudFormation이 `PolicyDocument`로 core network를 처음 만들 때 change set이 자동 실행되어 `LIVE`까지 가는지** — **갑니다.** 공식 문서는 정책을 갱신할 때의 동작만 적지만, 두 번 모두 스택이 만든 정책 버전 1이 `LIVE` / `Execution succeeded` 까지 저절로 갔습니다.
-    - **스택이 `CREATE_COMPLETE`가 된 시점과 core network를 쓸 수 있는 시점이 같은지** — **다릅니다.** core network가 먼저 준비되고 스택은 그 뒤로도 `CREATE_IN_PROGRESS` 입니다(EC2 부트스트랩과 VPC attachment 생성이 남습니다). 그래서 [2-1-d](lab0.md#lab0-d)는 스택 상태가 아니라 **정책 상태**를 준비 기준으로 삼습니다.
-
-!!! warning "아직 확인하지 못한 것"
-    - **Direct Connect gateway attachment의 시간당 요금.** 숫자는 지어내지 않고 [요금 페이지](https://aws.amazon.com/cloud-wan/pricing/)로 넘겼습니다([4-2-g](direct-connect.md#dx-pricing)).
-    - **참가자 1명당 실제 청구액.** [1-2-e](prerequisites.md#cost)의 합계는 공개된 시간당 요금으로 계산한 값이고, 실제 청구 내역과 대조하지 않았습니다.
-    - **묶음별 시간 배분.** 사람이 페이지를 따라가며 재지 않았습니다([1-1-d](index.md#schedule)).
-
 ## 4-4-a. 개념 { #ref-concept }
 
 - [What is AWS Cloud WAN?](https://docs.aws.amazon.com/network-manager/latest/cloudwan/what-is-cloudwan.html) — Cloud WAN의 구성 요소(global network, core network, core network edge, 세그먼트, 연결)와 지원 리전. 홈 리전이 `us-west-2`라는 것은 Network Manager API와 콘솔의 홈 리전을 뜻하며, core network edge는 지원 리전 어디에나 둘 수 있습니다

@@ -2,9 +2,6 @@
 
 실습 중에 막혔을 때 어디를 볼지 정리했습니다.
 
-!!! info "실제로 만난 것에는 표시를 해 두었습니다"
-    **실측** 이라고 적힌 줄은 사전 테스트에서 실제로 부딪혀 본 것입니다. 나머지는 공식 문서와 템플릿 내용을 근거로 미리 정리한 것입니다.
-
 ## 4-3-a. 증상으로 찾기 { #by-symptom }
 
 | 이럴 때 | 볼 곳 | 해결 |
@@ -19,12 +16,12 @@
 | 터널 설정 스크립트가 실패한다 | 스크립트가 출력한 `FAILED at:` 줄 | 어느 단계에서 멈췄는지 알려 줍니다. VPN 연결 ID를 제대로 넣었는지, attachment가 **Available** 인지 확인하고 다시 실행합니다 |
 | BGP 세션이 올라오지 않는다 | 라우터에서 `sudo vtysh -c 'show bgp summary'` | attachment가 없으면 AWS 쪽 BGP 이웃이 생기지 않습니다. attachment 상태를 먼저 봅니다 |
 | 온프레미스에서 `prod` 로 통신이 안 된다 | 정책의 `segment-actions` | 실습 [2-3-f](lab2.md#lab2-f) 에서는 **실패가 맞습니다**. `onprem` 과 `prod` 를 여는 것은 [2-4](lab3.md) 입니다 |
-| **Connect** 버튼이 회색이라 EC2에 접속할 수 없다 | **Connect to Linux instance** 의 **Choose how to connect** | **실측.** 콘솔은 첫 번째 **EC2 Instance Connect** 가 골라진 채로 열리는데, 실습 EC2는 퍼블릭 IP가 없어 `No public IPv4 or IPv6 address assigned` 경고와 함께 버튼이 잠깁니다. **Private subnet access** 의 **EC2 Instance Connect Endpoint** 를 고릅니다([2-2-b](lab1.md#lab1-b)) |
-| 승인 대기 중인 연결의 VPC에 라우트를 넣으려니 거부된다 | 오류 메시지 | **실측.** `InvalidCoreNetworkArn.NotFound` 가 납니다. 승인 전에는 VPC가 아직 core network에 붙지 않은 것으로 취급됩니다. **승인을 먼저 하고 라우트를 넣습니다**([3-1-b](extra-a.md#a-b)) |
-| VPN 연결을 지우려니 거부된다 | VPN attachment 상태 | **실측.** `UnsupportedOperation: Unable to delete a vpn that's associated to a Core Network` 가 납니다. VPN attachment가 **목록에서 완전히 사라진 뒤에야** VPN 연결을 지울 수 있습니다. attachment가 `Deleting` 인 동안 VPN 연결은 `Modifying` 으로 보입니다([3-4-c](extra-d.md#d-c)) |
-| 스택 삭제 창의 **Delete stack** 버튼이 회색이다 | 창 안의 입력 칸 | **실측.** `Type "<스택 이름>" to confirm deletion of the stack.` 이라고 적힌 칸에 **스택 이름을 그대로 입력해야** 버튼이 활성화됩니다. attachment 삭제 창은 입력을 요구하지 않아 요령이 다릅니다([3-4-d](extra-d.md#d-d)) |
+| **Connect** 버튼이 회색이라 EC2에 접속할 수 없다 | **Connect to Linux instance** 의 **Choose how to connect** | 콘솔은 첫 번째 **EC2 Instance Connect** 가 골라진 채로 열리는데, 실습 EC2는 퍼블릭 IP가 없어 `No public IPv4 or IPv6 address assigned` 경고와 함께 버튼이 잠깁니다. **Private subnet access** 의 **EC2 Instance Connect Endpoint** 를 고릅니다([2-2-b](lab1.md#lab1-b)) |
+| 승인 대기 중인 연결의 VPC에 라우트를 넣으려니 거부된다 | 오류 메시지 | `InvalidCoreNetworkArn.NotFound` 가 납니다. 승인 전에는 VPC가 아직 core network에 붙지 않은 것으로 취급됩니다. **승인을 먼저 하고 라우트를 넣습니다**([3-1-b](extra-a.md#a-b)) |
+| VPN 연결을 지우려니 거부된다 | VPN attachment 상태 | `UnsupportedOperation: Unable to delete a vpn that's associated to a Core Network` 가 납니다. VPN attachment가 **목록에서 완전히 사라진 뒤에야** VPN 연결을 지울 수 있습니다. attachment가 `Deleting` 인 동안 VPN 연결은 `Modifying` 으로 보입니다([3-4-c](extra-d.md#d-c)) |
+| 스택 삭제 창의 **Delete stack** 버튼이 회색이다 | 창 안의 입력 칸 | `Type "<스택 이름>" to confirm deletion of the stack.` 이라고 적힌 칸에 **스택 이름을 그대로 입력해야** 버튼이 활성화됩니다. attachment 삭제 창은 입력을 요구하지 않아 요령이 다릅니다([3-4-d](extra-d.md#d-d)) |
 | 스택이 지워지지 않는다 | CloudFormation 스택 **Events** | 참가자가 만든 연결이 남아 있으면 core network가 지워지지 않습니다. [3-4](extra-d.md) 의 순서대로 연결을 먼저 지웁니다 |
-| 스택 생성이 실패하고 **ROLLBACK_FAILED** 로 멈춘다 | CloudFormation 스택 **Events** | **실측.** core network가 아직 만들어지는 중(`PENDING`)이라 롤백이 지우지 못한 것입니다. 아래 [4-3-b](#rollback-failed) 를 보세요 |
+| 스택 생성이 실패하고 **ROLLBACK_FAILED** 로 멈춘다 | CloudFormation 스택 **Events** | core network가 아직 만들어지는 중(`PENDING`)이라 롤백이 지우지 못한 것입니다. 아래 [4-3-b](#rollback-failed) 를 보세요 |
 | 오레곤 스택을 서울에서 만들려 하니 거부된다 | 콘솔 오른쪽 위 리전 | 오레곤 템플릿은 `us-west-2` 에서만 배포됩니다. 리전을 **US West (Oregon)** 으로 바꿉니다 |
 | 콘솔 화면이 한국어로 나온다 | 콘솔 언어 설정 | 이 워크숍의 예제 화면은 영어 기준입니다. 언어를 **English** 로 바꾸면 따라 하기 쉽습니다([1-2-c](prerequisites.md#browser)) |
 
@@ -41,7 +38,7 @@ STATE: PENDING cannot be modified by ACTION: DELETE
 !!! info "참가자 잘못이 아닙니다"
     Cloud WAN의 생성 시간 때문에 생기는 일입니다. 아래 순서대로 하면 복구됩니다. 강사에게 알려 주세요.
 
-1. core network가 다 만들어질 때까지 기다립니다. **Network Manager** → **Core networks** 에서 상태가 **Available** 이 되면 됩니다. 사전 테스트에서 생성은 **14분 12초**(1차)와 **15분 14초**(2차) 걸렸습니다.
+1. core network가 다 만들어질 때까지 기다립니다. **Network Manager** → **Core networks** 에서 상태가 **Available** 이 되면 됩니다. 생성에는 **15분** 안팎이 걸립니다.
 2. **Available** 이 된 뒤 CloudFormation 콘솔에서 그 스택을 **Delete** 합니다. 이번에는 지워집니다.
 3. 삭제가 끝나면 [2-1-b](lab0.md#lab0-b) 부터 다시 합니다.
 

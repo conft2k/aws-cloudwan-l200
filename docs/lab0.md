@@ -11,7 +11,7 @@
     ![콘솔 오른쪽 위를 잘라낸 화면. 위쪽 줄에 CloudShell, 알림, 도움말 아이콘에 이어 파란색으로 켜진 톱니바퀴 아이콘이 있고 그 오른쪽에 리전 선택 메뉴 Asia Pacific (Seoul)이 있다. 톱니바퀴 아래로 Current user settings 창이 열려 있다. 창 안에는 Language 항목에 Browser default가 선택된 드롭다운이 있고, 그 아래 Visual mode - beta 항목에 Browser default, Light, Dark 세 개의 라디오 버튼이 있으며 Light가 선택되어 있다. 맨 아래에는 See all user settings 링크가 있다. 언어는 이 창에서 바꾸고, 콘솔 아래쪽 푸터에는 언어를 바꾸는 항목이 없다](images/console/lab0-login-01-region-language.png){ .shot }
 
     !!! tip "기본값이 **Browser default** 라서 이 단계가 필요합니다"
-        브라우저가 한국어면 콘솔도 한국어로 나옵니다. 콘솔 **아래쪽 푸터에는 언어를 바꾸는 항목이 없습니다**(사전 테스트에서 확인했습니다). 더 많은 설정은 같은 창의 **See all user settings** 에 있습니다.
+        브라우저가 한국어면 콘솔도 한국어로 나옵니다. 콘솔 **아래쪽 푸터에는 언어를 바꾸는 항목이 없습니다**. 더 많은 설정은 같은 창의 **See all user settings** 에 있습니다.
 
 **결과**: 콘솔 오른쪽 위에 **Asia Pacific (Seoul)** 이 보이고, 메뉴가 영어로 나옵니다.
 
@@ -47,7 +47,7 @@
 
 7. **Submit** 을 누릅니다.
 
-**결과**: 스택 상태가 **CREATE_IN_PROGRESS**입니다. 사전 테스트에서 **CREATE_COMPLETE** 까지 **약 21분** 걸렸습니다. 다만 다음 실습으로 넘어가는 기준은 스택 완료가 아니라 core network 준비입니다. core network 는 **15분 14초** 만에 쓸 수 있었고, 스택은 EC2 부트스트랩과 VPC attachment 생성 때문에 그 뒤로도 **CREATE_IN_PROGRESS** 였습니다. 보는 법은 [2-1-d](#lab0-d)에 있습니다.
+**결과**: 스택 상태가 **CREATE_IN_PROGRESS**입니다. **CREATE_COMPLETE** 까지 **20분 안팎** 걸립니다. 다만 다음 실습으로 넘어가는 기준은 스택 완료가 아니라 core network 준비입니다. core network 는 **15분쯤** 지나면 쓸 수 있고, 스택은 EC2 부트스트랩과 VPC attachment 생성 때문에 그 뒤로도 한동안 **CREATE_IN_PROGRESS** 입니다. 보는 법은 [2-1-d](#lab0-d)에 있습니다.
 
 ![서울 스택 cloudwan-workshop-seoul의 Overview 패널. Status가 CREATE_IN_PROGRESS이고, Description에는 이 스택이 만드는 것(global network, core network, 세그먼트 네 개, edge 두 곳, 서울 VPC 세 개와 EC2, 온프레미스 모사 VPC와 VPN 라우터, customer gateway)이 적혀 있다. Termination protection은 Deactivated, Drift status는 NOT_CHECKED다](images/console/lab0-cfn-04-in-progress-seoul.png){ .shot }
 
