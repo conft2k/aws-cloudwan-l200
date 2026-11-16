@@ -62,7 +62,7 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
         [3-4-a](#d-a)·[3-4-b](#d-b)의 attachment 삭제 창은 **Delete** 만 누르면 됐습니다. 두 단계 만에 요령이 바뀌는 자리라 적어 둡니다. 창에는 `Type "cloudwan-workshop-oregon" to confirm deletion of the stack.` 이라고 적혀 있고, 그 칸이 비어 있는 동안 버튼은 회색입니다.
 
     !!! info "**Express mode** 는 켜지 마세요"
-        같은 창에 **Express mode - new** 라는 선택지가 있고 `Delete this stack faster.` 라고 적혀 있습니다. 리소스가 안정될 때까지 기다리지 않고 정리한다는 뜻입니다. **이 워크숍에서는 시험해 보지 않았습니다.** 기본값(꺼짐) 그대로 두세요.
+        같은 창에 **Express mode - new** 라는 선택지가 있고 `Delete this stack faster.` 라고 적혀 있습니다. 리소스가 안정될 때까지 기다리지 않고 정리한다는 뜻입니다. **기본값(꺼짐) 그대로 두세요.** 이 단계에서 중요한 것은 빨리 끝나는 것이 아니라 **하나도 남지 않는 것**입니다. 남은 core network edge는 지워질 때까지 시간당 요금이 계속 붙습니다.
 
 **결과**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). 오레곤의 prod·dev VPC와 EC2 두 대가 함께 지워집니다. **2분 안쪽**입니다.
 
