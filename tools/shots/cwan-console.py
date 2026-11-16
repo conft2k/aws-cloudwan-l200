@@ -199,12 +199,14 @@ def routes(segment, name, must=None):
     # Destinations truncates to "attachment-0d39747b96dd62bf6 ..." and the tail
     # is the point: it says what the route points at. CIDR, Route type and Route
     # state hold short values, so take the width from them.
-    # Route state is the last column and Cloudscape will not let it be dragged -
-    # it absorbs whatever is left - so take from CIDR and Route type and then
-    # push Destinations wide enough to show "<attachment> | vpc | <vpc id>" whole.
-    for col, w in (("CIDR", 150), ("Route type", 170)):
+    # Destinations carries the whole point of this table - what the route points
+    # at - and truncates to "attachment-0d39747b96dd62bf6 ...". Route state is
+    # the last column, which Cloudscape refuses to drag because it absorbs
+    # whatever the others leave, so squeeze CIDR and Route type down to what
+    # their values need and spend all of it on Destinations.
+    for col, w in (("CIDR", 120), ("Route type", 130)):
         resize_column(col, w)
-    resize_column("Destinations", 480)
+    resize_column("Destinations", 620)
     f = app()
     print(f"--- routes {segment} ---")
     print(body(f)[:1200].replace("\n", " | "))

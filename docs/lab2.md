@@ -121,7 +121,7 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
     !!! info "광고가 AWS에 닿았는지는 반대쪽에서 봅니다"
         터널 내부 주소(`169.254.x.x`)는 VPN 연결을 만들 때마다 AWS가 새로 배정하므로, 이웃 주소를 적어 둔 명령은 계정마다 빗나갑니다. 광고가 실제로 닿았는지는 [2-3-d](#lab2-d)에서 Cloud WAN의 `shared` 세그먼트 경로 테이블에 `172.16.1.0/24` 가 `PROPAGATED` 로 들어왔는지로 확인합니다. 그쪽이 주소를 몰라도 되고, 보고 싶은 것(광고가 전파됐는가)에 더 가깝습니다.
 
-5. 콘솔에서도 확인합니다. **VPC** 콘솔 → **Site-to-Site VPN connections** → 2-3-a에서 만든 연결 → **Tunnel details** 탭을 엽니다.
+5. 콘솔에서도 확인합니다. **VPC** 콘솔 → **Site-to-Site VPN connections** → 2-3-a에서 만든 연결 → **Tunnel details** 탭을 엽니다. 그 안의 **Tunnel state** 표를 봅니다.
 
 <!-- shot: lab2-vpn-02-tunnels -->
 
@@ -156,6 +156,7 @@ BGP routing table entry for 172.16.1.0/24, version 1
 
 **성공 확인**
 
+- **Tunnel state** 표의 두 줄이 모두 **Status** `Up`, **Provisioning status** `Available` 이고, **Details** 에 `1 BGP ROUTES` 가 적혀 있습니다. **Inside IPv4 CIDR** 의 `169.254.x.x/30` 두 개가 BGP 이웃 주소가 나온 자리입니다.
 - `swanctl --list-sas` 에 `aws-tunnel1` 과 `aws-tunnel2` 가 모두 `ESTABLISHED` 이고 `INSTALLED` 입니다.
 - `show bgp summary` 에 **Total number of neighbors 2** 가 보이고, 두 줄 모두 **Up/Down** 이 시간(`00:00:21`)으로 나옵니다. 숫자가 아니라 `Active`/`Connect` 로 나오면 아직 올라오는 중입니다.
 - **`show ip route bgp` 에 `10.30.1.0/24`(shared)가 보입니다.**

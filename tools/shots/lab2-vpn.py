@@ -69,6 +69,33 @@ def radio(f, label):
     return False
 
 
+PHASE = os.environ.get("CWAN_PHASE", "create")
+VPN_ID = os.environ.get("CWAN_VPN", "")
+
+if PHASE == "tunnels":
+    # 2-3-c: both tunnels UP, which only reads this way once the attachment is
+    # in place and setup-tunnels.sh has run.
+    goto(f"/vpc/home?region={REGION}#VpnConnections:search={VPN_ID}")
+    page.wait_for_timeout(WAIT)
+    f = app()
+    print("LIST headings:", heads(f))
+    link = f.get_by_role("link", name=VPN_ID, exact=True)
+    print("vpn links:", link.count())
+    if link.count():
+        link.first.click()
+        page.wait_for_timeout(WAIT)
+    f = app()
+    print("tabs:", [x.strip() for x in f.get_by_role("tab").all_inner_texts() if x.strip()])
+    tb = f.get_by_role("tab", name="Tunnel details", exact=True)
+    if tb.count():
+        tb.first.click()
+        page.wait_for_timeout(WAIT)
+    f = app()
+    print("tunnel body:", body(f)[:700].replace("\n", " | "))
+    # The tab is "Tunnel details"; the panel inside it is "Tunnel state".
+    cshot("lab2-vpn-02-tunnels", "Tunnel state", "Tunnel details", VPN_ID)
+    raise SystemExit(0)
+
 goto(f"/vpc/home?region={REGION}#VpnConnections:")
 page.wait_for_timeout(WAIT)
 f = app()

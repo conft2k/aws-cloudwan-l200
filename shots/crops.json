@@ -112,5 +112,23 @@
   176,
   1432,
   519
+ ],
+ "images/console/lab2-routes-01-onprem-segment.png": [
+  309,
+  207,
+  1432,
+  648
+ ],
+ "images/console/lab2-vpn-02-tunnels.png": [
+  1,
+  630,
+  1439,
+  791
+ ],
+ "images/console/lab2-routes-02-shared-segment.png": [
+  309,
+  207,
+  1432,
+  762
  ]
 }
