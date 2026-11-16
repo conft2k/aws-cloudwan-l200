@@ -42,7 +42,7 @@
 
     <!-- shot: lab0-cfn-03-ack -->
 
-7. **Create stack** 를 누릅니다.
+7. **Submit** 을 누릅니다.
 
 **성공 확인**: 스택 상태가 **CREATE_IN_PROGRESS**입니다. 배포에 걸리는 시간은 사전 테스트에서 측정합니다.
 
@@ -62,7 +62,7 @@
     <!-- shot: lab0-cfn-05-upload-oregon -->
 
 4. **Stack name**에 `cloudwan-workshop-oregon`을 넣습니다. **Parameters**는 그대로 두고 **Next**를 누릅니다.
-5. **Next** 를 두 번 더 눌러 **Review and create** 까지 간 다음 맨 아래 버튼을 누릅니다. 이 스택은 IAM 리소스를 만들지 않으므로 서울 스택에서 봤던 **Capabilities** 확인란은 **나오지 않습니다**. 바로 넘어갑니다.
+5. **Next** 를 두 번 더 눌러 **Review and create** 까지 간 다음 **Submit** 을 누릅니다. 이 스택은 IAM 리소스를 만들지 않으므로 서울 스택에서 봤던 **Capabilities** 확인란은 **나오지 않습니다**. 바로 넘어갑니다.
 
 **성공 확인**: 오레곤 리전에서 스택 상태가 **CREATE_IN_PROGRESS**입니다.
 

@@ -60,18 +60,26 @@ def wait_app(must, tries=8):
     return app()
 
 
-def primary(f, *names):
-    """Click the wizard's primary button, by exact name so the breadcrumb link
-    of the same name ("Create stack") is not what gets clicked."""
-    for n in names:
-        b = f.get_by_role("button", name=n, exact=True)
+def primary(f=None):
+    """Click the wizard's primary button.
+
+    Find it by the class Cloudscape marks it with rather than by name. The last
+    step's button is "Submit", but the step navigation also has a button whose
+    text is "Create stack" (aria-label "Step 1: Create stack"), and a name
+    lookup on a stale frame found neither.
+    """
+    for _ in range(6):
+        g = app()
+        b = g.locator('button[class*="awsui_primary-button"]')
         if b.count():
+            print("   primary button:", b.last.inner_text().strip())
             b.last.click()
-            print(f"   clicked {n!r}")
-            return n
-    print(f"!! primary: none of {names};"
-          f" buttons = {[x.strip()[:26] for x in f.locator('button').all_inner_texts() if x.strip()][:20]}")
-    return None
+            return True
+        page.wait_for_timeout(2500)
+    g = app()
+    print("!! primary: no primary-variant button;"
+          f" buttons = {[x.strip()[:26] for x in g.locator('button').all_inner_texts() if x.strip()][-12:]}")
+    return False
 
 
 def cshot(name, *headings):
@@ -108,10 +116,14 @@ page.wait_for_timeout(WAIT)
 f = app()
 if not click(f, "Create stack", exact=False):
     raise SystemExit("no Create stack button")
+# Create stack is a dropdown; the documented path is its first item. Clicking
+# the button with a loose name match lands somewhere else entirely.
 f = app()
 opt = f.get_by_role("menuitem", name="With new resources (standard)")
 if not opt.count():
     opt = f.get_by_text("With new resources (standard)")
+print("menu items:",
+      [m.strip() for m in f.get_by_role("menuitem").all_inner_texts() if m.strip()][:8])
 if opt.count():
     opt.first.click()
     page.wait_for_timeout(WAIT)
@@ -147,7 +159,11 @@ else:
     print("!! stack name box not found")
 f = app()
 if SEOUL:
-    cshot("lab0-cfn-02-parameters", "Specify stack details", "Parameters", "Stack name")
+    # "Specify stack details" is the page heading, so cropping to it keeps the
+    # whole window. The two panels the step actually reads are these.
+    clip = span(card("Provide a stack name", f), card("Parameters", f))
+    shot("lab0-cfn-02-parameters", clip=clip)
+    print("   parameters clip:", clip)
 print("PARAMETERS PAGE:", body(f)[:600].replace("\n", " | "))
 
 click(app(), "Next")
@@ -190,7 +206,7 @@ if SEOUL:
 
 # --- submit -----------------------------------------------------------------
 f = wait_app("acknowledge")
-primary(f, "Create stack", "Submit")
+primary()
 page.wait_for_timeout(15000)
 f = app()
 print("AFTER SUBMIT:", body(f)[:400].replace("\n", " | "))

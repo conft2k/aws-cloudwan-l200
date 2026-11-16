@@ -56,6 +56,12 @@ print("AFTER CLICK headings:",
       [h.strip() for h in f.get_by_role("heading").all_inner_texts() if h.strip()][:10])
 print("menu items:", [m.strip() for m in f.get_by_role("menuitem").all_inner_texts() if m.strip()][:10])
 
+mi = f.get_by_role("menuitem", name="With new resources (standard)")
+print("menu item found:", mi.count())
+if mi.count():
+    mi.first.click()
+    page.wait_for_timeout(WAIT)
+
 f = app()
 up = f.get_by_role("radio", name="Upload a template file")
 if up.count():
