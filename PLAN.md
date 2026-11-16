@@ -420,6 +420,28 @@ SPAL은 EPEL9 파생이고 **AWS Enterprise Support 대상이 아니다.** 보�
 | 17:10~18:10 | core network 완성 | 정책 `LIVE`, change set `Execution succeeded` | |
 | 18:40~20:40 | 리허설 1차 + 스크린샷 완료 | 실습 2-1~2-4 전 과정 통과, 측정값을 14절에 기록 | |
 
+### 13-2. Codex 리뷰 세션 (이어서 쓸 것)
+
+| 항목 | 값 |
+|---|---|
+| 세션 id | `01a1e2eb-b20e-7a51-bf40-5e7eb2911c41` |
+| 인자 | `-m global.openai.gpt-6-astra -c model_reasoning_effort='"high"' -c model_context_window=272000` |
+| 첫 리뷰 프롬프트 | `~/.cache/codex-review-cwan-seoul/prompt.md` |
+| 첫 리뷰 결과 | `~/.cache/codex-review-cwan-seoul/review.log` (292KB, 최종 판정은 뒷부분) |
+| 리뷰어 검증 기록 | `~/.cache/codex-review-cwan-seoul/verification-summary.txt` |
+| 재리뷰 프롬프트 | `~/.cache/codex-review-cwan-seoul/prompt-recheck.md` |
+
+재리뷰는 같은 세션을 이어 쓴다. 템플릿을 이미 읽은 맥락이 남아 있어 변경분만 보면 되므로 빠르다.
+
+```bash
+cd /home/ec2-user/dev/ws-aws-cloudwan-l200
+codex exec resume 01a1e2eb-b20e-7a51-bf40-5e7eb2911c41 \
+  -m global.openai.gpt-6-astra -c model_reasoning_effort='"high"' -c model_context_window=272000 \
+  - < ~/.cache/codex-review-cwan-seoul/prompt-recheck.md
+```
+
+재리뷰 범위는 **차단 4건의 해소 여부와 수정이 새로 만든 문제**로 좁혔다. 첫 리뷰가 이미 확인한 정책 JSON, 정리 의존성, 참가자 입력, 백로그 항목은 다시 보지 않는다. 이것이 임계 경로 위에 있어 전체 완료 시각을 그대로 당긴다.
+
 ### 13-1. 2026-11-16 리뷰에서 나온 차단 (수정 대상)
 
 Codex 리뷰가 커밋 `746d903` 의 서울 템플릿에서 찾은 것이다. **기본값 그대로는 실습을 완료할 수 없다.**

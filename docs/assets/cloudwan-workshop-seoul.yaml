@@ -23,8 +23,6 @@ Metadata:
           - DevVpcCidr
           - SharedVpcCidr
           - OnPremVpcCidr
-          - SeoulEdgeAsn
-          - OregonEdgeAsn
           - CustomerGatewayAsn
 
 Parameters:
@@ -71,18 +69,6 @@ Parameters:
     Default: 172.16.1.0/24
     AllowedValues: [172.16.1.0/24]
     Description: Fixed at 172.16.1.0/24; the router script advertises this CIDR over BGP.
-  SeoulEdgeAsn:
-    Type: Number
-    Default: 64512
-    MinValue: 64512
-    MaxValue: 64520
-    Description: BGP ASN of the ap-northeast-2 core network edge. Inside the policy asn-ranges 64512-64520. Cannot be changed after creation.
-  OregonEdgeAsn:
-    Type: Number
-    Default: 64513
-    MinValue: 64512
-    MaxValue: 64520
-    Description: BGP ASN of the us-west-2 core network edge. Inside the policy asn-ranges 64512-64520. Cannot be changed after creation.
   CustomerGatewayAsn:
     Type: Number
     Default: 65000
@@ -112,8 +98,11 @@ Resources:
           asn-ranges: ["64512-64520"]
           vpn-ecmp-support: true
           edge-locations:
-            - { location: ap-northeast-2, asn: !Ref SeoulEdgeAsn }
-            - { location: us-west-2, asn: !Ref OregonEdgeAsn }
+            # Literal integers on purpose: a Number parameter read with !Ref
+            # resolves to a string, and the edge ASN must be a JSON number.
+            # These cannot be changed after the core network is created.
+            - { location: ap-northeast-2, asn: 64512 }
+            - { location: us-west-2, asn: 64513 }
         segments:
           - { name: prod, description: "Production", require-attachment-acceptance: false }
           - { name: dev, description: "Development", require-attachment-acceptance: false }
@@ -152,7 +141,7 @@ Resources:
     Properties:
       VpcId: !Ref ProdVpc
       CidrBlock: 10.10.1.0/26
-      AvailabilityZone: !Select [0, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}a"
       Tags:
         - { Key: Name, Value: cwan-ws-prod-app-az1 }
 
@@ -162,7 +151,7 @@ Resources:
     Properties:
       VpcId: !Ref ProdVpc
       CidrBlock: 10.10.1.224/28
-      AvailabilityZone: !Select [0, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}a"
       Tags:
         - { Key: Name, Value: cwan-ws-prod-cwan-az1 }
 
@@ -171,7 +160,7 @@ Resources:
     Properties:
       VpcId: !Ref ProdVpc
       CidrBlock: 10.10.1.240/28
-      AvailabilityZone: !Select [1, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}c"
       Tags:
         - { Key: Name, Value: cwan-ws-prod-cwan-az2 }
 
@@ -359,7 +348,7 @@ Resources:
     Properties:
       VpcId: !Ref DevVpc
       CidrBlock: 10.20.1.0/26
-      AvailabilityZone: !Select [0, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}a"
       Tags:
         - { Key: Name, Value: cwan-ws-dev-app-az1 }
 
@@ -368,7 +357,7 @@ Resources:
     Properties:
       VpcId: !Ref DevVpc
       CidrBlock: 10.20.1.224/28
-      AvailabilityZone: !Select [0, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}a"
       Tags:
         - { Key: Name, Value: cwan-ws-dev-cwan-az1 }
 
@@ -377,7 +366,7 @@ Resources:
     Properties:
       VpcId: !Ref DevVpc
       CidrBlock: 10.20.1.240/28
-      AvailabilityZone: !Select [1, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}c"
       Tags:
         - { Key: Name, Value: cwan-ws-dev-cwan-az2 }
 
@@ -527,7 +516,7 @@ Resources:
     Properties:
       VpcId: !Ref SharedVpc
       CidrBlock: 10.30.1.0/26
-      AvailabilityZone: !Select [0, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}a"
       Tags:
         - { Key: Name, Value: cwan-ws-shared-app-az1 }
 
@@ -536,7 +525,7 @@ Resources:
     Properties:
       VpcId: !Ref SharedVpc
       CidrBlock: 10.30.1.224/28
-      AvailabilityZone: !Select [0, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}a"
       Tags:
         - { Key: Name, Value: cwan-ws-shared-cwan-az1 }
 
@@ -545,7 +534,7 @@ Resources:
     Properties:
       VpcId: !Ref SharedVpc
       CidrBlock: 10.30.1.240/28
-      AvailabilityZone: !Select [1, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}c"
       Tags:
         - { Key: Name, Value: cwan-ws-shared-cwan-az2 }
 
@@ -710,7 +699,7 @@ Resources:
     Properties:
       VpcId: !Ref OnPremVpc
       CidrBlock: 172.16.1.0/26
-      AvailabilityZone: !Select [0, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}a"
       Tags:
         - { Key: Name, Value: cwan-ws-onprem-lan-az1 }
 
@@ -719,7 +708,7 @@ Resources:
     Properties:
       VpcId: !Ref OnPremVpc
       CidrBlock: 172.16.1.64/26
-      AvailabilityZone: !Select [0, !GetAZs ""]
+      AvailabilityZone: !Sub "${AWS::Region}a"
       Tags:
         - { Key: Name, Value: cwan-ws-onprem-wan-az1 }
 
@@ -893,7 +882,7 @@ Resources:
   OnPremRouterRole:
     Type: AWS::IAM::Role
     Properties:
-      Description: cwan-ws on-premises router - read the VPN connection configuration
+      Description: cwan-ws on-premises router - read its own stack metadata and the VPN connection configuration
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -906,10 +895,20 @@ Resources:
             Version: "2012-10-17"
             Statement:
               # DescribeVpnConnections does not support resource-level
-              # permissions, so the resource has to be "*".
+              # permissions, so the resource has to be "*". The region
+              # condition keeps the role from reading VPN configurations, and
+              # therefore pre-shared keys, in any other region.
               - Effect: Allow
                 Action: ec2:DescribeVpnConnections
                 Resource: "*"
+                Condition:
+                  StringEquals:
+                    aws:RequestedRegion: !Ref AWS::Region
+              # cfn-init reads this stack's resource metadata to lay down the
+              # router scripts.
+              - Effect: Allow
+                Action: cloudformation:DescribeStackResource
+                Resource: !Sub "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*"
       Tags:
         - { Key: Name, Value: cwan-ws-onprem-router }
 
@@ -920,7 +919,43 @@ Resources:
 
   OnPremRouterInstance:
     Type: AWS::EC2::Instance
-    DependsOn: [OnPremIgwAttachment, OnPremPublicRouteTableAssoc]
+    # Egress has to exist before the instance boots: cfn-init and dnf both
+    # leave the VPC. Without the route and the Elastic IP association in this
+    # list the bootstrap can start on an instance that cannot reach anything.
+    DependsOn:
+      - OnPremIgwAttachment
+      - OnPremPublicRouteTableAssoc
+      - OnPremPublicDefaultRoute
+      - OnPremRouterEipAssoc
+    # The three router scripts live here, not in UserData. Substituted into
+    # UserData they came to 19,609 bytes against the 16,384 byte EC2 limit, so
+    # the instance could not be created at all. cfn-init writes them from this
+    # metadata instead; aws-cfn-bootstrap is already on the AL2023 AMI.
+    Metadata:
+      AWS::CloudFormation::Init:
+        configSets:
+          default: [scripts, bootstrap]
+        scripts:
+          files:
+            /opt/onprem/install-packages.sh:
+              content: !FindInMap [Scripts, Router, Install]
+              mode: "000755"
+              owner: root
+              group: root
+            /opt/onprem/setup-tunnels.sh:
+              content: !FindInMap [Scripts, Router, Setup]
+              mode: "000755"
+              owner: root
+              group: root
+            /opt/onprem/parse-vpn-config.py:
+              content: !FindInMap [Scripts, Router, Parse]
+              mode: "000644"
+              owner: root
+              group: root
+        bootstrap:
+          commands:
+            01-install-packages:
+              command: /opt/onprem/install-packages.sh
     Properties:
       ImageId: !Ref RouterImageId
       InstanceType: !Ref InstanceType
@@ -935,34 +970,27 @@ Resources:
         - DeviceIndex: "0"
           NetworkInterfaceId: !Ref OnPremRouterEni
       UserData:
-        Fn::Base64: !Sub
-          - |
-            #!/bin/bash
-            set -uxo pipefail
-            exec > >(tee -a /var/log/cwan-ws-router-bootstrap.log) 2>&1
-            hostnamectl set-hostname cwan-ws-onprem-router
-            echo 'net.ipv4.ip_forward=1' > /etc/sysctl.d/99-cwan-ws.conf
-            sysctl -w net.ipv4.ip_forward=1
-            install -d -m 0755 /opt/onprem
-            cat > /opt/onprem/install-packages.sh <<'INSTALL'
-            ${InstallPackages}
-            INSTALL
-            cat > /opt/onprem/setup-tunnels.sh <<'SETUP'
-            ${SetupTunnels}
-            SETUP
-            cat > /opt/onprem/parse-vpn-config.py <<'PARSE'
-            ${ParseVpnConfig}
-            PARSE
-            chmod 0755 /opt/onprem/install-packages.sh /opt/onprem/setup-tunnels.sh
-            chmod 0644 /opt/onprem/parse-vpn-config.py
-            if /opt/onprem/install-packages.sh; then
-              rm -f /opt/onprem/BOOTSTRAP-FAILED
-            else
-              echo "see /var/log/cwan-ws-router-bootstrap.log" > /opt/onprem/BOOTSTRAP-FAILED
-            fi
-          - InstallPackages: !FindInMap [Scripts, Router, Install]
-            SetupTunnels: !FindInMap [Scripts, Router, Setup]
-            ParseVpnConfig: !FindInMap [Scripts, Router, Parse]
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -ux
+          exec > >(tee -a /var/log/cwan-ws-router-bootstrap.log) 2>&1
+          hostnamectl set-hostname cwan-ws-onprem-router
+          echo 'net.ipv4.ip_forward=1' > /etc/sysctl.d/99-cwan-ws.conf
+          sysctl -w net.ipv4.ip_forward=1
+          install -d -m 0755 /opt/onprem
+          # Wait for egress. DependsOn orders the stack resources, but the
+          # Elastic IP and the route can still settle after this boots.
+          for _ in $(seq 1 40); do
+            timeout 5 bash -c "exec 3<>/dev/tcp/cloudformation.${AWS::Region}.amazonaws.com/443" 2>/dev/null && break
+            sleep 15
+          done
+          if /opt/aws/bin/cfn-init -v --configsets default \
+               --stack ${AWS::StackName} --resource OnPremRouterInstance \
+               --region ${AWS::Region}; then
+            rm -f /opt/onprem/BOOTSTRAP-FAILED
+          else
+            echo "read /var/log/cfn-init.log and /var/log/cwan-ws-router-bootstrap.log" > /opt/onprem/BOOTSTRAP-FAILED
+          fi
       Tags:
         - { Key: Name, Value: cwan-ws-onprem-router }
 
@@ -1276,11 +1304,27 @@ Mappings:
         imds() { curl -fsS -H "X-aws-ec2-metadata-token: ${TOKEN}" "http://169.254.169.254/latest/meta-data/$1"; }
         LOCAL_IP="$(imds local-ipv4)"  || die "could not read local-ipv4"
         PUBLIC_IP="$(imds public-ipv4)" || die "could not read public-ipv4 - is the Elastic IP associated?"
-        ok "private ${LOCAL_IP}, public ${PUBLIC_IP}"
+        # The LAN subnet sits behind the VPC subnet router, which is always the
+        # first host address of this interface's own subnet. FRR needs it as a
+        # next hop; see the BGP step for why a blackhole cannot be used.
+        MAC="$(imds mac)" || die "could not read the interface MAC"
+        SUBNET_CIDR="$(imds "network/interfaces/macs/${MAC}/subnet-ipv4-cidr-block")" \
+            || die "could not read this interface's subnet CIDR"
+        LAN_GATEWAY="$(python3 -c 'import ipaddress, sys; print(next(ipaddress.ip_network(sys.argv[1]).hosts()))' "$SUBNET_CIDR")" \
+            || die "could not work out the VPC subnet router for ${SUBNET_CIDR}"
+        KERNEL_GATEWAY="$(ip -4 route show default | awk '{print $3; exit}')"
+        if [ -n "$KERNEL_GATEWAY" ] && [ "$KERNEL_GATEWAY" != "$LAN_GATEWAY" ]; then
+            printf '    note the default route uses %s but this subnet router is %s.\n' \
+                "$KERNEL_GATEWAY" "$LAN_GATEWAY"
+        fi
+        ok "private ${LOCAL_IP}, public ${PUBLIC_IP}, subnet ${SUBNET_CIDR}, VPC router ${LAN_GATEWAY}"
 
         # ----------------------------------------- 2. the VPN configuration
         CURRENT_STEP="downloading the VPN connection configuration"
         step "$CURRENT_STEP"
+        # The configuration contains both pre-shared keys. Create the file
+        # before the redirection so that it is never world-readable.
+        install -m 0600 /dev/null "$XML" || die "could not create ${XML}"
         aws ec2 describe-vpn-connections \
             --vpn-connection-ids "$VPN_ID" \
             --region "$REGION" \
@@ -1487,9 +1531,13 @@ Mappings:
         UP=0
         for _ in $(seq 1 60); do
             UP="$(swanctl --list-sas 2>/dev/null | grep -c 'ESTABLISHED')"
-            [ "$UP" -ge 1 ] && break
+            [ "$UP" -ge 2 ] && break
             sleep 2
         done
+        if [ "$UP" = "1" ]; then
+            printf '    WARNING: only one of the two tunnels is up. The lab expects two.\n'
+            printf '    Run swanctl --list-sas to see which one is missing.\n'
+        fi
         if [ "$UP" -lt 1 ]; then
             printf '    no security association came up after two minutes.\n'
             printf '    Check: the security group allows UDP 500 and 4500 from the AWS tunnel\n'
@@ -1507,10 +1555,16 @@ Mappings:
         systemctl is-active --quiet frr || systemctl restart frr || die "frr did not start"
         # 'no bgp ebgp-requires-policy' is needed from FRR 7.4 on, otherwise FRR
         # neither accepts nor advertises anything without a route-map.
-        # The blackhole route gives the 'network' statement something to match.
+        #
+        # The static route gives the 'network' statement a matching prefix to
+        # advertise. It must point at the VPC subnet router, NOT at a blackhole:
+        # the LAN subnet is a different subnet in this VPC, reached through that
+        # router, and this prefix covers it. A blackhole here is more specific
+        # than the default route and silently drops every packet to the inside
+        # VM and to the EC2 Instance Connect Endpoint, SSH replies included.
         vtysh <<BGP || die "vtysh rejected the BGP configuration"
         configure terminal
-        ip route ${LAN_CIDR} blackhole
+        ip route ${LAN_CIDR} ${LAN_GATEWAY}
         router bgp ${CGW_ASN}
          bgp router-id ${T1_CGW_INSIDE}
          no bgp ebgp-requires-policy
@@ -1536,9 +1590,13 @@ Mappings:
             ESTABLISHED="$(vtysh -c 'show bgp summary json' 2>/dev/null \
                 | python3 -c 'import json,sys; d=json.load(sys.stdin).get("ipv4Unicast",{}).get("peers",{}); print(sum(1 for p in d.values() if p.get("state")=="Established"))' \
                 2>/dev/null || echo 0)"
-            [ "$ESTABLISHED" -ge 1 ] && break
+            [ "$ESTABLISHED" -ge 2 ] && break
             sleep 2
         done
+        if [ "$ESTABLISHED" = "1" ]; then
+            printf '    WARNING: only one of the two BGP sessions is up. The lab expects two.\n'
+            printf '    Run vtysh -c "show bgp summary" to see which neighbour is down.\n'
+        fi
         if [ "$ESTABLISHED" -lt 1 ]; then
             printf '    no BGP session came up after 90 seconds.\n'
             printf '    Check that the Cloud WAN VPN attachment exists and is Available:\n'

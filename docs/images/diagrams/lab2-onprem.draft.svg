@@ -1,66 +1,78 @@
-<svg viewBox="0 0 1198 1062" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans CJK KR', 'Pretendard', Arial, sans-serif">
-<rect width="1198" height="1062" fill="#FFFFFF"/>
+<svg viewBox="0 0 1198 1102" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans CJK KR', 'Pretendard', Arial, sans-serif">
+<rect width="1198" height="1102" fill="#FFFFFF"/>
 <defs>
 <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#232F3E"/></marker>
 <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1D8102"/></marker>
 <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D13212"/></marker>
 </defs>
 
-<rect x="654" y="86" width="532" height="964" fill="none" stroke="#232F3E" stroke-width="2"/>
+<rect x="654" y="86" width="532" height="1004" fill="none" stroke="#232F3E" stroke-width="2"/>
 <image href="bundle:group/AWS-Cloud-logo_32" x="654" y="86" width="32" height="32"/>
 <text x="696" y="109" font-size="19" font-weight="600" fill="#232F3E">AWS Cloud</text>
-<rect x="670" y="126" width="500" height="904" fill="none" stroke="#8C4FFF" stroke-width="2" stroke-dasharray="6,4"/>
+<rect x="670" y="126" width="334" height="834" fill="none" stroke="#8C4FFF" stroke-width="2" stroke-dasharray="6,4"/>
 <image href="bundle:service/AWS-Cloud-WAN" x="670" y="126" width="24" height="24"/>
 <text x="702" y="145" font-size="19" font-weight="600" fill="#8C4FFF">core network</text>
 <text x="702" y="163" font-size="16" fill="#232F3E">AWS Cloud WAN</text>
-<text x="941" y="150" font-size="16" text-anchor="middle" fill="#3B4552">세그먼트</text>
-<image href="bundle:resource/AWS-Cloud-WAN_Core-Network-Edge" x="744" y="471" width="48" height="48"/>
-<text x="768" y="539" font-size="19" text-anchor="middle" fill="#232F3E">core network edge</text>
-<text x="768" y="560" font-size="16" text-anchor="middle" fill="#3B4552">서울 ap-northeast-2</text>
-<text x="768" y="581" font-size="16" text-anchor="middle" fill="#3B4552">ASN 64512</text>
-<image href="bundle:resource/AWS-Cloud-WAN_Core-Network-Edge" x="744" y="771" width="48" height="48"/>
-<text x="768" y="839" font-size="19" text-anchor="middle" fill="#232F3E">core network edge</text>
-<text x="768" y="860" font-size="16" text-anchor="middle" fill="#3B4552">오레곤 us-west-2</text>
-<text x="768" y="881" font-size="16" text-anchor="middle" fill="#3B4552">ASN 64513</text>
-<line x1="874" y1="200" x2="874" y2="795" stroke="#232F3E" stroke-width="1.5"/>
-<line x1="796" y1="495" x2="874" y2="495" stroke="#232F3E" stroke-width="1.5"/>
-<line x1="796" y1="795" x2="874" y2="795" stroke="#232F3E" stroke-width="1.5"/>
-<line x1="874" y1="200" x2="913" y2="200" stroke="#232F3E" stroke-width="1.5"/>
-<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="917" y="176" width="48" height="48"/>
-<text x="973" y="214" font-size="19" font-weight="600" fill="#232F3E">dev</text>
-<line x1="874" y1="345" x2="913" y2="345" stroke="#232F3E" stroke-width="1.5"/>
-<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="917" y="321" width="48" height="48"/>
-<text x="973" y="359" font-size="19" font-weight="600" fill="#232F3E">shared</text>
-<line x1="874" y1="495" x2="913" y2="495" stroke="#232F3E" stroke-width="1.5"/>
-<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="917" y="471" width="48" height="48"/>
-<text x="973" y="509" font-size="19" font-weight="600" fill="#232F3E">onprem</text>
-<line x1="874" y1="645" x2="913" y2="645" stroke="#232F3E" stroke-width="1.5"/>
-<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="917" y="621" width="48" height="48"/>
-<text x="973" y="659" font-size="19" font-weight="600" fill="#232F3E">prod</text>
-<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1054" y="176" width="48" height="48"/>
-<text x="1078" y="244" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
-<text x="1078" y="265" font-size="16" text-anchor="middle" fill="#3B4552">서울 10.20.1.0/24</text>
-<text x="1078" y="286" font-size="16" text-anchor="middle" fill="#3B4552">VPC attachment</text>
-<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1054" y="321" width="48" height="48"/>
-<text x="1078" y="389" font-size="19" text-anchor="middle" fill="#232F3E">shared VPC</text>
-<text x="1078" y="410" font-size="16" text-anchor="middle" fill="#3B4552">서울 10.30.1.0/24</text>
-<text x="1078" y="431" font-size="16" text-anchor="middle" fill="#3B4552">EC2 10.30.1.10</text>
-<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1054" y="621" width="48" height="48"/>
-<text x="1078" y="689" font-size="19" text-anchor="middle" fill="#232F3E">prod VPC</text>
-<text x="1078" y="710" font-size="16" text-anchor="middle" fill="#3B4552">서울 10.10.1.0/24</text>
-<text x="1078" y="731" font-size="16" text-anchor="middle" fill="#3B4552">EC2 10.10.1.10</text>
-<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1054" y="771" width="48" height="48"/>
-<text x="1078" y="839" font-size="19" text-anchor="middle" fill="#232F3E">prod VPC</text>
-<text x="1078" y="860" font-size="16" text-anchor="middle" fill="#3B4552">오레곤 10.11.1.0/24</text>
-<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1054" y="876" width="48" height="48"/>
-<text x="1078" y="944" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
-<text x="1078" y="965" font-size="16" text-anchor="middle" fill="#3B4552">오레곤 10.21.1.0/24</text>
-<text x="1078" y="986" font-size="16" text-anchor="middle" fill="#3B4552">attachment 없음</text>
-<text x="1078" y="1007" font-size="16" text-anchor="middle" fill="#3B4552">(추가 과제 3-1)</text>
-<line x1="1050" y1="184" x2="969" y2="184" stroke="#232F3E" stroke-width="1.5"/>
-<line x1="1050" y1="329" x2="969" y2="329" stroke="#232F3E" stroke-width="1.5"/>
-<line x1="1050" y1="629" x2="969" y2="629" stroke="#232F3E" stroke-width="1.5"/>
-<polyline points="1050,795 988,795 988,700 941,700 941,673" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<text x="890" y="150" font-size="16" text-anchor="middle" fill="#3B4552">세그먼트</text>
+<rect x="1016" y="126" width="166" height="629" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="3,3"/>
+<image href="bundle:group/Region_32" x="1016" y="126" width="24" height="24"/>
+<text x="1048" y="145" font-size="19" font-weight="600" fill="#00A4A6">서울</text>
+<text x="1048" y="163" font-size="16" fill="#232F3E">ap-northeast-2</text>
+<rect x="1016" y="775" width="166" height="299" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="3,3"/>
+<image href="bundle:group/Region_32" x="1016" y="775" width="24" height="24"/>
+<text x="1048" y="794" font-size="19" font-weight="600" fill="#00A4A6">오레곤</text>
+<text x="1048" y="812" font-size="16" fill="#232F3E">us-west-2</text>
+<image href="bundle:resource/AWS-Cloud-WAN_Core-Network-Edge" x="731" y="471" width="48" height="48"/>
+<text x="755" y="539" font-size="19" text-anchor="middle" fill="#232F3E">서울 edge</text>
+<text x="755" y="560" font-size="16" text-anchor="middle" fill="#3B4552">core network edge</text>
+<text x="755" y="581" font-size="16" text-anchor="middle" fill="#3B4552">ASN 64512</text>
+<image href="bundle:resource/AWS-Cloud-WAN_Core-Network-Edge" x="731" y="825" width="48" height="48"/>
+<text x="755" y="893" font-size="19" text-anchor="middle" fill="#232F3E">오레곤 edge</text>
+<text x="755" y="914" font-size="16" text-anchor="middle" fill="#3B4552">core network edge</text>
+<text x="755" y="935" font-size="16" text-anchor="middle" fill="#3B4552">ASN 64513</text>
+<line x1="840" y1="200" x2="840" y2="849" stroke="#232F3E" stroke-width="1.5"/>
+<line x1="783" y1="495" x2="840" y2="495" stroke="#232F3E" stroke-width="1.5"/>
+<line x1="783" y1="849" x2="840" y2="849" stroke="#232F3E" stroke-width="1.5"/>
+<rect x="858" y="168" width="138" height="64" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<line x1="840" y1="200" x2="858" y2="200" stroke="#232F3E" stroke-width="1.5"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="866" y="176" width="48" height="48"/>
+<text x="922" y="214" font-size="19" font-weight="600" fill="#232F3E">dev</text>
+<rect x="858" y="313" width="138" height="64" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<line x1="840" y1="345" x2="858" y2="345" stroke="#232F3E" stroke-width="1.5"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="866" y="321" width="48" height="48"/>
+<text x="922" y="359" font-size="19" font-weight="600" fill="#232F3E">shared</text>
+<rect x="858" y="463" width="138" height="64" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<line x1="840" y1="495" x2="858" y2="495" stroke="#232F3E" stroke-width="1.5"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="866" y="471" width="48" height="48"/>
+<text x="922" y="509" font-size="19" font-weight="600" fill="#232F3E">onprem</text>
+<rect x="858" y="613" width="138" height="64" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<line x1="840" y1="645" x2="858" y2="645" stroke="#232F3E" stroke-width="1.5"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="866" y="621" width="48" height="48"/>
+<text x="922" y="659" font-size="19" font-weight="600" fill="#232F3E">prod</text>
+<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1075" y="176" width="48" height="48"/>
+<text x="1099" y="244" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
+<text x="1099" y="265" font-size="16" text-anchor="middle" fill="#3B4552">10.20.1.0/24</text>
+<text x="1099" y="286" font-size="16" text-anchor="middle" fill="#3B4552">VPC attachment</text>
+<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1075" y="321" width="48" height="48"/>
+<text x="1099" y="389" font-size="19" text-anchor="middle" fill="#232F3E">shared VPC</text>
+<text x="1099" y="410" font-size="16" text-anchor="middle" fill="#3B4552">10.30.1.0/24</text>
+<text x="1099" y="431" font-size="16" text-anchor="middle" fill="#3B4552">EC2 10.30.1.10</text>
+<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1075" y="621" width="48" height="48"/>
+<text x="1099" y="689" font-size="19" text-anchor="middle" fill="#232F3E">prod VPC</text>
+<text x="1099" y="710" font-size="16" text-anchor="middle" fill="#3B4552">10.10.1.0/24</text>
+<text x="1099" y="731" font-size="16" text-anchor="middle" fill="#3B4552">EC2 10.10.1.10</text>
+<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1075" y="825" width="48" height="48"/>
+<text x="1099" y="893" font-size="19" text-anchor="middle" fill="#232F3E">prod VPC</text>
+<text x="1099" y="914" font-size="16" text-anchor="middle" fill="#3B4552">10.11.1.0/24</text>
+<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1075" y="928" width="48" height="48"/>
+<text x="1099" y="996" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
+<text x="1099" y="1017" font-size="16" text-anchor="middle" fill="#3B4552">10.21.1.0/24</text>
+<text x="1099" y="1038" font-size="16" text-anchor="middle" fill="#3B4552">attachment 없음</text>
+<text x="1099" y="1059" font-size="16" text-anchor="middle" fill="#3B4552">(추가 과제 3-1)</text>
+<line x1="1071" y1="184" x2="996" y2="184" stroke="#232F3E" stroke-width="1.5"/>
+<line x1="1071" y1="329" x2="996" y2="329" stroke="#232F3E" stroke-width="1.5"/>
+<line x1="1071" y1="629" x2="996" y2="629" stroke="#232F3E" stroke-width="1.5"/>
+<polyline points="1071,849 990,849 990,700 870,700 870,681" fill="none" stroke="#232F3E" stroke-width="1.5"/>
 <rect x="12" y="417" width="202" height="353" fill="none" stroke="#7D8998" stroke-width="2"/>
 <image href="bundle:group/Corporate-data-center_32" x="12" y="417" width="24" height="24"/>
 <text x="44" y="436" font-size="19" font-weight="600" fill="#7D8998">온프레미스</text>
@@ -90,23 +102,23 @@
 <line x1="458" y1="487" x2="532" y2="487" stroke="#232F3E" stroke-width="1.5"/>
 <line x1="338" y1="503" x2="402" y2="503" stroke="#232F3E" stroke-width="1.5"/>
 <line x1="458" y1="503" x2="532" y2="503" stroke="#232F3E" stroke-width="1.5"/>
-<line x1="588" y1="495" x2="740" y2="495" stroke="#232F3E" stroke-width="1.5"/>
+<line x1="588" y1="495" x2="727" y2="495" stroke="#232F3E" stroke-width="1.5"/>
 <circle cx="587" cy="455" r="10.5" fill="#232F3E"/>
 <text x="587" y="460.5" font-size="16" font-weight="700" text-anchor="middle" fill="#FFFFFF">1</text>
 <circle cx="700" cy="479" r="10.5" fill="#232F3E"/>
 <text x="700" y="484.5" font-size="16" font-weight="700" text-anchor="middle" fill="#FFFFFF">2</text>
-<rect x="688" y="435.5" width="149.2" height="22" fill="#232F3E" rx="3"/>
-<text x="762.6" y="452" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">segment=onprem</text>
+<rect x="678" y="435.5" width="149.2" height="22" fill="#232F3E" rx="3"/>
+<text x="752.6" y="452" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">segment=onprem</text>
 <circle cx="497" cy="473" r="10.5" fill="#232F3E"/>
 <text x="497" y="478.5" font-size="16" font-weight="700" text-anchor="middle" fill="#FFFFFF">3</text>
-<line x1="941" y1="467" x2="941" y2="373" stroke="#1D8102" stroke-width="1.8" marker-end="url(#arrowGreen)"/>
-<circle cx="908" cy="420" r="10.5" fill="#232F3E"/>
-<text x="908" y="425.5" font-size="16" font-weight="700" text-anchor="middle" fill="#FFFFFF">4</text>
-<text x="959" y="426" font-size="16" font-weight="700" fill="#1D8102">성공</text>
-<line x1="941" y1="523" x2="941" y2="617" stroke="#D13212" stroke-width="1.8" stroke-dasharray="6,4" marker-end="url(#arrowRed)"/>
-<circle cx="908" cy="570" r="10.5" fill="#232F3E"/>
-<text x="908" y="575.5" font-size="16" font-weight="700" text-anchor="middle" fill="#FFFFFF">5</text>
-<text x="959" y="576" font-size="16" font-weight="700" fill="#D13212">차단(실패)</text>
+<line x1="890" y1="459" x2="890" y2="381" stroke="#1D8102" stroke-width="1.8" marker-end="url(#arrowGreen)"/>
+<circle cx="860" cy="422" r="10.5" fill="#232F3E"/>
+<text x="860" y="427.5" font-size="16" font-weight="700" text-anchor="middle" fill="#FFFFFF">4</text>
+<text x="908" y="428" font-size="16" font-weight="700" fill="#1D8102">성공</text>
+<line x1="890" y1="531" x2="890" y2="609" stroke="#D13212" stroke-width="1.8" stroke-dasharray="6,4" marker-end="url(#arrowRed)"/>
+<circle cx="860" cy="570" r="10.5" fill="#232F3E"/>
+<text x="860" y="575.5" font-size="16" font-weight="700" text-anchor="middle" fill="#FFFFFF">5</text>
+<text x="908" y="576" font-size="16" font-weight="700" fill="#D13212">차단(실패)</text>
 <rect x="12" y="86" width="624" height="317" fill="#FBFBFB" stroke="#D5DBDB" stroke-width="1.5"/>
 <text x="32" y="112" font-size="19" font-weight="600" fill="#232F3E">실습 2-3 진행 순서</text>
 <circle cx="42" cy="137" r="10.5" fill="#232F3E"/>

@@ -1,4 +1,9 @@
-"""실습 2-3: 온프레미스를 Site-to-Site VPN으로 Cloud WAN에 연결하는 순서 (1~5)."""
+"""실습 2-3: 온프레미스를 Site-to-Site VPN으로 Cloud WAN에 연결하는 순서 (1~5).
+
+core network 박스 안에는 core network edge와 세그먼트만 둔다. VPC는 박스 밖의
+리전 박스 안에 두고 attachment 선으로 자기 세그먼트에 잇는다
+(diagram_guide.md "Global network (AWS Cloud WAN)", architecture.py와 같은 문법).
+"""
 import sys
 
 sys.path.insert(0, sys.path[0])
@@ -9,11 +14,12 @@ d = D()
 
 GREEN = "#1D8102"
 BLOCK = "#D13212"
+SEGC = GREY                                        # 세그먼트 박스 테두리
 
 # ---- grid ---------------------------------------------------------------
-W, H = 1198, 1062
-r1, r2, r3, r4, r5 = 200, 345, 495, 645, 795      # dev / shared / onprem(main) / prod / 오레곤
-r6 = 900                                           # 오레곤 dev VPC (추가 과제 3-1에서 붙인다)
+W, H = 1198, 1102
+r1, r2, r3, r4 = 200, 345, 495, 645                # dev / shared / onprem(main) / prod
+r5, r6 = 849, 952                                  # 오레곤 prod / 오레곤 dev
 
 # left block
 PANE = (12, 86, 636, 403)                          # 번호 설명 패널
@@ -23,9 +29,12 @@ y_vm = 660
 x_cgw, x_net, x_vpn = 310, 430, 560
 
 # cloud block
-CL = (654, 86, 1186, 1050)                         # AWS Cloud
-CN = (670, 126, 1170, 1030)                        # core network
-x_edge, x_bus, x_seg, x_vpc, x_or = 768, 874, 941, 1078, 988
+CL = (654, 86, 1186, 1090)                         # AWS Cloud
+CN = (670, 126, 1004, 960)                         # core network (edge + 세그먼트만)
+SR = (1016, 126, 1182, 755)                        # 서울 리전
+OR_ = (1016, 775, 1182, 1074)                      # 오레곤 리전
+x_edge, x_bus, x_seg, x_vpc, x_cor = 755, 840, 890, 1099, 990
+SEG_L, SEG_R, SEG_H = 858, 996, 64                 # 세그먼트 박스
 
 d.raw(markers("arrow", "arrowGreen", "arrowRed"))
 
@@ -41,41 +50,45 @@ def badge(cx, cy, n):
     d.text(cx, cy + 5.5, str(n), F_TAG, "#FFFFFF", "700", "middle")
 
 
-# ---- AWS Cloud / core network ------------------------------------------
+# ---- AWS Cloud / core network / 리전 ------------------------------------
 d.group(CL[0], CL[1], CL[2] - CL[0], CL[3] - CL[1], "cloud", "AWS Cloud")
 d.rect(CN[0], CN[1], CN[2] - CN[0], CN[3] - CN[1], "none", PURPLE, 2, "6,4")
 d.img("service/AWS-Cloud-WAN", CN[0], CN[1], 24)
 d.text(CN[0] + 32, CN[1] + 19, "core network", F_TITLE, PURPLE, "600")
 d.text(CN[0] + 32, CN[1] + 37, "AWS Cloud WAN", F_SUB, INK)
 d.text(x_seg, 150, "세그먼트", F_SUB, SUB, None, "middle")
+d.group(SR[0], SR[1], SR[2] - SR[0], SR[3] - SR[1], "region", "서울", "ap-northeast-2")
+d.group(OR_[0], OR_[1], OR_[2] - OR_[0], OR_[3] - OR_[1], "region", "오레곤", "us-west-2")
 
 # core network edge (서울 · 오레곤)
 EDGE = "resource/AWS-Cloud-WAN_Core-Network-Edge"
-d.node(EDGE, x_edge, r3, [("core network edge", "name"), ("서울 ap-northeast-2", "sub"), ("ASN 64512", "sub")])
-d.node(EDGE, x_edge, r5, [("core network edge", "name"), ("오레곤 us-west-2", "sub"), ("ASN 64513", "sub")])
+d.node(EDGE, x_edge, r3, [("서울 edge", "name"), ("core network edge", "sub"), ("ASN 64512", "sub")])
+d.node(EDGE, x_edge, r5, [("오레곤 edge", "name"), ("core network edge", "sub"), ("ASN 64513", "sub")])
 
-# segment bus: 두 edge 모두 네 세그먼트를 가진다
+# 세그먼트 박스와 버스 (두 edge 모두 네 세그먼트를 가진다)
 d.line(x_bus, r1, x_bus, r5)
 d.line(x_edge + S / 2 + 4, r3, x_bus, r3)
 d.line(x_edge + S / 2 + 4, r5, x_bus, r5)
 SEG = "resource/AWS-Cloud-WAN_Segment-Network"
 for y, name in ((r1, "dev"), (r2, "shared"), (r3, "onprem"), (r4, "prod")):
-    d.line(x_bus, y, x_seg - S / 2 - 4, y)
+    d.rect(SEG_L, y - SEG_H / 2, SEG_R - SEG_L, SEG_H, "none", SEGC, 1.5, "6,4")
+    d.line(x_bus, y, SEG_L, y)
     d.img(SEG, x_seg - S / 2, y - S / 2)
     d.text(x_seg + S / 2 + 8, y + 14, name, F_NODE, INK, "600")
 
-# VPC attachment
+# ---- VPC (core network 밖, 리전 박스 안) + VPC attachment ----------------
 VPC = "resource/Amazon-VPC_Virtual-private-cloud-VPC"
-d.node(VPC, x_vpc, r1, [("dev VPC", "name"), ("서울 10.20.1.0/24", "sub"), ("VPC attachment", "sub")])
-d.node(VPC, x_vpc, r2, [("shared VPC", "name"), ("서울 10.30.1.0/24", "sub"), ("EC2 10.30.1.10", "sub")])
-d.node(VPC, x_vpc, r4, [("prod VPC", "name"), ("서울 10.10.1.0/24", "sub"), ("EC2 10.10.1.10", "sub")])
-d.node(VPC, x_vpc, r5, [("prod VPC", "name"), ("오레곤 10.11.1.0/24", "sub")])
+d.node(VPC, x_vpc, r1, [("dev VPC", "name"), ("10.20.1.0/24", "sub"), ("VPC attachment", "sub")])
+d.node(VPC, x_vpc, r2, [("shared VPC", "name"), ("10.30.1.0/24", "sub"), ("EC2 10.30.1.10", "sub")])
+d.node(VPC, x_vpc, r4, [("prod VPC", "name"), ("10.10.1.0/24", "sub"), ("EC2 10.10.1.10", "sub")])
+d.node(VPC, x_vpc, r5, [("prod VPC", "name"), ("10.11.1.0/24", "sub")])
 # 오레곤 dev VPC: 실습 2-3 시점에는 attachment가 없다 (추가 과제 3-1에서 참가자가 붙인다)
-d.node(VPC, x_vpc, r6, [("dev VPC", "name"), ("오레곤 10.21.1.0/24", "sub"),
+d.node(VPC, x_vpc, r6, [("dev VPC", "name"), ("10.21.1.0/24", "sub"),
                         ("attachment 없음", "sub"), ("(추가 과제 3-1)", "sub")])
 for y in (r1, r2, r4):
-    d.line(x_vpc - S / 2 - 4, y - 16, x_seg + S / 2 + 4, y - 16)
-d.poly([(x_vpc - S / 2 - 4, r5), (x_or, r5), (x_or, r4 + 55), (x_seg, r4 + 55), (x_seg, r4 + S / 2 + 4)])
+    d.line(x_vpc - S / 2 - 4, y - 16, SEG_R, y - 16)
+d.poly([(x_vpc - S / 2 - 4, r5), (x_cor, r5), (x_cor, r4 + 55), (x_seg - 20, r4 + 55),
+        (x_seg - 20, r4 + SEG_H / 2 + 4)])
 
 # ---- 온프레미스 ----------------------------------------------------------
 d.group(OP[0], OP[1], OP[2] - OP[0], OP[3] - OP[1], "onprem", "온프레미스", "172.16.1.0/24")
@@ -101,18 +114,18 @@ d.line(x_vpn + S / 2 + 4, r3, x_edge - S / 2 - 4, r3)
 # ---- 번호 ----------------------------------------------------------------
 badge(x_vpn + S / 2 + 3, 455, 1)
 badge(700, 479, 2)
-chip(688, 452, "segment=onprem")
+chip(678, 452, "segment=onprem")
 badge(497, 473, 3)
 
 # 4: onprem -> shared (성공)
-d.line(x_seg, r3 - S / 2 - 4, x_seg, r2 + S / 2 + 4, GREEN, 1.8, None, "arrowGreen")
-badge(908, 420, 4)
-d.text(959, 426, "성공", F_SUB, GREEN, "700")
+d.line(x_seg, r3 - SEG_H / 2 - 4, x_seg, r2 + SEG_H / 2 + 4, GREEN, 1.8, None, "arrowGreen")
+badge(860, 422, 4)
+d.text(908, 428, "성공", F_SUB, GREEN, "700")
 
 # 5: onprem -> prod (차단)
-d.line(x_seg, r3 + S / 2 + 4, x_seg, r4 - S / 2 - 4, BLOCK, 1.8, "6,4", "arrowRed")
-badge(908, 570, 5)
-d.text(959, 576, "차단(실패)", F_SUB, BLOCK, "700")
+d.line(x_seg, r3 + SEG_H / 2 + 4, x_seg, r4 - SEG_H / 2 - 4, BLOCK, 1.8, "6,4", "arrowRed")
+badge(860, 570, 5)
+d.text(908, 576, "차단(실패)", F_SUB, BLOCK, "700")
 
 # ---- 번호 설명 패널 -------------------------------------------------------
 d.rect(PANE[0], PANE[1], PANE[2] - PANE[0], PANE[3] - PANE[1], "#FBFBFB", "#D5DBDB", 1.5)
