@@ -103,7 +103,7 @@
 change set을 실행해 새 버전을 적용합니다.
 
 1. change set을 실행합니다.
-2. 상태가 **Ready to execute** → **Executing policy** → **Execution succeeded**로 바뀌는 것을 지켜봅니다.
+2. 상태가 **Ready to execute** → **Executing policy** → **Execution succeeded**로 바뀌는 것을 지켜봅니다. 사전 테스트에서 **1분 4초** 걸렸습니다.
 3. 새 정책이 **LIVE**가 되었는지 확인합니다.
 
 반영은 사전 테스트에서 **약 1분** 걸렸습니다. 상태가 **Executing policy** 에 머무르는 동안에는 다음 단계로 가지 말고 기다립니다.

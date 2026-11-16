@@ -5,15 +5,15 @@
 
 실습이 끝나면 만든 리소스를 지웁니다. 아래 **순서대로** 진행합니다. **순서가 중요합니다.** 참가자가 직접 만든 것을 먼저 지우고, 그다음에 스택을 지웁니다. core network는 연결이 하나라도 남아 있으면 지워지지 않기 때문입니다.
 
-| 순서 | 지울 것 | 누가 만들었나 |
-|---|---|---|
-| 1 | 오레곤 VPC attachment (prod, 그리고 [3-1](extra-a.md)을 했다면 dev도) | 참가자([2-2-d](lab1.md), [3-1-d](extra-a.md#a-d)) |
-| 2 | Site-to-Site VPN attachment | 참가자([2-3-b](lab2.md)) |
-| 3 | Site-to-Site VPN 연결 | 참가자([2-3-a](lab2.md)) |
-| 4 | 오레곤 스택 `cloudwan-workshop-oregon` | CloudFormation |
-| 5 | 서울 스택 `cloudwan-workshop-seoul` | CloudFormation |
+| 순서 | 지울 것 | 누가 만들었나 | 사전 테스트 소요 시간 |
+|---|---|---|---|
+| 1 | 오레곤 VPC attachment (prod, 그리고 [3-1](extra-a.md)을 했다면 dev도) | 참가자([2-2-d](lab1.md), [3-1-d](extra-a.md#a-d)) | 따로 재지 않음 |
+| 2 | Site-to-Site VPN attachment | 참가자([2-3-b](lab2.md)) | **22초** |
+| 3 | Site-to-Site VPN 연결 | 참가자([2-3-a](lab2.md)) | 따로 재지 않음 |
+| 4 | 오레곤 스택 `cloudwan-workshop-oregon` | CloudFormation | **1분 32초** |
+| 5 | 서울 스택 `cloudwan-workshop-seoul` | CloudFormation | **14분 32초** |
 
-각 단계의 소요 시간은 사전 테스트에서 측정합니다.
+정리 전체는 사전 테스트에서 **약 22분** 걸렸습니다. 첫 삭제부터 서울 스택이 사라질 때까지 재었고, 그중 **14분 32초가 마지막 서울 스택 하나**입니다. 앞의 네 단계는 다 합쳐도 8분이 안 됩니다.
 
 ## 3-4-a. 오레곤 VPC attachment 지우기 { #d-a }
 
@@ -24,7 +24,7 @@
     !!! warning "오레곤 연결을 하나라도 남기면 뒤 단계가 막힙니다"
         오레곤 VPC 연결이 남아 있으면 오레곤 스택의 VPC가 지워지지 않고, 서울 스택의 core network도 지워지지 않습니다.
 
-![attachment 삭제 확인 창. 제목이 Delete attachment-…? 이고 본문에 Delete attachment-… permanently? This action cannot be undone. 이라고 적혀 있다. 버튼은 Cancel과 Delete 두 개다. 뒤로 Attachments 목록과 선택한 연결의 상세 창이 보인다](images/console/extraD-01-delete-attachment.png){ .shot }
+![attachment 삭제 확인 창. 제목이 Delete attachment-…? 이고 본문에 Delete attachment-… permanently? This action cannot be undone. 이라고 적혀 있다. 버튼은 Cancel과 Delete 두 개다. 창 밖은 잘라 냈다](images/console/extraD-01-delete-attachment.png){ .shot }
 
 **성공 확인**: 연결이 목록에서 사라지거나 삭제된 상태가 됩니다. 오레곤 VPC 연결이 **하나도** 보이지 않을 때까지 기다린 뒤 다음으로 넘어갑니다.
 

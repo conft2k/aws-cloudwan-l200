@@ -4,7 +4,7 @@
    1111,
    753
   ],
-  "why": "2-2-a shows the three attachments the stack made. Shot at 13:50, during teardown, so the list also held the onprem VPN and the us-west-2 VPC in Deleting - both from later steps.",
+  "why": "2-2-a shows the three attachments the stack made. Shot at 13:50, during teardown, so the list also held the onprem VPN and the us-west-2 VPC in Deleting - both from later steps. The Last updated stamp goes too: it is capture metadata, and keeping it would leave the 2-2-a screen stamped six minutes after the 2-2-d screen.",
   "drop_rows": [
    [
     148,
@@ -21,6 +21,12 @@
     20,
     183,
     60
+   ],
+   [
+    548,
+    17,
+    824,
+    68
    ]
   ]
  },
@@ -29,7 +35,7 @@
    1121,
    388
   ],
-  "why": "2-2-d has the three Seoul attachments plus the Oregon prod one the participant just made. Shot after 3-1 and 2-3, so the list also held the dev us-west-2 attachment and the onprem VPN.",
+  "why": "2-2-d has the three Seoul attachments plus the Oregon prod one the participant just made. Shot after 3-1 and 2-3, so the list also held the dev us-west-2 attachment and the onprem VPN. The Last updated stamp goes too: it is capture metadata, and keeping it would leave the 2-2-a screen stamped six minutes after the 2-2-d screen.",
   "drop_rows": [
    [
     153,
@@ -46,6 +52,12 @@
     28,
     181,
     59
+   ],
+   [
+    550,
+    20,
+    830,
+    72
    ]
   ]
  },
@@ -54,7 +66,7 @@
    1130,
    397
   ],
-  "why": "2-3-b adds the onprem VPN to the four attachments of 2-2-d. Shot after 3-1, so the list also held the dev us-west-2 attachment.",
+  "why": "2-3-b adds the onprem VPN to the four attachments of 2-2-d. Shot after 3-1, so the list also held the dev us-west-2 attachment. The Last updated stamp goes too: it is capture metadata, and keeping it would leave the 2-2-a screen stamped six minutes after the 2-2-d screen.",
   "drop_rows": [
    [
     229,
@@ -67,6 +79,47 @@
     28,
     181,
     59
+   ],
+   [
+    550,
+    20,
+    830,
+    72
+   ]
+  ]
+ },
+ "images/console/lab0-cnet-01-policy-versions.png": {
+  "size": [
+   1111,
+   343
+  ],
+  "why": "2-1-d reads this screen to decide the core network is ready, so it must show the one version the stack made, LIVE and LATEST. Shot at 22:40, after the extra assignments had added versions 2 to 5, so version 1 had lost its alias to version 5.",
+  "copy_cells": [
+   [
+    [
+     250,
+     290,
+     350,
+     328
+    ],
+    [
+     250,
+     138
+    ]
+   ]
+  ],
+  "drop_rows": [
+   [
+    175,
+    328
+   ]
+  ],
+  "erase": [
+   [
+    159,
+    22,
+    187,
+    58
    ]
   ]
  }

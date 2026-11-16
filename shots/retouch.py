@@ -37,8 +37,14 @@ PLAN = json.loads((HERE / "retouch.json").read_text())
 
 
 def retouch(im: Image.Image, spec: dict) -> Image.Image:
-    """Drop the recorded row bands and white out the recorded boxes."""
+    """Move the recorded cells, drop the recorded row bands, white out boxes.
+
+    Order matters: a copy is measured against the untouched image, so it runs
+    before any row comes out from under it.
+    """
     w, h = im.size
+    for src, dst in spec.get("copy_cells", []):
+        im.paste(im.crop(tuple(src)), tuple(dst))
     drops = sorted(tuple(b) for b in spec["drop_rows"])
     keep = []
     y = 0
@@ -58,6 +64,16 @@ def retouch(im: Image.Image, spec: dict) -> Image.Image:
     return out
 
 
+def describe(spec: dict) -> str:
+    bits = []
+    if spec.get("copy_cells"):
+        bits.append(f"{len(spec['copy_cells'])} cell moved")
+    rows = len(spec.get("drop_rows", []))
+    if rows:
+        bits.append(f"{rows} row{'' if rows == 1 else 's'} out")
+    return ", ".join(bits) or "erase only"
+
+
 def main(argv=None) -> None:
     apply = "--apply" in (sys.argv if argv is None else argv)
     for rel, spec in sorted(PLAN.items()):
@@ -72,9 +88,8 @@ def main(argv=None) -> None:
                       f"or re-cropped, left alone")
                 continue
             out = retouch(im.convert("RGB"), spec)
-        rows = len(spec["drop_rows"])
         print(f"{rel}: {spec['size'][0]}x{spec['size'][1]} -> "
-              f"{out.size[0]}x{out.size[1]} ({rows} row{'' if rows == 1 else 's'} out)")
+              f"{out.size[0]}x{out.size[1]} ({describe(spec)})")
         if apply:
             out.save(dst, optimize=True)
     if not apply:

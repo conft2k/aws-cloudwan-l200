@@ -40,6 +40,9 @@
 
 승인이 필요한 연결은 만들면 **Network Manager** 콘솔의 core network 화면에서 승인 대기 상태로 보입니다. 승인 흐름은 다음과 같습니다.
 
+!!! info "아래 두 그림은 승인을 켠 뒤의 화면입니다"
+    기본 정책은 네 세그먼트 모두 `require-attachment-acceptance` 가 `false` 라서, [2-2-d](lab1.md#lab1-d)처럼 그냥 만들면 이 **Pending attachment acceptance** 상태를 볼 수 없습니다. 아래 그림은 사전 테스트에서 `dev` 세그먼트만 승인 요구로 바꾼 뒤 오레곤 dev 연결을 만들어 찍은 것입니다. 직접 보려면 [3-1-f](#a-f)와 같은 방법으로 `dev` 의 그 값을 `true` 로 바꿔 새 정책 버전을 적용한 다음 연결을 만드세요.
+
 1. **Network Manager** → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** → **Attachments** 로 갑니다.
 2. **State** 가 **Pending attachment acceptance** 인 연결의 행을 선택합니다.
 3. **Segment** 열에서 그 연결이 어느 세그먼트로 가려는지 확인합니다. 승인 전에도 세그먼트는 이미 정해져 있습니다. attachment policy가 태그를 보고 배정한 결과이고, 승인은 그것을 실제로 붙일지만 정합니다.
@@ -86,7 +89,7 @@
 
 ![오레곤 dev VPC를 붙이는 Create attachment 화면의 Attachment settings 패널. Name에 cwan-ws-att-dev-usw2, Attachment type에 VPC, Edge location에 United States (Oregon)이 들어 있다. 2-2-d에서 prod를 붙일 때와 같은 화면이고 이름과 VPC, 태그 값만 다르다](images/console/extraA-01-oregon-dev-attachment.png){ .shot }
 
-4. attachment가 `Available`이 되면 상세 화면에서 **Segment**가 `dev`인지 확인합니다. 만드는 데 걸리는 시간은 사전 테스트에서 측정합니다.
+4. attachment가 `Available`이 되면 상세 화면에서 **Segment**가 `dev`인지 확인합니다. [2-2-d](lab1.md#lab1-d)의 오레곤 prod attachment와 똑같은 작업이고, 그쪽은 사전 테스트에서 **4분 15초** 걸렸습니다. 이 dev attachment 자체는 따로 재지 않았습니다.
 5. 오레곤 dev 앱 서브넷의 라우트 테이블에 core network 경로를 넣습니다([2-2-e](lab1.md#lab1-e)와 같습니다). 라우트 테이블 ID는 오레곤 스택 **Outputs**의 dev용 항목에서 찾습니다.
 
     | Destination | Target |
@@ -140,7 +143,9 @@ rtt min/avg/max/mdev = 120.849/122.037/126.761/2.361 ms
     { "name": "dev", "description": "Development", "require-attachment-acceptance": false, "isolate-attachments": true }
     ```
 
-3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). 실행이 끝나는 데 걸리는 시간은 사전 테스트에서 측정합니다.
+3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). 2-4에서 잰 값으로 change set 생성에 **38초**, 실행에 **1분 4초** 걸렸습니다. 이 과제의 change set은 따로 재지 않았지만 같은 종류의 변경입니다.
+
+![isolate-attachments를 켠 정책 버전을 실행하는 중의 Policy versions 목록. 새 버전의 Alias가 LATEST이고 Change set state가 파란색 Executing이며, 그 전 버전이 아직 LIVE를 달고 있다. 실행이 끝나야 LIVE가 새 버전으로 넘어온다. 사전 테스트에서는 2-4와 승인 과제까지 했기 때문에 버전이 네 개이고 3번이 LIVE, 4번이 Executing이다. 만든 버전 수는 어떤 과제를 했는지에 따라 다릅니다](images/console/extraA-04b-isolate-executing.png){ .shot }
 
 ![isolate-attachments를 켠 정책 버전의 change set 화면. 변경이 두 건뿐이고, 하나는 Type이 Segments configuration에 Action이 Modify, 다른 하나는 Type이 Attachment route propagation에 Action이 Remove다. share를 추가했던 2-4의 일곱 건과 대비된다](images/console/extraA-04-isolate-change-set.png){ .shot }
 

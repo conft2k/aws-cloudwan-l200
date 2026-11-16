@@ -40,11 +40,11 @@
 
     **I acknowledge that AWS CloudFormation might create IAM resources.** 확인란을 선택합니다. 이 스택이 EC2에 붙일 IAM 역할(role)과 인스턴스 프로파일을 만들기 때문입니다. 선택하지 않으면 **Please acknowledge all checkboxes before proceeding.** 이 뜨고 넘어가지 않습니다.
 
-    ![Review and create 화면 맨 아래 Capabilities 패널. The following resource(s) require capabilities: [AWS::IAM::Role]이라는 안내와 함께 I acknowledge that AWS CloudFormation might create IAM resources. 확인란이 하나 있다. 선택하지 않고 넘어가려 하면 Please acknowledge all checkboxes before proceeding.이라는 오류가 아래에 나타난다](images/console/lab0-cfn-03-ack.png){ .shot }
+    ![Review and create 화면 맨 아래 Capabilities 패널. The following resource(s) require capabilities: [AWS::IAM::Role]이라는 안내와 함께 I acknowledge that AWS CloudFormation might create IAM resources. 확인란이 하나 있고 파란색으로 체크되어 있다. 이 확인란이 Capabilities 패널의 유일한 선택 항목이다](images/console/lab0-cfn-03-ack.png){ .shot }
 
 7. **Submit** 을 누릅니다.
 
-**성공 확인**: 스택 상태가 **CREATE_IN_PROGRESS**입니다. 배포에 걸리는 시간은 사전 테스트에서 측정합니다.
+**성공 확인**: 스택 상태가 **CREATE_IN_PROGRESS**입니다. 사전 테스트에서 **CREATE_COMPLETE** 까지 **약 21분** 걸렸습니다. 다만 다음 실습으로 넘어가는 기준은 스택 완료가 아니라 core network 준비입니다. core network 는 **15분 14초** 만에 쓸 수 있었고, 스택은 EC2 부트스트랩과 VPC attachment 생성 때문에 그 뒤로도 **CREATE_IN_PROGRESS** 였습니다. 보는 법은 [2-1-d](#lab0-d)에 있습니다.
 
 ![서울 스택 cloudwan-workshop-seoul의 Overview 패널. Status가 CREATE_IN_PROGRESS이고, Description에는 이 스택이 만드는 것(global network, core network, 세그먼트 네 개, edge 두 곳, 서울 VPC 세 개와 EC2, 온프레미스 모사 VPC와 VPN 라우터, customer gateway)이 적혀 있다. Termination protection은 Deactivated, Drift status는 NOT_CHECKED다](images/console/lab0-cfn-04-in-progress-seoul.png){ .shot }
 

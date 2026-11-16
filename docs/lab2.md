@@ -88,9 +88,7 @@ attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 at
 VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는 스크립트가 들어 있습니다. VPN 연결 ID만 넣고 실행합니다.
 
 1. **EC2** 콘솔 → **Instances**에서 `cwan-ws-onprem-router`를 골라 **Connect**를 누릅니다.
-2. **Connect to Linux instance** 화면의 **In web browser** 탭에서 **Connect**를 누릅니다. [2-2-b](lab1.md#lab1-b)와 같은 화면입니다.
-
-![VPN 라우터 cwan-ws-onprem-router의 Connect to Linux instance 화면. 2-2-b에서 본 것과 같은 화면이고 대상 인스턴스만 다르다. In web browser 탭의 Choose how to connect에서 Private subnet access의 EC2 Instance Connect Endpoint를 고른다](images/console/lab2-router-01-connect.png){ .shot }
+2. **Connect to Linux instance** 화면의 **In web browser** 탭에서 **Private subnet access** 의 **EC2 Instance Connect Endpoint** 를 고르고 **Connect** 를 누릅니다. [2-2-b](lab1.md#lab1-b)와 같은 화면이고 대상 인스턴스만 다르므로 그림은 그쪽을 보세요.
 
 3. 아래 명령을 **VPN 라우터(`cwan-ws-onprem-router`)** 에서 실행합니다. `<VPN 연결 ID>`는 2-3-a에서 메모한 `vpn-…` 값입니다.
 
@@ -214,9 +212,7 @@ BGP routing table entry for 172.16.1.0/24, version 1
 
 온프레미스 VM에서 서울 shared EC2로 ping을 보냅니다.
 
-1. **EC2** 콘솔 → **Instances**에서 `cwan-ws-onprem-vm`을 골라 2-3-c와 같은 방법(EC2 Instance Connect Endpoint)으로 접속합니다.
-
-![온프레미스 VM cwan-ws-onprem-vm의 Connect to Linux instance 화면. 라우터에 접속할 때와 같은 화면이며 대상 인스턴스만 다르다](images/console/lab2-vm-01-connect.png){ .shot }
+1. **EC2** 콘솔 → **Instances**에서 `cwan-ws-onprem-vm`을 골라 2-3-c와 같은 방법(**EC2 Instance Connect Endpoint**)으로 접속합니다. 이 VM은 퍼블릭 IP가 없으므로 첫 번째 **EC2 Instance Connect** 를 고르면 [2-2-b](lab1.md#lab1-b)의 그림처럼 **No public IPv4 or IPv6 address assigned** 경고가 뜨고 **Connect** 가 눌리지 않습니다.
 
 2. 아래 명령을 **온프레미스 VM(`172.16.1.10`)** 에서 실행합니다.
 

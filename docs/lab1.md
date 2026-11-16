@@ -73,7 +73,7 @@ EC2에는 인터넷 주소가 없습니다. 그래서 스택이 만든 EC2 Insta
         이름이 비슷한 선택지가 둘 있습니다. **Public subnet access** 묶음의 **EC2 Instance Connect** 는 인스턴스에 퍼블릭 IP가 있을 때 쓰는 것이라 이 실습의 EC2에는 통하지 않습니다. 고를 것은 **Private subnet access** 묶음의 **EC2 Instance Connect Endpoint** 입니다.
 3. **Connect**를 누르면 터미널이 열립니다.
 
-![EC2의 Connect to Linux instance 화면. 위쪽에 대상 인스턴스 정보(인스턴스 ID와 이름, 상태, VPC, 서브넷, 보안 그룹)가 있고, In web browser 탭의 Choose how to connect에 네 가지 선택지가 있다. Public subnet access의 EC2 Instance Connect, Private subnet access의 EC2 Instance Connect Endpoint, Maximum security의 SSM Session Manager, Troubleshoot의 EC2 Serial Console이다. 이 실습에서 고를 것은 두 번째다](images/console/lab1-eic-01-connect.png){ .shot }
+![EC2의 Connect to Linux instance 화면. 위쪽에 대상 인스턴스 정보(인스턴스 ID와 이름, 상태, VPC, 서브넷, 보안 그룹)가 있고, In web browser 탭의 Choose how to connect에 네 가지 선택지가 있다. Public subnet access의 EC2 Instance Connect, Private subnet access의 EC2 Instance Connect Endpoint, Maximum security의 SSM Session Manager, Troubleshoot의 EC2 Serial Console이다. 콘솔은 첫 번째 EC2 Instance Connect 가 선택된 채로 열리고, 그 상태에서는 아래 Settings 패널의 Choose public IP address 라디오 두 개가 모두 흐리게 비활성되며 노란 경고 No public IPv4 or IPv6 address assigned 와 함께 오른쪽 아래 Connect 버튼이 회색으로 눌리지 않는다. 경고문 자체가 대신 EC2 Instance Connect Endpoint 를 써 보라고 알려 준다. 이 실습에서 고를 것은 두 번째다](images/console/lab1-eic-01-connect.png){ .shot }
 
 !!! tip "브라우저 탭을 두 개 열어 두세요"
     이 실습은 EC2 터미널과 Network Manager 콘솔을 번갈아 씁니다. VPC 콘솔과 Network Manager는 새 탭에 따로 열어 두면 터미널을 닫지 않고 오갈 수 있습니다.
@@ -224,7 +224,10 @@ attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행
 
 5. **Save changes**를 누릅니다.
 
-![오레곤 스택 cloudwan-workshop-oregon의 Outputs 탭. Key와 Value 쌍이 줄지어 있고 ProdVpcId, ProdCwanSubnetAId, ProdCwanSubnetBId, ProdAppRouteTableId처럼 이 실습에서 쓰는 값들이 들어 있다](images/console/lab1-route-01-outputs.png){ .shot }
+![오레곤 스택 cloudwan-workshop-oregon의 Outputs 탭. 왼쪽 스택 목록에서 이 스택이 선택되어 있고 CREATE_COMPLETE다. Outputs (13) 표는 Key 오름차순이라 DevAppRouteTableId, DevCwanSubnetAId, DevCwanSubnetBId, DevInstanceId, DevInstancePrivateIp, DevVpcId 여섯 줄이 먼저 보이고, ProdAppRouteTableId는 화면 맨 아래에서 반쯤 잘려 있다. Description 열에 각 값을 어디에 쓰는지가 적혀 있다. 예를 들어 라우트 테이블 항목에는 attachment가 준비된 뒤 10.0.0.0/8과 172.16.0.0/12 경로를 이 테이블에 넣으라고 적혀 있다](images/console/lab1-route-01-outputs.png){ .shot }
+
+    !!! tip "`Prod…` 값은 아래로 스크롤해야 보입니다"
+        표가 **Key** 오름차순이라 `Dev…` 로 시작하는 여섯 줄이 먼저 나옵니다. 위 그림에서도 `ProdAppRouteTableId` 는 맨 아래에 반쯤 걸려 있습니다. 표를 아래로 내리거나 **Search outputs** 에 `Prod` 를 넣어 거르세요.
 ![오레곤 앱 서브넷 라우트 테이블의 Edit routes 화면. 제목이 Edit routes: rtb-… / cwan-ws-prod-app이다. 첫 줄은 원래 있던 10.11.1.0/24가 Target local, Status Active로 있고, 그 아래 Add route로 추가한 두 줄이 Destination 10.0.0.0/8과 172.16.0.0/12, Target 종류는 모두 Core Network로 되어 있다. 새로 추가한 줄의 Status는 아직 비어 있고, 화면 아래에 Cancel, Preview, Save changes 버튼이 있다](images/console/lab1-route-02-edit.png){ .shot }
 ![저장이 끝난 라우트 테이블의 Routes 탭. 경로 세 개가 모두 Status Active다. 10.0.0.0/8과 172.16.0.0/12는 Target이 arn:aws:networkmanager로 시작하는 core network이고 Route Origin이 CreateRoute, 10.11.1.0/24는 Target이 local이고 Route Origin이 CreateRouteTable이다](images/console/lab1-route-03-saved.png){ .shot }
 
