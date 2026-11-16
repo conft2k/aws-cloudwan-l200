@@ -19,17 +19,29 @@ FAIL=0
 
 q() {  # q <region> <label> <jmespath for the resources> <aws args...>
     local region="$1" label="$2" sel="$3"; shift 3
-    local out rc
+    local out rc total=0 line
     out=$(aws "$@" --profile "$PROFILE" --region "$region" \
               --query "$sel | length(@)" --output text 2>&1)
     rc=$?
-    if [ "$rc" -ne 0 ] || ! [[ "$out" =~ ^[0-9]+$ ]]; then
+    if [ "$rc" -ne 0 ] || [ -z "$out" ]; then
         echo "  $label: 조회 실패 - $(echo "$out" | tail -1)"
         FAIL=1
         return
     fi
-    echo "  $label: $out"
-    [ "$out" = 0 ] || FAIL=1
+    # The CLI applies --query once per page, so a paginated answer arrives as one
+    # number per page (`5` then `1` for six instances). Add them up. Anything
+    # that is not a number is the error text, not a count.
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^[0-9]+$ ]]; then
+            total=$((total + line))
+        else
+            echo "  $label: 조회 실패 - $line"
+            FAIL=1
+            return
+        fi
+    done <<< "$out"
+    echo "  $label: $total"
+    [ "$total" = 0 ] || FAIL=1
 }
 
 echo "profile: $PROFILE"
