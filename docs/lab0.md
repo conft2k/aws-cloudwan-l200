@@ -28,11 +28,11 @@
 3. **CloudFormation** 콘솔 → **Create stack** → **With new resources (standard)** 를 누릅니다.
 4. **Upload a template file** → **Choose file**로 내려받은 파일을 고르고 **Next**를 누릅니다.
 
-    <!-- shot: lab0-cfn-01-upload -->
+    ![CloudFormation의 Create stack 1단계 Specify template 패널. Template source에서 Amazon S3 URL, Upload a template file, Sync from Git 세 가지 중 가운데 Upload a template file이 선택되어 있고, 그 아래 Choose file 버튼 옆 칸에 고른 파일 이름 cloudwan-workshop-seoul.yaml이 들어 있다. 패널 맨 아래에는 콘솔이 템플릿을 올려 둔 S3 URL이 표시된다](images/console/lab0-cfn-01-upload.png){ .shot }
 
 5. **Stack name**에 `cloudwan-workshop-seoul`을 넣습니다. **Parameters**는 그대로 두고 **Next**를 누릅니다.
 
-    <!-- shot: lab0-cfn-02-parameters -->
+    ![Create stack 2단계 Specify stack details 화면. 위쪽 Provide a stack name 패널의 Stack name 칸에 cloudwan-workshop-seoul이 입력되어 있다. 아래 Parameters 패널은 Nothing to enter - deploy with the defaults와 Addresses and ASNs (leave the defaults) 두 묶음으로 나뉘고, ImageId와 RouterImageId는 Amazon Linux 2023 arm64 SSM 파라미터 경로가, InstanceType은 t4g.micro가, ProdVpcCidr은 10.10.1.0/24가 기본값으로 채워져 있다. 참가자가 고칠 값은 없다](images/console/lab0-cfn-02-parameters.png){ .shot }
 
 6. **Configure stack options** 화면에서도 **Next**를 누릅니다. 마지막 **Review and create** 화면 맨 아래 **Capabilities** 에 다음이 나옵니다.
 
@@ -40,13 +40,13 @@
 
     **I acknowledge that AWS CloudFormation might create IAM resources.** 확인란을 선택합니다. 이 스택이 EC2에 붙일 IAM 역할(role)과 인스턴스 프로파일을 만들기 때문입니다. 선택하지 않으면 **Please acknowledge all checkboxes before proceeding.** 이 뜨고 넘어가지 않습니다.
 
-    <!-- shot: lab0-cfn-03-ack -->
+    ![Review and create 화면 맨 아래 Capabilities 패널. The following resource(s) require capabilities: [AWS::IAM::Role]이라는 안내와 함께 I acknowledge that AWS CloudFormation might create IAM resources. 확인란이 하나 있다. 선택하지 않고 넘어가려 하면 Please acknowledge all checkboxes before proceeding.이라는 오류가 아래에 나타난다](images/console/lab0-cfn-03-ack.png){ .shot }
 
 7. **Submit** 을 누릅니다.
 
 **성공 확인**: 스택 상태가 **CREATE_IN_PROGRESS**입니다. 배포에 걸리는 시간은 사전 테스트에서 측정합니다.
 
-<!-- shot: lab0-cfn-04-in-progress-seoul -->
+![서울 스택 cloudwan-workshop-seoul의 Overview 패널. Status가 CREATE_IN_PROGRESS이고, Description에는 이 스택이 만드는 것(global network, core network, 세그먼트 네 개, edge 두 곳, 서울 VPC 세 개와 EC2, 온프레미스 모사 VPC와 VPN 라우터, customer gateway)이 적혀 있다. Termination protection은 Deactivated, Drift status는 NOT_CHECKED다](images/console/lab0-cfn-04-in-progress-seoul.png){ .shot }
 
 ## 2-1-c. 오레곤 스택 배포하기 { #lab0-c }
 
@@ -59,14 +59,14 @@
 2. 템플릿 파일을 내려받습니다: [cloudwan-workshop-oregon.yaml](assets/cloudwan-workshop-oregon.yaml){ download }
 3. **CloudFormation** 콘솔 → **Create stack** → **With new resources (standard)** → **Upload a template file** → **Choose file**로 파일을 고르고 **Next**를 누릅니다.
 
-    <!-- shot: lab0-cfn-05-upload-oregon -->
+    ![오레곤 리전에서 연 Create stack 1단계 Specify template 패널. 서울 때와 같은 화면이고 다른 것은 고른 파일 이름뿐이다. Upload a template file이 선택되어 있고 파일 칸에 cloudwan-workshop-oregon.yaml이 들어 있다](images/console/lab0-cfn-05-upload-oregon.png){ .shot }
 
 4. **Stack name**에 `cloudwan-workshop-oregon`을 넣습니다. **Parameters**는 그대로 두고 **Next**를 누릅니다.
 5. **Next** 를 두 번 더 눌러 **Review and create** 까지 간 다음 **Submit** 을 누릅니다. 이 스택은 IAM 리소스를 만들지 않으므로 서울 스택에서 봤던 **Capabilities** 확인란은 **나오지 않습니다**. 바로 넘어갑니다.
 
 **성공 확인**: 오레곤 리전에서 스택 상태가 **CREATE_IN_PROGRESS**입니다.
 
-<!-- shot: lab0-cfn-06-in-progress-oregon -->
+![오레곤 스택 cloudwan-workshop-oregon의 Overview 패널. Status가 CREATE_IN_PROGRESS다. 서울 스택과 같은 화면이며 스택 이름과 Description만 다르다](images/console/lab0-cfn-06-in-progress-oregon.png){ .shot }
 
 ## 2-1-d. core network가 준비됐는지 보는 법 { #lab0-d }
 
@@ -74,12 +74,12 @@
 
 1. **Network Manager** 콘솔 → **Global networks**를 엽니다. Cloud WAN은 리전에 묶이지 않아서 오른쪽 위 리전 선택에 **Global** 이 뜹니다.
 
-    <!-- shot: lab0-cnet-00-global-networks -->
+    ![Network Manager의 Global networks 목록. 스택이 만든 global network 한 개가 ID와 이름 cwan-ws-global, 상태와 함께 한 줄로 보인다. 오른쪽 위에는 Create global network 버튼이 있다](images/console/lab0-cnet-00-global-networks.png){ .shot }
 
 2. `cwan-ws-global`을 엽니다. 스택 배포 직후에는 아직 목록에 없거나 생성 중으로 보일 수 있습니다.
 3. 왼쪽 메뉴에서 **Policy versions** 를 엽니다.
 
-    <!-- shot: lab0-cnet-01-policy-versions -->
+    ![core network의 Policy versions 화면. 버전이 하나뿐이고, Policy version - 1 행의 Alias가 LIVE, LATEST, Change set state가 초록색 Execution succeeded, Description이 Initial version.이다. 이 두 값이 core network를 쓸 준비가 끝났다는 신호다](images/console/lab0-cnet-01-policy-versions.png){ .shot }
 
 4. 정책이 **LIVE** 이고 **Change set state** 가 **Execution succeeded** 이면 준비가 끝난 것입니다. 위 그림의 **Alias** 와 **Change set state** 열에서 봅니다.
 

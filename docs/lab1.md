@@ -32,20 +32,21 @@
 2. **Global networks** 에서 `cwan-ws-global` 을 엽니다.
 3. 왼쪽 메뉴에서 **Core network** 를 누릅니다. **Overview** 탭의 **Inventory** 에 **Edge locations** 가 `2`, **Segments** 가 `4` 로 보입니다.
 
-    <!-- shot: lab1-core-01-overview -->
+    ![core network의 Overview 탭 Inventory 패널. Edge locations가 2, Segments가 4로 적혀 있고, Network function groups와 Devices, Sites는 0이다. 스택이 만든 core network가 두 리전에 edge를 두고 세그먼트 네 개를 가지고 있다는 뜻이다](images/console/lab1-core-01-overview.png){ .shot }
 
     아래 **Geography** 지도에는 `ap-northeast-2` 와 `us-west-2` 가 선 하나로 이어져 있습니다. 이 선이 AWS 백본입니다. 두 리전을 잇기 위해 여러분이 만들 것은 없습니다.
 
 4. 왼쪽 메뉴에서 **Attachments** 를 누릅니다. 스택이 만든 서울 연결 3개가 보이고, **Segment** 열에 `prod`, `dev`, `shared` 가 각각 적혀 있습니다.
 
-    <!-- shot: lab1-core-02-attachments -->
+    ![core network의 Attachments 목록. 연결이 세 개뿐이고 모두 스택이 만든 서울 연결이다. 각 줄은 Name이 cwan-ws-att-prod-apne2, cwan-ws-att-dev-apne2, cwan-ws-att-shared-apne2이고, Edge location이 모두 ap-northeast-2, Resource type이 VPC, State가 초록색 Available, Segment가 각각 prod, dev, shared다](images/console/lab1-core-02-attachments.png){ .shot }
 
 5. `cwan-ws-att-prod-apne2` 행의 왼쪽 **선택 버튼**을 누릅니다. 표 아래에 상세 창이 열립니다. **Tags** 탭에서 `segment` = `prod` 태그를 확인합니다.
 
-    <!-- shot: lab1-core-03-attachment-tags -->
-
     !!! tip "이름을 클릭하지 말고 선택 버튼을 누르세요"
         **Name** 열의 글자는 링크가 아닙니다. 눌러도 아무것도 열리지 않습니다. 행 맨 왼쪽의 동그란 선택 버튼을 눌러야 상세 창이 열립니다.
+
+    !!! info "태그가 5개입니다. `segment` 는 아래쪽에 있습니다"
+        스택이 만든 연결에는 CloudFormation이 붙인 태그 세 개(`aws:cloudformation:logical-id`, `aws:cloudformation:stack-id`, `aws:cloudformation:stack-name`)가 먼저 나오고, 그다음 `Name` 과 `segment` 가 있습니다. 목록을 아래로 내려야 `segment` 가 보입니다.
 
     **Segment** 열의 값은 여러분이 고른 것이 아닙니다. 방금 본 `segment` 태그를 보고 core network policy가 정한 것입니다. 태그로 세그먼트가 정해지는 규칙은 [2-2-d](#lab1-d)에서 직접 붙여 보며 확인합니다.
 
@@ -72,7 +73,7 @@ EC2에는 인터넷 주소가 없습니다. 그래서 스택이 만든 EC2 Insta
         이름이 비슷한 선택지가 둘 있습니다. **Public subnet access** 묶음의 **EC2 Instance Connect** 는 인스턴스에 퍼블릭 IP가 있을 때 쓰는 것이라 이 실습의 EC2에는 통하지 않습니다. 고를 것은 **Private subnet access** 묶음의 **EC2 Instance Connect Endpoint** 입니다.
 3. **Connect**를 누르면 터미널이 열립니다.
 
-<!-- shot: lab1-eic-01-connect -->
+![EC2의 Connect to Linux instance 화면. 위쪽에 대상 인스턴스 정보(인스턴스 ID와 이름, 상태, VPC, 서브넷, 보안 그룹)가 있고, In web browser 탭의 Choose how to connect에 네 가지 선택지가 있다. Public subnet access의 EC2 Instance Connect, Private subnet access의 EC2 Instance Connect Endpoint, Maximum security의 SSM Session Manager, Troubleshoot의 EC2 Serial Console이다. 이 실습에서 고를 것은 두 번째다](images/console/lab1-eic-01-connect.png){ .shot }
 
 !!! tip "브라우저 탭을 두 개 열어 두세요"
     이 실습은 EC2 터미널과 Network Manager 콘솔을 번갈아 씁니다. VPC 콘솔과 Network Manager는 새 탭에 따로 열어 두면 터미널을 닫지 않고 오갈 수 있습니다.
@@ -156,7 +157,7 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
     |---|---|
     | Name | `cwan-ws-att-prod-usw2` |
     | Attachment type | **VPC** (기본값) |
-    | Edge location | `us-west-2` |
+    | Edge location | **US West (Oregon)** — 목록에는 리전 코드가 아니라 리전 이름으로 나옵니다 |
     | VPC | 오레곤 스택 **Outputs**의 `ProdVpcId` (`cwan-ws-prod-vpc`) |
     | Subnets | 오레곤 스택 **Outputs**의 `ProdCwanSubnetAId`, `ProdCwanSubnetBId` 두 개 (`cwan-ws-prod-cwan-az1`, `cwan-ws-prod-cwan-az2`) |
 
@@ -176,9 +177,9 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
 
 6. 만들기 버튼을 누릅니다.
 
-<!-- shot: lab1-attach-01-create -->
-<!-- shot: lab1-attach-02-subnets -->
-<!-- shot: lab1-attach-03-tags -->
+![Create attachment 화면의 Attachment settings 패널. Name - optional 칸에 cwan-ws-att-prod-usw2가 입력되어 있고, Attachment type 드롭다운은 VPC, Edge location 드롭다운은 United States (Oregon)으로 되어 있다. core network를 고르는 칸은 없다](images/console/lab1-attach-01-create.png){ .shot }
+![Create attachment 화면의 VPC attachment 패널. Appliance mode support와 IPv6 support는 꺼져 있고 DNS support와 Security Group Referencing support는 켜져 있다. VPC ID 드롭다운에 cwan-ws-prod-vpc가 선택되어 있고, 그 아래 Subnet IDs 표에 가용 영역마다 한 줄씩 us-west-2b는 cwan-ws-prod-cwan-az2, us-west-2a는 cwan-ws-prod-cwan-az1이 선택되어 있다. 표 위 설명에 가용 영역당 서브넷 하나만 고를 수 있지만 그 영역의 모든 서브넷이 Global network로 트래픽을 보낼 수 있다고 적혀 있다](images/console/lab1-attach-02-subnets.png){ .shot }
+![Create attachment 화면의 Tags 패널. Key 칸에 segment, Value 칸에 prod가 입력된 줄 하나가 있고 옆에 Remove tag 버튼, 아래에 Add tag 버튼이 있다](images/console/lab1-attach-03-tags.png){ .shot }
 
 **Subnet IDs** 는 가용 영역(Availability Zone)마다 한 줄씩 나오고, 콘솔이 각 줄에 서브넷 하나를 미리 채워 줍니다. 값이 `cwan-ws-prod-cwan-az1`, `cwan-ws-prod-cwan-az2` 인지 확인하세요. 앱 서브넷이 아니라 attachment 전용 서브넷(`/28`)입니다. Cloud WAN이 이 서브넷에 네트워크 인터페이스를 만들어 VPC와 core network를 잇습니다.
 
@@ -198,9 +199,7 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
 
 `tag-exists` 조건은 `segment` 태그가 있는지 봅니다. 있으면 그 태그의 값(`prod`)과 이름이 같은 세그먼트에 연결을 배정합니다. 그래서 태그 값을 `prod`로 넣었는지가 중요합니다. 대소문자도 같아야 합니다.
 
-attachment 상태가 `Available`이 되면 상세 화면에서 **Segment**가 `prod`인지 확인합니다.
-
-<!-- shot: lab1-attach-04-available -->
+attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행의 **Segment** 열이 `prod` 인지 확인합니다. [2-2-a](#lab1-a)에서 서울 연결 세 개를 봤던 그 목록이고, 이제 `cwan-ws-att-prod-usw2` 가 **Edge location** `us-west-2` 로 한 줄 늘어 있습니다.
 
 **성공 확인**: attachment 상태가 `Available`이고 **Segment**가 `prod`입니다. 직접 고르지 않았는데 `prod`에 들어갔습니다.
 
@@ -223,9 +222,9 @@ attachment 상태가 `Available`이 되면 상세 화면에서 **Segment**가 `p
 
 5. **Save changes**를 누릅니다.
 
-<!-- shot: lab1-route-01-outputs -->
-<!-- shot: lab1-route-02-edit -->
-<!-- shot: lab1-route-03-saved -->
+![오레곤 스택 cloudwan-workshop-oregon의 Outputs 탭. Key와 Value 쌍이 줄지어 있고 ProdVpcId, ProdCwanSubnetAId, ProdCwanSubnetBId, ProdAppRouteTableId처럼 이 실습에서 쓰는 값들이 들어 있다](images/console/lab1-route-01-outputs.png){ .shot }
+![오레곤 앱 서브넷 라우트 테이블의 Edit routes 화면. 제목이 Edit routes: rtb-… / cwan-ws-prod-app이다. 첫 줄은 원래 있던 10.11.1.0/24가 Target local, Status Active로 있고, 그 아래 Add route로 추가한 두 줄이 Destination 10.0.0.0/8과 172.16.0.0/12, Target 종류는 모두 Core Network로 되어 있다. 새로 추가한 줄의 Status는 아직 비어 있고, 화면 아래에 Cancel, Preview, Save changes 버튼이 있다](images/console/lab1-route-02-edit.png){ .shot }
+![저장이 끝난 라우트 테이블의 Routes 탭. 경로 세 개가 모두 Status Active다. 10.0.0.0/8과 172.16.0.0/12는 Target이 arn:aws:networkmanager로 시작하는 core network이고 Route Origin이 CreateRoute, 10.11.1.0/24는 Target이 local이고 Route Origin이 CreateRouteTable이다](images/console/lab1-route-03-saved.png){ .shot }
 
 `10.0.0.0/8`은 서울의 `10.x` 대역 전체를, `172.16.0.0/12`는 온프레미스 대역(`172.16.1.0/24`)을 덮습니다. 온프레미스는 실습 2-3에서 연결합니다. 지금 미리 넣어 두면 2-3에서 오레곤 쪽을 다시 고칠 일이 없습니다.
 
@@ -267,7 +266,7 @@ rtt min/avg/max/mdev = 115.539/116.838/121.962/2.561 ms
 3. **Route Filter** 에서 **Segment** 를 `prod`, **Edge location** 을 `ap-northeast-2` 로 고르고 **Search routes** 를 누릅니다.
 4. **CIDR** 에 `10.11.1.0/24` 가 보이는지 확인합니다.
 
-<!-- shot: lab1-routes-01-segment-table -->
+![core network의 Routes 탭. 위쪽 Route Filter에서 Segment를 prod, Edge location을 ap-northeast-2로 고르고 Search routes를 누른 결과가 아래 Routes 표에 세 줄로 나온다. 10.10.1.0/24와 10.30.1.0/24는 Destinations가 attachment ID와 그 VPC ID이고, 10.11.1.0/24는 Destinations가 prod | us-west-2로 다른 리전의 세그먼트를 가리킨다. 세 줄 모두 Route type이 PROPAGATED, Route state가 ACTIVE다](images/console/lab1-routes-01-segment-table.png){ .shot }
 
 표에 경로 세 개가 보입니다.
 

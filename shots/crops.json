@@ -215,23 +215,11 @@
   1432,
   724
  ],
- "images/console/lab1-attach-04-available.png": [
-  310,
-  107,
-  1431,
-  504
- ],
  "images/console/extraC-02-route-table-dev.png": [
   309,
   207,
   1432,
   686
- ],
- "images/console/lab2-attach-02-available.png": [
-  310,
-  107,
-  1440,
-  504
  ],
  "images/console/extraC-03-prod-oregon-route.png": [
   309,
@@ -249,12 +237,6 @@
   0,
   0,
   1440,
-  900
- ],
- "images/console/lab1-core-03-attachment-tags.png": [
-  310,
-  569,
-  1431,
   900
  ]
 }

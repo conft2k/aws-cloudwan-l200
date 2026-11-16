@@ -58,7 +58,7 @@
     |---|---|
     | Name | `cwan-ws-att-onprem-apne2` |
     | Attachment type | **VPN** |
-    | Edge location | `ap-northeast-2` |
+    | Edge location | **Asia Pacific (Seoul)** — 목록에는 리전 코드가 아니라 리전 이름으로 나옵니다 |
     | VPN ID | 2-3-a에서 만든 VPN 연결(`vpn-…`) |
 
     !!! info "종류 이름은 **VPN** 입니다"
@@ -77,8 +77,6 @@
 attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 attachment를 배정합니다. 그래서 이 태그 하나로 VPN이 `onprem` 세그먼트에 들어갑니다.
 
 **성공 확인**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. 상태가 바뀌기까지 걸리는 시간은 사전 테스트에서 측정합니다.
-
-<!-- shot: lab2-attach-02-available -->
 
 ## 2-3-c. 온프레미스 라우터에 터널 설정하기 { #lab2-c }
 
