@@ -134,8 +134,8 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
 
 그림 1의 ③과 ④입니다. 오레곤 prod VPC를 core network에 연결합니다. 오레곤 스택은 VPC와 EC2만 만들었고 attachment는 만들지 않았습니다.
 
-!!! warning "attachment 생성에 걸리는 시간"
-    attachment가 `Available`이 되기까지 걸리는 시간은 사전 테스트에서 측정합니다. 생성하는 동안 다음 소절의 준비를 합니다.
+!!! warning "attachment 생성에 4분쯤 걸립니다"
+    사전 테스트에서 **4분 15초** 걸렸습니다. 상태가 `Creating` → `Pending network update` → `Available` 순으로 바뀝니다. 기다리는 동안 다음 소절([2-2-e](#lab1-e))의 라우트 작업을 먼저 해 두면 시간을 벌 수 있습니다. 라우트는 attachment가 `Available` 이 아니어도 넣을 수 있습니다.
 
 1. 콘솔 오른쪽 위에서 리전을 **US West (Oregon)** 으로 바꿉니다.
 2. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 를 엽니다. Cloud WAN은 리전에 묶이지 않으므로 이 화면은 서울에서 보던 것과 같습니다. 리전을 바꾼 것은 **VPC와 서브넷 목록**을 오레곤 것으로 보기 위해서입니다.
@@ -231,9 +231,22 @@ attachment 상태가 `Available`이 되면 상세 화면에서 **Segment**가 `p
 ping -c 5 10.11.1.10
 ```
 
-<!-- shot: lab1-ping-03-seoul-to-oregon -->
-
 **결과**: 응답이 옵니다.
+
+```text
+PING 10.11.1.10 (10.11.1.10) 56(84) bytes of data.
+64 bytes from 10.11.1.10: icmp_seq=1 ttl=125 time=122 ms
+64 bytes from 10.11.1.10: icmp_seq=2 ttl=125 time=116 ms
+64 bytes from 10.11.1.10: icmp_seq=3 ttl=125 time=116 ms
+64 bytes from 10.11.1.10: icmp_seq=4 ttl=125 time=116 ms
+64 bytes from 10.11.1.10: icmp_seq=5 ttl=125 time=116 ms
+
+--- 10.11.1.10 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4006ms
+rtt min/avg/max/mdev = 115.539/116.838/121.962/2.561 ms
+```
+
+왕복이 **약 116밀리초**입니다. 같은 리전 안이었던 [2-2-c](#lab1-c)의 1밀리초와 비교해 보세요. 서울과 오레곤 사이의 물리적 거리가 그대로 나타납니다. 대역폭이 아니라 거리가 정하는 값이라 Cloud WAN이든 다른 방법이든 비슷합니다.
 
 서울과 오레곤 edge 사이의 연결, 그리고 경로를 서로 알려 주는 일은 참가자가 설정하지 않았습니다. 두 리전의 `prod` 연결이 같은 세그먼트에 있으면 Cloud WAN이 edge 사이를 이어 경로를 전파합니다. 정책에 서울과 오레곤 edge를 모두 적어 두었기 때문입니다. 참가자가 한 일은 attachment에 태그를 붙인 것과 VPC 라우트 2개를 넣은 것뿐입니다.
 

@@ -628,6 +628,15 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 - **IAM 확인란은 반드시 나온다.** **Review and create** 맨 아래 **Capabilities** 에 `The following resource(s) require capabilities: [AWS::IAM::Role]` 과 함께 확인란이 하나 나오고, 선택하지 않으면 `Please acknowledge all checkboxes before proceeding.` 로 막힌다. 2-1-b 6단계의 "보이면 선택합니다" 를 단정형으로 고쳤다.
 - **스택 생성 마법사는 4단계다.** Step 1 Create stack, Step 2 Specify stack details, Step 3 Configure stack options, Step 4 Review and create. 파라미터는 기본값 그대로 두면 된다.
 
+### 15-6. 자동화 백로그 (문서 문제가 아니라 도구 문제)
+
+리허설을 멈추지 않으려고 CLI로 돌려 넘긴 것들이다. 화면 자체는 문서 설명과 맞았다.
+
+| 자리 | 무엇이 막혔나 | 대신 한 일 |
+|---|---|---|
+| `lab1-route-02-edit` | **Edit routes** 에서 **Target** 종류로 **Core Network** 까지는 골랐는데, 그다음 core network를 고르는 드롭다운을 찾지 못했다(`core network choices: 0`). 문서의 2단계 설명은 화면과 맞다 | `aws ec2 create-route --core-network-arn` 으로 경로 2개를 넣었다. 결과 화면(`lab1-route-03-saved`)은 찍었다 |
+| `lab1-core-03-attachment-tags` | 연결 행에 링크가 없고 신규 계정에서는 상세 창이 열리지 않는다. **Actions** 메뉴에 **Edit** 가 있어 거기서 태그를 보는 것으로 보이지만 확인하지 못했다 | 2-2-a 5단계에서 그 지시를 빼고 **Segment** 열로 설명했다 |
+
 ### 15-5. 캡처 뒤에 남는 일: 자리를 이미지로 바꾸기
 
 지금 페이지들의 스크린샷 자리는 `<!-- shot: 이름 -->` 주석이라 **사이트에 아무 그림도 보이지 않는다.** 캡처가 끝나면 주석을 실제 이미지로 바꿔야 한다.

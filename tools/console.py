@@ -393,6 +393,27 @@ def main() -> int:
                     min(vw["width"], max(b["x"] + b["width"] for b in boxes) + margin),
                     min(vw["height"], max(b["y"] + b["height"] for b in boxes) + margin))
 
+        def panel(*headings, frame=None):
+            """A clip box for the named panel(s), tables included.
+
+            A table panel's container measures as its header strip, so cropping
+            to the heading alone drops the rows - which are the point. Take in
+            any table that starts at or below the panel's top.
+            """
+            f = frame if frame is not None else app()
+            parts = [card(h, f) for h in headings]
+            parts = [c for c in parts if c is not None]
+            if not parts:
+                return None
+            top = min((b["y"] for b in (c.bounding_box() for c in parts) if b),
+                      default=None)
+            tbl = f.locator("table")
+            for i in range(tbl.count()):
+                bb = tbl.nth(i).bounding_box()
+                if bb and (top is None or bb["y"] >= top - 8):
+                    parts.append(tbl.nth(i))
+            return span(*parts)
+
         def resize_column(header: str, width: int, frame=None):
             """Widen one column of a console table by dragging its resize handle.
 
@@ -511,7 +532,7 @@ def main() -> int:
             exec(script, {"page": page, "use": use, "app": app, "goto": goto, "close_tours": close_tours, "shot": shot, "mask": mask,
                           "collapse_nav": collapse_nav, "expand_nav": expand_nav, "select_row": select_row,
                           "table_columns": table_columns, "resize_column": resize_column,
-                          "card": card, "span": span, "REGION": REGION, "ROOT": ROOT, "re": re})
+                          "card": card, "span": span, "panel": panel, "REGION": REGION, "ROOT": ROOT, "re": re})
         finally:
             STATE.parent.mkdir(parents=True, exist_ok=True)
             ctx.storage_state(path=str(STATE))

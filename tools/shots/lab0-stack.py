@@ -48,7 +48,7 @@ print("status seen:", [s for s in ("CREATE_IN_PROGRESS", "CREATE_COMPLETE",
                                    "ROLLBACK", "CREATE_FAILED") if s in txt])
 
 for h in ("Overview", "Stack info", STACK, "Events"):
-    c = card(h, f)
+    c = panel(h, frame=f)
     if c is not None:
         shot(NAME, clip=c)
         print(f"shot cropped to {h!r}")

@@ -12,6 +12,9 @@ If the form resists, the routes can be made with `aws ec2 create-route
 import os
 
 RTB = os.environ.get("CWAN_RTB", "")
+# edit = walk the Edit routes form and save; view = only shoot the result, for
+# when the routes are already there.
+PHASE = os.environ.get("CWAN_PHASE", "edit")
 STACK = os.environ.get("CWAN_STACK", "cloudwan-workshop-oregon")
 DESTS = ["10.0.0.0/8", "172.16.0.0/12"]
 WAIT = 6000
@@ -35,7 +38,7 @@ def cshot(name, *headings):
     f = app()
     print(f"   headings for {name}: {heads(f)}")
     for h in headings:
-        c = card(h, f)
+        c = panel(h, frame=f)
         if c is not None:
             shot(name, clip=c)
             return True
@@ -73,7 +76,7 @@ if rl.count():
 f = app()
 print("tabs:", [x.strip() for x in f.get_by_role("tab").all_inner_texts() if x.strip()])
 
-eb = f.get_by_role("button", name="Edit routes", exact=True)
+eb = f.get_by_role("button", name="Edit routes", exact=True) if PHASE == "edit" else f.locator("nothing")
 if not eb.count():
     eb = f.get_by_role("link", name="Edit routes", exact=True)
 print("Edit routes buttons:", eb.count())
@@ -82,7 +85,10 @@ if eb.count():
     page.wait_for_timeout(WAIT)
 
 f = app()
-print("EDIT FORM headings:", heads(f))
+if PHASE != "edit":
+    DESTS = []
+else:
+    print("EDIT FORM headings:", heads(f))
 for i, dest in enumerate(DESTS):
     g = app()
     add = g.get_by_role("button", name="Add route", exact=True)
@@ -129,10 +135,11 @@ for i, dest in enumerate(DESTS):
         print("!! no target selector;",
               [x.strip()[:24] for x in g.locator("button").all_inner_texts() if x.strip()][:18])
 
-cshot("lab1-route-02-edit", "Edit routes", "Routes")
-print("BEFORE SAVE:", body(app())[:600].replace("\n", " | "))
+if PHASE == "edit":
+    cshot("lab1-route-02-edit", "Edit routes", "Routes")
+    print("BEFORE SAVE:", body(app())[:600].replace("\n", " | "))
 
-sv = app().get_by_role("button", name="Save changes", exact=True)
+sv = app().get_by_role("button", name="Save changes", exact=True) if PHASE == "edit" else app().locator("nothing")
 print("Save changes buttons:", sv.count())
 if sv.count():
     sv.last.click()

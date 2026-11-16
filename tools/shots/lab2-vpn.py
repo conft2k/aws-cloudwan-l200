@@ -45,7 +45,7 @@ def cshot(name, *headings):
     f = app()
     print(f"   headings for {name}: {heads(f)}")
     for h in headings:
-        c = card(h, f)
+        c = panel(h, frame=f)
         if c is not None:
             shot(name, clip=c)
             return True
