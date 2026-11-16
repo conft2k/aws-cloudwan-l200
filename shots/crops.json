@@ -190,5 +190,53 @@
   169,
   1431,
   480
+ ],
+ "images/console/extraA-02-oregon-dev-route.png": [
+  309,
+  207,
+  1432,
+  686
+ ],
+ "images/console/lab2-router-01-connect.png": [
+  8,
+  90,
+  1432,
+  892
+ ],
+ "images/console/lab2-vm-01-connect.png": [
+  8,
+  90,
+  1432,
+  900
+ ],
+ "images/console/extraC-01-route-table-prod-seoul.png": [
+  309,
+  207,
+  1432,
+  724
+ ],
+ "images/console/lab1-attach-04-available.png": [
+  310,
+  107,
+  1431,
+  504
+ ],
+ "images/console/extraC-02-route-table-dev.png": [
+  309,
+  207,
+  1432,
+  686
+ ],
+ "images/console/lab2-attach-02-available.png": [
+  310,
+  107,
+  1440,
+  504
+ ],
+ "images/console/extraC-03-prod-oregon-route.png": [
+  309,
+  207,
+  1432,
+  724
  ]
 }

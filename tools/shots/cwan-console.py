@@ -309,6 +309,17 @@ elif STAGE == "routes-onprem":
     routes("onprem", "lab2-routes-01-onprem-segment", "10.30.1.0/24")
     routes("shared", "lab2-routes-02-shared-segment", "172.16.1.0/24")
 
+elif STAGE == "attachments":
+    # Just the list, for the steps whose success check is "it says Available
+    # and the segment is the one the tag asked for".
+    f = open_core_network()
+    f = nav("Attachments", must="cwan-ws-att")
+    table_columns(hide=NOISE + ["Attachment ID"])
+    resize_column("Name", 300)
+    resize_column("State", 240)
+    take(app(), os.environ["CWAN_ATT_SHOT"],
+         os.environ.get("CWAN_ATT_MUST") or None, crop="Attachments")
+
 elif STAGE == "routes-one":
     # One segment / edge pair, named by the environment, for the pages that read
     # a particular route table: 3-1-d, 3-3-a, 3-3-b, 3-3-c.

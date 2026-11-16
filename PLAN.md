@@ -637,6 +637,21 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 - **IAM 확인란은 반드시 나온다.** **Review and create** 맨 아래 **Capabilities** 에 `The following resource(s) require capabilities: [AWS::IAM::Role]` 과 함께 확인란이 하나 나오고, 선택하지 않으면 `Please acknowledge all checkboxes before proceeding.` 로 막힌다. 2-1-b 6단계의 "보이면 선택합니다" 를 단정형으로 고쳤다.
 - **스택 생성 마법사는 4단계다.** Step 1 Create stack, Step 2 Specify stack details, Step 3 Configure stack options, Step 4 Review and create. 파라미터는 기본값 그대로 두면 된다.
 
+### 15-7. 리허설이 찾아낸 문서 오류 (실제 화면으로 확인)
+
+참가자가 그대로 따라 하면 **막히는** 것부터 적는다.
+
+| 쪽 | 문서가 적고 있던 것 | 실제 |
+|---|---|---|
+| 2-3-c | `show ip bgp neighbors 169.254.21.1 advertised-routes` | 터널 내부 주소는 VPN 연결마다 AWS가 배정한다. 이번 리허설은 `169.254.203.157`, `169.254.241.109` 였다. 주소를 묻지 않는 명령으로 바꿨다 |
+| 2-3-b | Attachment type = **Site-to-Site VPN** | **VPN**. 선택지는 VPN / VPC / Connect / Transit gateway route table / Direct Connect Gateway |
+| 2-3-c | "**EC2 Instance Connect** 탭에서 **Connection Type** 을…" | 그런 탭도 그런 칸도 없다. 화면은 **Connect to Linux instance**, 탭은 **In web browser** / **In SSH client** |
+| 2-4-a | "현재 정책을 편집하고 새 버전을 만듭니다" | 편집기는 **Visual editor** 로 열린다. **Choose policy view mode** 에서 **JSON** 으로 바꿔야 JSON을 붙여 넣을 수 있다 |
+| 2-2-d | 입력 표에 **Core network** 행 | 그런 칸이 없다. 이미 core network 안에서 만들고 있다 |
+| 3-1-d | 승인과 라우트 순서를 적지 않음 | **승인 전에는 VPC에 core network 라우트를 넣을 수 없다**(`InvalidCoreNetworkArn.NotFound`). 승인이 필요 없는 연결은 `Creating` 중에도 된다 |
+
+그 밖의 정정: **Attachments** 와 **Policy versions** 는 탭이 아니라 왼쪽 메뉴, **Segments** 탭은 없음(개수는 **Overview** 의 **Inventory**), Network Manager는 리전 선택이 **Global**, 마법사 마지막 버튼은 **Submit**, 경로 표의 열은 **Route type** / **Route state** 에 조회 버튼은 **Search routes**, VPN 터널 표는 **Tunnel details** 탭 안의 **Tunnel state**, attachment 이름은 태그가 아니라 폼의 **Name** 칸, 서브넷은 **VPC** 를 고른 뒤 AZ마다 한 줄씩 나타남.
+
 ### 15-6. 자동화 백로그 (문서 문제가 아니라 도구 문제)
 
 리허설을 멈추지 않으려고 CLI로 돌려 넘긴 것들이다. 화면 자체는 문서 설명과 맞았다.

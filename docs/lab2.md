@@ -100,7 +100,25 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
 스크립트는 `aws ec2 describe-vpn-connections`로 터널 정보(AWS 쪽 주소 2개, 사전 공유 키, BGP 주소)를 받아 IPsec 터널 2개와 BGP 세션 2개를 설정하고, 온프레미스 LAN `172.16.1.0/24`를 광고합니다. 다시 실행해도 됩니다.
 
-<!-- shot: lab2-router-02-setup -->
+사전 테스트에서는 스크립트가 끝나는 시점에 이미 터널과 BGP가 올라와 있었습니다. 마지막 몇 줄이 이렇게 나옵니다.
+
+```text
+Neighbor        V         AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd
+169.254.203.157 4      64512         4         2        0    0    0 00:00:01            0
+169.254.241.109 4      64512         5         2        0    0    0 00:00:01            1
+
+Total number of neighbors 2
+
+IPv4 unicast VRF default:
+B>* 10.30.1.0/24 [20/100] via 169.254.241.109, vti2, weight 1, 00:00:00
+
+Next:
+  swanctl --list-sas                  the two IPsec tunnels
+  vtysh -c 'show bgp summary'         the two BGP sessions
+  vtysh -c 'show ip route bgp'        the routes Cloud WAN sends you
+```
+
+스크립트가 다음에 확인할 명령까지 알려 줍니다. 실패하면 `FAILED at:` 줄이 나옵니다.
 
 4. 설정이 끝나면 아래 확인 명령을 **VPN 라우터**에서 실행합니다.
 
