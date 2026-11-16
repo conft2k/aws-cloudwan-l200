@@ -23,6 +23,16 @@ from playwright.sync_api import sync_playwright
 PROFILE = os.environ.get("AWS_PROFILE", "sandbox")
 REGION = os.environ.get("AWS_REGION", "ap-northeast-2")
 STATE = Path(os.environ.get("CONSOLE_STATE", Path.home() / ".cache/cwan-console-state.json"))
+
+
+def _viewport():
+    """Window size. Widen it ($CONSOLE_VIEWPORT=1920x1080) when a console table
+    truncates the column the page needs to show, such as an attachment name."""
+    v = os.environ.get("CONSOLE_VIEWPORT", "1440x900").lower().split("x")
+    return int(v[0]), int(v[1])
+
+
+VIEWPORT = _viewport()
 ROOT = Path(__file__).resolve().parent.parent
 SHOTS = ROOT / "docs/images/console"
 FAKE = "111122223333"
@@ -60,14 +70,24 @@ def signin_url() -> str:
     return f"https://signin.aws.amazon.com/federation?{q}"
 
 
+def resolve_account() -> str:
+    """Account ID for masking. $CWAN_ACCOUNT wins, so a run can reuse a live
+    browser session (in $CONSOLE_STATE) after the profile's credentials expire."""
+    env = os.environ.get("CWAN_ACCOUNT", "").strip()
+    if env:
+        return env
+    return boto3.Session(profile_name=PROFILE).client("sts").get_caller_identity()["Account"]
+
+
 def main() -> int:
     script = Path(sys.argv[1]).read_text()
-    account = boto3.Session(profile_name=PROFILE).client("sts").get_caller_identity()["Account"]
+    account = resolve_account()
     dashed = f"{account[:4]}-{account[4:8]}-{account[8:]}"
     SHOTS.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        ctx_args = {"viewport": {"width": 1440, "height": 900}, "locale": "en-US",
+        vw, vh = VIEWPORT
+        ctx_args = {"viewport": {"width": vw, "height": vh}, "locale": "en-US",
                     "device_scale_factor": 1}
         if STATE.exists():
             ctx_args["storage_state"] = str(STATE)
@@ -94,8 +114,38 @@ def main() -> int:
             P().wait_for_load_state("load", timeout=60000)
             P().wait_for_timeout(4000)  # the console keeps polling; never networkidle
             close_tours()
+            expand_nav()
+
+        def expand_nav():
+            """Unfold the service's left navigation.
+
+            A folded nav is remembered in storage_state, so a later run finds no
+            nav links at all and every nav() click times out. Call it before
+            navigating; collapse_nav() is for the moment of the screenshot only.
+            """
+            for sel in ('button[aria-label="Open side navigation"]',
+                        '[aria-label="Open side navigation"]'):
+                try:
+                    b = P().locator(sel)
+                    if b.count() and b.first.is_visible():
+                        b.first.click(timeout=3000)
+                        P().wait_for_timeout(1200)
+                        return True
+                except Exception:
+                    pass
+            return False
 
         def close_tours():
+            # the cookie consent banner covers the bottom of the window
+            for sel in ('button[aria-label="Accept all cookies"]',
+                        "#awsccc-cb-btn-accept"):
+                try:
+                    b = P().locator(sel)
+                    if b.count() and b.first.is_visible():
+                        b.first.click(timeout=3000)
+                        P().wait_for_timeout(500)
+                except Exception:
+                    pass
             # first-visit console tours ("Service menu" etc.) and info banners
             for _ in range(6):
                 t = P().locator('[data-testid^="awsc-nav-services-tooltip"] button, [data-testid*="tooltip-confirm"]')
@@ -184,6 +234,92 @@ def main() -> int:
               if any(x in all_text() for x in secrets):
                     raise RuntimeError("secret still visible on the page; screenshot refused")
 
+        def collapse_nav():
+            """Fold the service's left navigation away. A console table steals the
+            space, so a truncated column ("cwan-ws-a...") becomes readable."""
+            for sel in ('button[aria-label="Close side navigation"]',
+                        '[aria-label="Close side navigation"]'):
+                try:
+                    b = P().locator(sel)
+                    if b.count() and b.first.is_visible():
+                        b.first.click(timeout=3000)
+                        P().wait_for_timeout(1200)
+                        return True
+                except Exception:
+                    pass
+            return False
+
+        def table_columns(hide=(), wrap=None, page_size=None, frame=None):
+            """Trim a console table through its Preferences (gear) dialog.
+
+            Console tables show every column and truncate the useful ones
+            ("cwan-ws-a..."). Hiding the columns a page does not need beats
+            widening the window. Names are as the dialog lists them, e.g.
+            "Account ID", "Network function groups", "NAT gateway support".
+            """
+            f = frame if frame is not None else app()
+            # name="Preferences" also matches "Customize cookie preferences",
+            # so address the gear by its exact aria-label
+            gear = f.locator('button[aria-label="Preferences"]')
+            if not gear.count():
+                gear = f.get_by_role("button", name="Preferences", exact=True)
+            if not gear.count():
+                print("!! table_columns: no Preferences button")
+                return False
+            gear.last.click()
+            P().wait_for_timeout(2500)
+            f = app()
+            # the cookie-consent modal also has role=dialog, so match on content
+            dlg = f.get_by_role("dialog").filter(has_text="Select visible columns")
+            if not dlg.count():
+                print("!! table_columns: preferences dialog did not open")
+                return False
+            dlg = dlg.last
+            for name in hide:
+                cb = dlg.get_by_role("checkbox", name=name, exact=True)
+                if not cb.count():
+                    print(f"!! table_columns: no column {name!r}")
+                    continue
+                try:
+                    if cb.first.is_checked():
+                        cb.first.evaluate("e => e.click()")  # the input is visually hidden
+                        P().wait_for_timeout(250)
+                except Exception as e:
+                    print(f"!! table_columns: {name!r}: {e}")
+            if wrap is not None:
+                cb = dlg.get_by_role("checkbox", name="Wrap lines", exact=True)
+                if cb.count() and cb.first.is_checked() != wrap:
+                    cb.first.evaluate("e => e.click()")
+            if page_size:
+                r = dlg.get_by_role("radio", name=re.compile(rf"^{page_size}\b"))
+                if r.count():
+                    r.first.evaluate("e => e.click()")
+            dlg.get_by_role("button", name="Confirm", exact=True).first.click()
+            P().wait_for_timeout(3000)
+            return True
+
+        def select_row(name: str, frame=None):
+            """Tick a Cloudscape table row by its visible label.
+
+            The control is an <input type=checkbox> even where the table is
+            single-select and the console paints a radio; its aria-label is the
+            row's first column. The input is visually hidden, so click() reports
+            "element is not visible" - click the <label> that wraps it instead.
+            """
+            f = frame if frame is not None else app()
+            lab = f.locator(f'label[aria-label="{name}"]')
+            if not lab.count():
+                print(f"!! select_row: no row labelled {name!r}")
+                return False
+            lab.first.click(timeout=10000)
+            P().wait_for_timeout(1500)
+            try:
+                ok = f.locator(f'input[aria-label="{name}"]').first.is_checked()
+            except Exception:
+                ok = False
+            print(f"select_row({name!r}) -> {ok}")
+            return ok
+
         def shot(name: str, locator=None, clip=None, margin: int = 16):
             """Full-window original to shots/raw, cropped (clip locator or box) to docs/images."""
             mask()
@@ -229,7 +365,9 @@ def main() -> int:
             page.goto(signin_url(), wait_until="domcontentloaded")
             page.wait_for_url(re.compile(r".*console\.aws\.amazon\.com.*"), timeout=60000)
         try:
-            exec(script, {"page": page, "use": use, "app": app, "goto": goto, "close_tours": close_tours, "shot": shot, "mask": mask, "REGION": REGION, "re": re})
+            exec(script, {"page": page, "use": use, "app": app, "goto": goto, "close_tours": close_tours, "shot": shot, "mask": mask,
+                          "collapse_nav": collapse_nav, "expand_nav": expand_nav, "select_row": select_row,
+                          "table_columns": table_columns, "REGION": REGION, "re": re})
         finally:
             STATE.parent.mkdir(parents=True, exist_ok=True)
             ctx.storage_state(path=str(STATE))
