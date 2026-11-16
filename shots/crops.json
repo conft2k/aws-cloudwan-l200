@@ -172,5 +172,23 @@
   176,
   1432,
   519
+ ],
+ "images/console/extraA-b1-pending-acceptance.png": [
+  310,
+  107,
+  1440,
+  504
+ ],
+ "images/console/extraA-04-isolate-change-set.png": [
+  310,
+  107,
+  1431,
+  346
+ ],
+ "images/console/extraA-04b-isolate-executing.png": [
+  310,
+  169,
+  1431,
+  480
  ]
 }

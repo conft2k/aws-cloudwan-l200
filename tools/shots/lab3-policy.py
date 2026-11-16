@@ -105,7 +105,9 @@ if PHASE == "editor":
                 break
 
 elif PHASE == "changeset":
-    cshot("lab3-policy-02-versions", "Policy versions")
+    if os.environ.get("CWAN_VERSIONS_SHOT", "lab3-policy-02-versions"):
+        cshot(os.environ.get("CWAN_VERSIONS_SHOT", "lab3-policy-02-versions"),
+              "Policy versions")
     if not PV:
         raise SystemExit("set $CWAN_PV to the new version")
     if select_row(f"Policy version - {PV}", app()):
@@ -117,7 +119,8 @@ elif PHASE == "changeset":
             g = app()
             print("CHANGE SET headings:", heads(g))
             print("CHANGE SET body:", body(g)[:1200].replace("\n", " | "))
-            cshot("lab3-policy-03-changeset", "Change set", "Changes", "Policy changes")
+            cshot(os.environ.get("CWAN_CHANGESET_SHOT", "lab3-policy-03-changeset"),
+                  f"Policy version - {PV} change sets", "Change set", "Changes")
             ex = g.get_by_role("button", name=re.compile(r"^(Apply change set|Execute)"))
             print("execute buttons:", ex.count())
             if ex.count():
@@ -128,7 +131,8 @@ elif PHASE == "changeset":
                 if cb.count():
                     cb.last.click()
                 page.wait_for_timeout(8000)
-                cshot("lab3-policy-04-executing", "Change set", "Policy versions", "Changes")
+                cshot(os.environ.get("CWAN_EXECUTING_SHOT", "lab3-policy-04-executing"),
+                      f"Policy version - {PV} change sets", "Policy versions", "Changes")
                 print("AFTER EXECUTE:", body(app())[:600].replace("\n", " | "))
 
 elif PHASE == "live":

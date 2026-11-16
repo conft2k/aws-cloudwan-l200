@@ -178,7 +178,7 @@ def open_core_network():
     return nav("Core network", must="Edge locations")
 
 
-def routes(segment, name, must=None):
+def routes(segment, name, must=None, edge="ap-northeast-2"):
     """Fill the Routes tab filter and shoot the table.
 
     Re-read the frame between the two dropdowns: choosing a segment re-renders
@@ -188,7 +188,7 @@ def routes(segment, name, must=None):
                 also=("prod", "dev", "shared", "onprem")):
         return False
     page.wait_for_timeout(3000)
-    if not pick(app(), "Select edge location", "ap-northeast-2",
+    if not pick(app(), "Select edge location", edge,
                 also=("ap-northeast-2", "us-west-2")):
         return False
     f = app()
@@ -308,6 +308,16 @@ elif STAGE == "routes-onprem":
     f = tab(f, "Routes")
     routes("onprem", "lab2-routes-01-onprem-segment", "10.30.1.0/24")
     routes("shared", "lab2-routes-02-shared-segment", "172.16.1.0/24")
+
+elif STAGE == "routes-one":
+    # One segment / edge pair, named by the environment, for the pages that read
+    # a particular route table: 3-1-d, 3-3-a, 3-3-b, 3-3-c.
+    f = open_core_network()
+    f = tab(f, "Routes")
+    routes(os.environ.get("CWAN_SEG", "dev"),
+           os.environ["CWAN_ROUTE_SHOT"],
+           os.environ.get("CWAN_ROUTE_MUST") or None,
+           edge=os.environ.get("CWAN_EDGE_LOC", "ap-northeast-2"))
 
 elif STAGE == "policy":
     f = open_core_network()

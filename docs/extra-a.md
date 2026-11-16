@@ -40,17 +40,18 @@
 
 승인이 필요한 연결은 만들면 **Network Manager** 콘솔의 core network 화면에서 승인 대기 상태로 보입니다. 승인 흐름은 다음과 같습니다.
 
-1. **Network Manager** → **Core network** → **Attachments**로 갑니다.
-2. 승인 대기 상태인 연결을 고릅니다.
-3. 연결이 어느 세그먼트로 가려는지 확인하고 승인합니다.
-4. 상태가 **Available**로 바뀌고 해당 세그먼트의 경로 테이블에 경로가 들어옵니다.
+1. **Network Manager** → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** → **Attachments** 로 갑니다.
+2. **State** 가 **Pending attachment acceptance** 인 연결의 행을 선택합니다.
+3. **Segment** 열에서 그 연결이 어느 세그먼트로 가려는지 확인합니다. 승인 전에도 세그먼트는 이미 정해져 있습니다. attachment policy가 태그를 보고 배정한 결과이고, 승인은 그것을 실제로 붙일지만 정합니다.
+4. **Actions** → **Accept** 를 누릅니다. 같은 메뉴에 **Reject** 도 있습니다.
+5. 상태가 **Creating** → **Pending network update** → **Available** 순으로 바뀝니다.
 
 <!-- shot: extraA-b1-pending-acceptance -->
 
 <!-- shot: extraA-b2-accept-attachment -->
 
-!!! info "화면 이름은 사전 테스트에서 확인합니다"
-    승인 대기 상태의 표시 이름과 승인 버튼의 위치는 사전 테스트에서 확인한 뒤 이 절에 적습니다. 위 순서는 흐름만 설명합니다.
+!!! warning "승인하기 전에는 VPC 라우트를 넣을 수 없습니다"
+    사전 테스트에서 확인한 것입니다. 승인 대기 중인 연결의 VPC에서 core network로 가는 경로를 만들려고 하면 `InvalidCoreNetworkArn.NotFound` 로 거부됩니다. VPC가 아직 core network에 붙지 않은 것으로 취급되기 때문입니다. **승인을 먼저 하고 경로를 넣으세요.** 승인이 필요 없는 연결은 `Creating` 중에도 경로를 넣을 수 있습니다.
 
 연결을 승인하지 않고 두면 그 연결은 세그먼트에 들어가지 못하므로 통신하지 않습니다. 승인하지 않을 연결은 **거절**하거나 삭제합니다.
 
@@ -109,7 +110,22 @@
 ping -c 3 10.21.1.10
 ```
 
-<!-- shot: extraA-03-ping-dev-to-dev-ok -->
+사전 테스트에서 나온 출력입니다.
+
+```text
+PING 10.21.1.10 (10.21.1.10) 56(84) bytes of data.
+64 bytes from 10.21.1.10: icmp_seq=1 ttl=125 time=127 ms
+64 bytes from 10.21.1.10: icmp_seq=2 ttl=125 time=121 ms
+64 bytes from 10.21.1.10: icmp_seq=3 ttl=125 time=121 ms
+64 bytes from 10.21.1.10: icmp_seq=4 ttl=125 time=121 ms
+64 bytes from 10.21.1.10: icmp_seq=5 ttl=125 time=121 ms
+
+--- 10.21.1.10 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4007ms
+rtt min/avg/max/mdev = 120.849/122.037/126.761/2.361 ms
+```
+
+왕복 약 121밀리초로 [2-2-f](lab1.md#lab1-f)의 prod 쪽 리전 간 통신과 같습니다. 같은 백본을 쓰기 때문입니다.
 
 **결과**: 응답이 옵니다. 두 연결이 같은 `dev` 세그먼트에 있고, 세그먼트의 경로는 리전을 넘어 전파되기 때문입니다.
 
@@ -135,7 +151,20 @@ ping -c 3 10.21.1.10
     ping -c 3 10.30.1.10
     ```
 
-<!-- shot: extraA-05-ping-after-isolate -->
+사전 테스트에서 나온 출력입니다.
+
+```text
+$ ping -c 4 10.21.1.10            # 오레곤 dev, 같은 세그먼트
+4 packets transmitted, 0 received, 100% packet loss, time 3109ms
+
+$ ping -c 4 10.30.1.10            # shared, 다른 세그먼트에서 share로 받은 경로
+4 packets transmitted, 4 received, 0% packet loss, time 3004ms
+rtt min/avg/max/mdev = 1.050/1.801/4.012/1.276 ms
+```
+
+**같은 세그먼트 안은 막히고, share로 받은 경로는 그대로입니다.** 3-1-c에서 설명한 "남는 경로" 두 가지 중 share 쪽이 이것입니다.
+
+`isolate-attachments` 를 켠 change set은 변경이 **2건** 뿐이었습니다. `SEGMENTS_CONFIGURATION` `MODIFY` 하나와, dev attachment의 `ATTACHMENT_ROUTE_PROPAGATION` `REMOVE` 하나입니다. [2-4-b](lab3.md#lab3-b)의 share 추가가 7건이었던 것과 비교해 보세요.
 
 **결과(실패가 맞습니다)**
 
@@ -159,6 +188,20 @@ ping -c 3 10.21.1.10
     ping -c 3 10.21.1.10
     ```
 
-<!-- shot: extraA-06-ping-after-revert -->
+사전 테스트에서 나온 출력입니다.
+
+```text
+PING 10.21.1.10 (10.21.1.10) 56(84) bytes of data.
+64 bytes from 10.21.1.10: icmp_seq=1 ttl=125 time=117 ms
+64 bytes from 10.21.1.10: icmp_seq=2 ttl=125 time=115 ms
+64 bytes from 10.21.1.10: icmp_seq=3 ttl=125 time=115 ms
+64 bytes from 10.21.1.10: icmp_seq=4 ttl=125 time=115 ms
+
+--- 10.21.1.10 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3004ms
+rtt min/avg/max/mdev = 114.517/115.148/116.981/1.057 ms
+```
+
+되돌린 뒤 통신이 돌아옵니다. 정책 버전을 하나 더 만들어 옵션을 끈 것이고, 이전 버전으로 **Restore** 하는 방법도 있습니다.
 
 **성공 확인**: 오레곤 dev로 다시 응답이 옵니다. 오레곤 dev attachment는 [3-4](extra-d.md)에서 지웁니다.
