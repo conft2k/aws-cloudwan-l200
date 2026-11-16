@@ -46,7 +46,7 @@
 !!! info "정적 라우팅은 쓸 수 없습니다"
     Cloud WAN의 VPN attachment는 BGP만 지원하고 정적 라우팅은 지원하지 않습니다. 그래서 **Routing options**를 **Dynamic (requires BGP)** 로 고릅니다. ([Cloud WAN VPN attachment 만들기](https://docs.aws.amazon.com/vpn/latest/s2svpn/create-cwan-vpn-attachment.html))
 
-**성공 확인**: 목록에서 방금 만든 VPN 연결의 **State**가 **Available**입니다. 이 연결의 ID(`vpn-…`)를 메모해 둡니다. 2-3-c에서 씁니다.
+**결과**: 목록에서 방금 만든 VPN 연결의 **State**가 **Available**입니다. 이 연결의 ID(`vpn-…`)를 메모해 둡니다. 2-3-c에서 씁니다.
 
 ## 2-3-b. Cloud WAN에 VPN 연결 붙이기 { #lab2-b }
 
@@ -78,7 +78,7 @@ attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 at
 
 ![core network의 Attachments 목록. 맨 윗줄에 cwan-ws-att-onprem-apne2가 생겨 모두 다섯 줄이다. 이 줄만 Resource type이 VPN이고 나머지 네 줄은 VPC다. 새 줄은 Edge location이 ap-northeast-2, State가 초록색 Available, Segment가 onprem이다. 아래 네 줄은 2-2-d까지 만든 연결로 cwan-ws-att-prod-apne2가 prod, cwan-ws-att-prod-usw2가 us-west-2의 prod, cwan-ws-att-dev-apne2가 dev, cwan-ws-att-shared-apne2가 shared다](images/console/lab2-attach-02-available.png){ .shot }
 
-**성공 확인**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. 사전 테스트에서 `Available` 이 되기까지 **3분 30초** 걸렸습니다.
+**결과**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. 사전 테스트에서 `Available` 이 되기까지 **3분 30초** 걸렸습니다.
 
 ## 2-3-c. 온프레미스 라우터에 터널 설정하기 { #lab2-c }
 
@@ -178,7 +178,7 @@ BGP routing table entry for 172.16.1.0/24, version 1
 !!! info "`show bgp summary` 에는 `Established` 라는 글자가 나오지 않습니다"
     올라온 이웃은 **Up/Down** 열이 시간(`00:00:21`)으로 세어지는 것으로 알 수 있습니다. 아직이면 그 자리에 `Active` 나 `Connect` 가 나옵니다. 맨 오른쪽 **State/PfxRcd** 는 그 이웃에게서 **받은 경로 수**입니다. 위 출력은 터널이 올라온 지 21초밖에 안 된 시점이라 한 줄은 `1`, 다른 줄은 `0` 입니다. 두 값이 달라도 괜찮습니다. 봐야 할 것은 이 숫자가 아니라 다음 명령(`show ip route bgp`)에 `10.30.1.0/24` 가 보이는지입니다.
 
-**성공 확인**
+**결과**
 
 - **Tunnel state** 표의 두 줄이 모두 **Status** `Up`, **Provisioning status** `Available` 이고, **Details** 에 `1 BGP ROUTES` 가 적혀 있습니다. **Inside IPv4 CIDR** 의 `169.254.x.x/30` 두 개가 BGP 이웃 주소가 나온 자리입니다.
 - `swanctl --list-sas` 에 `aws-tunnel1` 과 `aws-tunnel2` 가 모두 `ESTABLISHED` 이고 `INSTALLED` 입니다.
@@ -207,7 +207,7 @@ BGP routing table entry for 172.16.1.0/24, version 1
 
     ![같은 Routes 탭에서 Segment만 shared로 바꿔 조회한 결과. 경로가 다섯 개다. 서울 prod 10.10.1.0/24, shared 10.30.1.0/24, dev 10.20.1.0/24가 각자 attachment와 VPC를 가리키고, 172.16.1.0/24는 VPN attachment를, 10.11.1.0/24는 shared | us-west-2를 가리킨다. 다섯 줄 모두 Route type이 PROPAGATED, Route state가 ACTIVE다. 온프레미스가 광고한 172.16.1.0/24가 여기까지 전파된 것이 보인다](images/console/lab2-routes-02-shared-segment.png){ .shot }
 
-**성공 확인**
+**결과**
 
 - `onprem` 세그먼트에 경로가 **2개뿐**입니다. `10.30.1.0/24`(shared)와 자기 대역 `172.16.1.0/24` 입니다. `10.10.1.0/24`(prod)는 **없습니다**.
 - `172.16.1.0/24` 의 **Destinations** 는 `attachment-… | vpn | vpn-…` 입니다. VPN attachment를 통해 들어온 경로라는 뜻이고, 괄호 안은 AWS 쪽 터널 주소입니다.
@@ -245,7 +245,7 @@ rtt min/avg/max/mdev = 2.644/3.940/8.917/2.488 ms
 
 왕복이 약 2.7밀리초입니다. [2-2-c](lab1.md#lab1-c)의 VPC 사이 통신이 약 1밀리초였으니, IPsec 터널을 거치면서 1.7밀리초쯤 더 걸린 셈입니다. 첫 패킷만 8.9밀리초로 느린 것은 경로를 처음 쓰면서 생기는 지연입니다.
 
-**성공 확인**: `0% packet loss` 이고 5개 모두 응답합니다.
+**결과**: `0% packet loss` 이고 5개 모두 응답합니다.
 
 성공하는 이유는 정책에서 `shared` 세그먼트가 `onprem` 세그먼트에도 share하기 때문입니다. 온프레미스는 `shared`의 경로를 받고, `shared`도 온프레미스의 `172.16.1.0/24`를 받습니다.
 

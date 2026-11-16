@@ -7,7 +7,7 @@
 
 리전마다 Transit Gateway를 하나씩 두고 peering으로 잇는 방식은 리전이 두세 개일 때는 잘 동작합니다. 하지만 리전이 늘면 이어야 할 peering이 빠르게 늘고, 운영·개발·공유 서비스 같은 환경을 나누려면 리전마다 라우팅 테이블과 연결(attachment)의 연결 관계를 손으로 맞춰야 합니다. 리전 하나를 더 열 때마다 같은 일을 처음부터 다시 하게 됩니다.
 
-AWS Cloud WAN은 이 일을 **core network policy** 하나로 바꿉니다. 리전은 core network edge 하나를 더하는 것으로 늘어나고, 환경은 세그먼트(segment)로 나눕니다. 어디와 통신할 수 있는지는 정책에 적힌 대로 정해지고, 라우팅 테이블을 리전마다 고칠 일이 없습니다. **여기 나온 core network policy, core network edge, 세그먼트가 각각 무엇인지는 바로 아래 [1-1-a. 왜 Cloud WAN인가요](#why)에서 풉니다.**
+AWS Cloud WAN은 이 일을 **정책 문서 하나**(core network policy)로 바꿉니다. 리전은 **그 리전의 접속 지점**(core network edge) 하나를 더하는 것으로 늘어나고, 환경은 **세그먼트**(segment)라는 격리 구역으로 나눕니다. 어디와 통신할 수 있는지는 이 문서에 적힌 대로 정해지고, 라우팅 테이블을 리전마다 고칠 일이 없습니다. 셋을 자세히 푸는 것은 바로 아래 [1-1-a. 왜 Cloud WAN인가요](#why)입니다.
 
 | 항목 | 내용 |
 |---|---|

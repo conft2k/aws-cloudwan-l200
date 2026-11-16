@@ -13,7 +13,7 @@
     !!! tip "기본값이 **Browser default** 라서 이 단계가 필요합니다"
         브라우저가 한국어면 콘솔도 한국어로 나옵니다. 콘솔 **아래쪽 푸터에는 언어를 바꾸는 항목이 없습니다**(사전 테스트에서 확인했습니다). 더 많은 설정은 같은 창의 **See all user settings** 에 있습니다.
 
-**성공 확인**: 콘솔 오른쪽 위에 **Asia Pacific (Seoul)** 이 보이고, 메뉴가 영어로 나옵니다.
+**결과**: 콘솔 오른쪽 위에 **Asia Pacific (Seoul)** 이 보이고, 메뉴가 영어로 나옵니다.
 
 ## 2-1-b. 서울 스택 배포하기 { #lab0-b }
 
@@ -47,7 +47,7 @@
 
 7. **Submit** 을 누릅니다.
 
-**성공 확인**: 스택 상태가 **CREATE_IN_PROGRESS**입니다. 사전 테스트에서 **CREATE_COMPLETE** 까지 **약 21분** 걸렸습니다. 다만 다음 실습으로 넘어가는 기준은 스택 완료가 아니라 core network 준비입니다. core network 는 **15분 14초** 만에 쓸 수 있었고, 스택은 EC2 부트스트랩과 VPC attachment 생성 때문에 그 뒤로도 **CREATE_IN_PROGRESS** 였습니다. 보는 법은 [2-1-d](#lab0-d)에 있습니다.
+**결과**: 스택 상태가 **CREATE_IN_PROGRESS**입니다. 사전 테스트에서 **CREATE_COMPLETE** 까지 **약 21분** 걸렸습니다. 다만 다음 실습으로 넘어가는 기준은 스택 완료가 아니라 core network 준비입니다. core network 는 **15분 14초** 만에 쓸 수 있었고, 스택은 EC2 부트스트랩과 VPC attachment 생성 때문에 그 뒤로도 **CREATE_IN_PROGRESS** 였습니다. 보는 법은 [2-1-d](#lab0-d)에 있습니다.
 
 ![서울 스택 cloudwan-workshop-seoul의 Overview 패널. Status가 CREATE_IN_PROGRESS이고, Description에는 이 스택이 만드는 것(global network, core network, 세그먼트 네 개, edge 두 곳, 서울 VPC 세 개와 EC2, 온프레미스 모사 VPC와 VPN 라우터, customer gateway)이 적혀 있다. Termination protection은 Deactivated, Drift status는 NOT_CHECKED다](images/console/lab0-cfn-04-in-progress-seoul.png){ .shot }
 
@@ -67,7 +67,7 @@
 4. **Stack name**에 `cloudwan-workshop-oregon`을 넣습니다. **Parameters**는 그대로 두고 **Next**를 누릅니다.
 5. **Next** 를 두 번 더 눌러 **Review and create** 까지 간 다음 **Submit** 을 누릅니다. 이 스택은 IAM 리소스를 만들지 않으므로 서울 스택에서 봤던 **Capabilities** 확인란은 **나오지 않습니다**. 바로 넘어갑니다.
 
-**성공 확인**: 오레곤 리전에서 스택 상태가 **CREATE_IN_PROGRESS**입니다.
+**결과**: 오레곤 리전에서 스택 상태가 **CREATE_IN_PROGRESS**입니다.
 
 ![오레곤 스택 cloudwan-workshop-oregon의 Overview 패널. Status가 CREATE_IN_PROGRESS다. 서울 스택과 같은 화면이며 스택 이름과 Description만 다르다](images/console/lab0-cfn-06-in-progress-oregon.png){ .shot }
 
@@ -88,7 +88,7 @@
 
 아직 준비되지 않았으면 여기서 기다리지 않습니다. 이론 강의를 들으러 갑니다.
 
-**성공 확인**: **Policy versions** 가 어디에 있는지 알고, 어떤 값이 보이면 준비 완료인지 말할 수 있습니다.
+**결과**: **Policy versions** 가 어디에 있는지 알고, 어떤 값이 보이면 준비 완료인지 말할 수 있습니다.
 
 ## 2-1-e. 정리 { #lab0-e }
 

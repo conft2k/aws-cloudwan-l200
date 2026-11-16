@@ -41,7 +41,7 @@ STATE: PENDING cannot be modified by ACTION: DELETE
 2. **Available** 이 된 뒤 CloudFormation 콘솔에서 그 스택을 **Delete** 합니다. 이번에는 지워집니다.
 3. 삭제가 끝나면 [2-1-b](lab0.md#lab0-b) 부터 다시 합니다.
 
-**성공 확인**: 스택이 목록에서 사라지고, **Network Manager** 에 core network와 global network가 남아 있지 않습니다.
+**결과**: 스택이 목록에서 사라지고, **Network Manager** 에 core network와 global network가 남아 있지 않습니다.
 
 ## 4-3-c. 그래도 안 되면 { #ask }
 

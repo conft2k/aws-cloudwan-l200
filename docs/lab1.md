@@ -58,7 +58,7 @@
 !!! info "`onprem` 세그먼트는 아직 비어 있습니다"
     **Segments** 는 `4` 인데 **Attachments** 에는 `prod`, `dev`, `shared` 세 가지만 보입니다. 네 번째인 `onprem` 은 정책에 정의만 되어 있고 아직 붙은 연결이 없습니다. [2-3](lab2.md)에서 Site-to-Site VPN 연결을 붙이면 채워집니다.
 
-**성공 확인**: **Inventory** 에 **Edge locations** `2`, **Segments** `4` 가 보이고, **Attachments** 에 서울 연결 3개가 `Available` 로 있으며, 각 연결의 `segment` 태그 값이 **Segment** 열의 값과 같습니다.
+**결과**: **Inventory** 에 **Edge locations** `2`, **Segments** `4` 가 보이고, **Attachments** 에 서울 연결 3개가 `Available` 로 있으며, 각 연결의 `segment` 태그 값이 **Segment** 열의 값과 같습니다.
 
 ## 2-2-b. 운영에서 개발로 통신해 보기 { #lab1-b }
 
@@ -97,7 +97,7 @@ PING 10.20.1.10 (10.20.1.10) 56(84) bytes of data.
 
 보안 그룹은 열려 있습니다. dev EC2의 보안 그룹은 `10.0.0.0/8`에서 오는 ICMP(Internet Control Message Protocol, ping에 쓰는 프로토콜)를 허용하고, prod EC2의 주소 `10.10.1.10`도 이 대역 안에 있습니다. 그런데도 막힌 이유는 보안 그룹이 아니라 **Cloud WAN 세그먼트**입니다. `prod`와 `dev`는 서로 다른 세그먼트이고, 둘 사이에 `share`가 없으면 서로의 경로를 배우지 못합니다. 막으려고 따로 설정한 것이 없다는 점이 이 워크숍의 핵심입니다.
 
-**성공 확인**: `100% packet loss`가 나옵니다. 응답이 오면 안 됩니다.
+**결과**: 보안 그룹이 열려 있는데도 `100% packet loss` 입니다. 막은 것은 보안 그룹이 아니라 세그먼트입니다.
 
 ## 2-2-c. 운영에서 공유 서비스로 통신해 보기 { #lab1-c }
 
@@ -109,7 +109,7 @@ PING 10.20.1.10 (10.20.1.10) 56(84) bytes of data.
 ping -c 5 10.30.1.10
 ```
 
-**결과**: 응답이 옵니다.
+응답이 옵니다.
 
 ```text
 PING 10.30.1.10 (10.30.1.10) 56(84) bytes of data.
@@ -142,7 +142,7 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
 - **공유는 양방향입니다.** `shared` 의 경로가 세 세그먼트로 가고, 세 세그먼트의 경로도 `shared` 로 옵니다. 한쪽으로만 가면 요청은 가도 응답이 돌아오지 못합니다.
 - **받는 쪽끼리는 공유되지 않습니다.** `prod` 와 `dev` 는 둘 다 `shared` 와 통신하지만, 서로는 여전히 닿지 않습니다. 공유 서비스 패턴은 바로 이 비대칭을 이용합니다. 공유 서비스는 모두가 쓰되, 운영과 개발은 서로 막혀 있는 것입니다.
 
-**성공 확인**: `0% packet loss`이고 5개 모두 응답합니다.
+**결과**: `0% packet loss`이고 5개 모두 응답합니다.
 
 ## 2-2-d. 오레곤 연결 만들기 { #lab1-d }
 
@@ -206,7 +206,7 @@ attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행
 
 ![core network의 Attachments 목록. 2-2-a에서 본 서울 연결 세 개에 cwan-ws-att-prod-usw2 한 줄이 늘어 모두 네 줄이다. 새로 생긴 줄은 Edge location이 us-west-2이고 Resource type이 VPC, State가 초록색 Available, Segment가 prod다. 나머지 세 줄은 Edge location이 ap-northeast-2이고 Segment가 각각 prod, dev, shared다. 이 그림에서는 Edge location과 Resource type 열이 좁아 값이 줄임표로 잘려 있다](images/console/lab1-attach-04-available.png){ .shot }
 
-**성공 확인**: attachment 상태가 `Available`이고 **Segment**가 `prod`입니다. 직접 고르지 않았는데 `prod`에 들어갔습니다.
+**결과**: attachment 상태가 `Available`이고 **Segment**가 `prod`입니다. 직접 고르지 않았는데 `prod`에 들어갔습니다.
 
 ## 2-2-e. 오레곤 VPC에 경로 넣기 { #lab1-e }
 
@@ -237,7 +237,7 @@ attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행
 
 `10.0.0.0/8`은 서울의 `10.x` 대역 전체를, `172.16.0.0/12`는 온프레미스 대역(`172.16.1.0/24`)을 덮습니다. 온프레미스는 실습 2-3에서 연결합니다. 지금 미리 넣어 두면 2-3에서 오레곤 쪽을 다시 고칠 일이 없습니다.
 
-**성공 확인**: **Routes** 탭에 두 경로가 보이고 **Status**가 `Active`입니다.
+**결과**: **Routes** 탭에 두 경로가 보이고 **Status**가 `Active`입니다.
 
 ## 2-2-f. 리전을 넘어 통신해 보기 { #lab1-f }
 
@@ -249,7 +249,7 @@ attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행
 ping -c 5 10.11.1.10
 ```
 
-**결과**: 응답이 옵니다.
+응답이 옵니다.
 
 ```text
 PING 10.11.1.10 (10.11.1.10) 56(84) bytes of data.
@@ -289,7 +289,7 @@ rtt min/avg/max/mdev = 115.539/116.838/121.962/2.561 ms
 
 **Segment** 를 `dev` 로 바꿔 다시 조회하면 `10.11.1.0/24` 도 `10.10.1.0/24` 도 보이지 않습니다. 세그먼트마다 경로 테이블이 따로입니다.
 
-**성공 확인**: ping이 `0% packet loss`이고, `prod` 세그먼트 경로 테이블에 `10.11.1.0/24`가 보입니다.
+**결과**: ping이 `0% packet loss`이고, `prod` 세그먼트 경로 테이블에 `10.11.1.0/24`가 보입니다.
 
 ## 2-2-g. 정리 { #lab1-g }
 

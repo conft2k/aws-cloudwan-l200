@@ -74,7 +74,7 @@ core network가 **어디에 생길지**를 정하는 덩어리입니다. 여기�
 | `vpn-ecmp-support` | 아니요 | 여러 VPN 연결에 트래픽을 나눠 보내는 ECMP(Equal-Cost Multi-Path)를 켭니다. 기본값은 `true`입니다 |
 | `dns-support` | 아니요 | 연결된 VPC 사이에서 도메인 이름을 풀 수 있게 합니다. 기본값은 `true`입니다 |
 | `security-group-referencing-support` | 아니요 | 한 VPC의 보안 그룹이 다른 VPC의 보안 그룹을 참조할 수 있게 합니다. 기본값은 `false`입니다 |
-| `inside-cidr-blocks` | 아니요 | **Connect attachment** 에 줄 주소 대역입니다. 이 워크숍에서는 쓰지 않으므로 비워 두었습니다([아래](#inside-cidr)에서 설명합니다) |
+| `inside-cidr-blocks` | 아니요 | **Connect attachment**(AWS 밖의 네트워크 장비를 Cloud WAN에 잇는 연결)에 줄 주소 대역입니다. 이 워크숍에서는 쓰지 않으므로 비워 두었습니다([아래](#inside-cidr)에서 자세히) |
 
 실습 정책에서는 `asn-ranges`를 `64512-64520`으로 주고, 서울 edge에 `64512`, 오레곤 edge에 `64513`을 직접 지정했습니다. `asn`을 생략하면 범위 안에서 자동으로 배정됩니다.
 

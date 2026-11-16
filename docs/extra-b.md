@@ -25,7 +25,7 @@
 
 ![리전 네 개를 Cloud WAN과 Transit Gateway로 각각 이었을 때를 나란히 놓은 비교도. 왼쪽은 AWS Cloud WAN이다. 보라색 파선의 core network 상자 안에 회색 파선의 segment prod 상자가 있고, 그 상자가 리전 A, B, C, D 네 개를 모두 품고 있다. 세그먼트 상자에는 전역 — 리전마다 만들지 않는다고 적혀 있다. 리전 상자마다 core network edge 아이콘이 하나씩 들어 있고 리전끼리 잇는 선은 하나도 그려져 있지 않다. 아래에 리전 4개 → edge 4개, edge끼리는 자동으로 연결됩니다, 세그먼트는 정책 한 곳에만 적습니다라고 적혀 있다. 오른쪽은 Transit Gateway다. 리전 A, B, C, D 네 상자가 2×2로 놓여 있고 상자마다 Transit Gateway 아이콘과 라우팅 테이블 아이콘이 따로 하나씩 들어 있다. 네 리전은 선 여섯 개로 모든 쌍이 이어져 있다. 가로 두 개, 세로 두 개, 가운데서 교차하는 대각선 두 개이며, A와 B를 잇는 선 위에만 TGW peering 아이콘과 이름이 붙어 있다. 아래에 리전 4개 → TGW 4개, peering 6개, 라우팅 테이블은 리전마다 따로 만듭니다, peering마다 양쪽 테이블에 경로를 넣습니다라고 적혀 있다. 그림 맨 아래 띠에는 리전이 n개일 때 늘어나는 것: core network edge n개 · Transit Gateway peering n(n−1)/2개라고 적혀 있다. 왼쪽은 선이 없고 오른쪽은 선이 여섯 개라는 모양 차이가 그대로 관리 부담의 차이다](images/diagrams/extra-b-compare.png)
 
-**성공 확인**: 리전이 5개일 때 Transit Gateway peering은 10개, core network edge는 5개임을 계산할 수 있습니다.
+**결과**: 리전이 5개일 때 Transit Gateway peering은 10개, core network edge는 5개임을 계산할 수 있습니다.
 
 ## 3-2-b. 이 워크숍의 구성을 Transit Gateway로 만든다면 { #b-b }
 
@@ -39,7 +39,7 @@
 !!! info "Transit Gateway가 더 맞는 경우도 있습니다"
     리전이 하나이고 구성이 단순하면 Transit Gateway로 충분합니다. 이 표는 리전과 환경이 늘어날 때의 관리 부담을 보여 줍니다.
 
-**성공 확인**: "운영과 개발을 분리하려고 Cloud WAN에서는 따로 할 일이 없다"는 이유를 세그먼트의 기본 동작으로 설명할 수 있습니다.
+**결과**: "운영과 개발을 분리하려고 Cloud WAN에서는 따로 할 일이 없다"는 이유를 세그먼트의 기본 동작으로 설명할 수 있습니다.
 
 ## 3-2-c. 요금 비교 { #b-c }
 
@@ -53,10 +53,10 @@ Cloud WAN 요금은 이 워크숍에서 쓰는 값으로 정리합니다. 최신
 
 Transit Gateway는 연결(attachment) 시간당 요금과 데이터 처리 요금 외에 **Transit Gateway peering에도 별도 시간당 요금**이 있습니다. 비교할 때는 리전 수에 따라 peering 개수가 늘어난다는 점과, Cloud WAN에서는 core network edge 요금이 리전마다 붙는다는 점을 함께 봅니다. 실제 금액은 구성에 따라 달라지므로 AWS 요금 계산기로 따로 계산하세요.
 
-**성공 확인**: 두 서비스에서 리전이 늘 때 늘어나는 요금 항목이 각각 무엇인지 말할 수 있습니다(Cloud WAN은 edge, Transit Gateway는 peering).
+**결과**: 두 서비스에서 리전이 늘 때 늘어나는 요금 항목이 각각 무엇인지 말할 수 있습니다(Cloud WAN은 edge, Transit Gateway는 peering).
 
 ## 3-2-d. 이미 Transit Gateway가 있다면 { #b-d }
 
 기존 Transit Gateway를 쓰고 있다면 한 번에 옮기지 않아도 됩니다. Transit Gateway **route table attachment**를 쓰면 Transit Gateway와 Cloud WAN을 함께 두고 단계적으로 옮길 수 있습니다. 자세한 절차는 이 페이지에서 다루지 않습니다. [4-4 참고 문서](references.md)를 보세요.
 
-**성공 확인**: 공존 단계를 거쳐 옮길 수 있다는 것과, 자세한 내용을 찾을 곳을 알고 있습니다.
+**결과**: 공존 단계를 거쳐 옮길 수 있다는 것과, 자세한 내용을 찾을 곳을 알고 있습니다.

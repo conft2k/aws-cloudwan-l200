@@ -62,7 +62,7 @@
 
 ![정책 편집기 화면. 제목이 Create policy이고 오른쪽 위에 Cancel과 Create policy 버튼이 있다. Details 패널의 Description 칸에 설명이 들어 있고, Choose policy view mode 패널에서 Visual editor와 JSON 중 JSON이 선택되어 있다. 그 아래 JSON 패널에 현재 정책 전체가 줄 번호가 달린 편집기에 들어 있고, version과 core-network-configuration, asn-ranges, edge-locations가 차례로 보인다](images/console/lab3-policy-01-edit.png){ .shot }
 
-**성공 확인**: 정책 버전 목록에 새 버전이 보입니다.
+**결과**: 정책 버전 목록에 새 버전이 보입니다.
 
 ![새 버전을 만든 직후의 Policy versions 목록. 두 줄이 있고 Policy version - 1은 Alias가 LIVE에 Change set state가 초록색 Execution succeeded, Policy version - 2는 Alias가 LATEST에 Change set state가 파란색 Ready to execute다. 아직 적용되지 않았다는 뜻이다](images/console/lab3-policy-02-versions.png){ .shot }
 
@@ -96,7 +96,7 @@
 !!! info "**Identifier** 열은 비어 있습니다"
     목록에서는 어느 연결인지 보이지 않고 `-` 로 나옵니다. 구체적인 대상은 **New values** 의 **Details** 를 눌러야 보입니다. 목록에서 읽을 것은 **Type** 과 **Action**, 그리고 개수입니다.
 
-**성공 확인**: 변경 목록에 **Attachment route propagation** / **Add** 가 있고, 세그먼트를 지우거나(**Delete**) 만드는(**Create**) 항목은 없습니다.
+**결과**: 변경 목록에 **Attachment route propagation** / **Add** 가 있고, 세그먼트를 지우거나(**Delete**) 만드는(**Create**) 항목은 없습니다.
 
 ## 2-4-c. change set 실행하기 { #lab3-c }
 
@@ -111,7 +111,7 @@ change set을 실행해 새 버전을 적용합니다.
 ![change set을 실행한 직후의 Policy versions 목록. Policy version - 2의 Change set state가 Executing으로 바뀌었고 Alias는 아직 LATEST다. Policy version - 1이 여전히 LIVE를 달고 있다](images/console/lab3-policy-04-executing.png){ .shot }
 ![실행이 끝난 뒤의 Policy versions 목록. Policy version - 2의 Alias가 LIVE, LATEST가 되고 Change set state가 Execution succeeded다. Policy version - 1에는 Alias가 없다. 새 정책이 적용됐다는 뜻이다](images/console/lab3-policy-05-live.png){ .shot }
 
-**성공 확인**: change set 상태가 **Execution succeeded**이고, 새 정책 버전이 **LIVE**로 표시됩니다.
+**결과**: change set 상태가 **Execution succeeded**이고, 새 정책 버전이 **LIVE**로 표시됩니다.
 
 ## 2-4-d. 다시 통신해 보기 { #lab3-d }
 
@@ -141,7 +141,7 @@ $ ping -c 5 10.11.1.10            # 오레곤 prod
 rtt min/avg/max/mdev = 123.230/123.789/125.858/1.035 ms
 ```
 
-**성공 확인**: 두 ping 모두 응답이 오고 **0% packet loss**입니다. 조금 전 [2-3-f](lab2.md#lab2-f)에서 `100% packet loss` 였던 그 명령입니다. 바뀐 것은 정책 한 줄뿐입니다.
+**결과**: 두 ping 모두 응답이 오고 **0% packet loss**입니다. 조금 전 [2-3-f](lab2.md#lab2-f)에서 `100% packet loss` 였던 그 명령입니다. 바뀐 것은 정책 한 줄뿐입니다.
 
 오레곤은 따로 설정하지 않았는데도 함께 열렸습니다. 정책이 `prod` 세그먼트 전체에 적용되기 때문이고, [2-4-b](#lab3-b)의 change set에 오레곤 prod attachment가 들어 있던 것이 그 예고였습니다. 왕복 123밀리초는 온프레미스에서 서울을 거쳐 오레곤까지 간 거리입니다.
 

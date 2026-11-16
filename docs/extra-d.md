@@ -26,7 +26,7 @@
 
 ![attachment 삭제 확인 창. 제목이 Delete attachment-…? 이고 본문에 Delete attachment-… permanently? This action cannot be undone. 이라고 적혀 있다. 버튼은 Cancel과 Delete 두 개다. 창 밖은 잘라 냈다](images/console/extraD-01-delete-attachment.png){ .shot }
 
-**성공 확인**: 연결이 목록에서 사라지거나 삭제된 상태가 됩니다. 오레곤 VPC 연결이 **하나도** 보이지 않을 때까지 기다린 뒤 다음으로 넘어갑니다.
+**결과**: 연결이 목록에서 사라지거나 삭제된 상태가 됩니다. 오레곤 VPC 연결이 **하나도** 보이지 않을 때까지 기다린 뒤 다음으로 넘어갑니다.
 
 ## 3-4-b. Site-to-Site VPN attachment 지우기 { #d-b }
 
@@ -34,7 +34,7 @@
 
 ![Site-to-Site VPN attachment를 지울 때 나오는 같은 모양의 확인 창. 제목의 attachment ID만 다르다](images/console/extraD-02-delete-vpn-attachment.png){ .shot }
 
-**성공 확인**: VPN attachment가 목록에서 사라지거나 삭제된 상태가 됩니다. 이 단계가 끝나면 core network에는 서울 VPC 연결 3개만 남습니다(스택이 만든 연결입니다).
+**결과**: VPN attachment가 목록에서 사라지거나 삭제된 상태가 됩니다. 이 단계가 끝나면 core network에는 서울 VPC 연결 3개만 남습니다(스택이 만든 연결입니다).
 
 ## 3-4-c. Site-to-Site VPN 연결 지우기 { #d-c }
 
@@ -50,7 +50,7 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 2. [2-3-a](lab2.md)에서 만든 VPN 연결을 고르고 **Actions** → **Delete VPN connection**을 누릅니다.
 3. 확인 창에서 삭제를 확정합니다.
 
-**성공 확인**: VPN 연결의 상태가 **Deleted**가 됩니다. customer gateway는 스택이 만든 것이므로 그대로 둡니다. 서울 스택을 지울 때 함께 지워집니다.
+**결과**: VPN 연결의 상태가 **Deleted**가 됩니다. customer gateway는 스택이 만든 것이므로 그대로 둡니다. 서울 스택을 지울 때 함께 지워집니다.
 
 ## 3-4-d. 오레곤 스택 지우기 { #d-d }
 
@@ -64,7 +64,7 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
     !!! info "**Express mode** 는 켜지 마세요"
         같은 창에 **Express mode - new** 라는 선택지가 있고 `Delete this stack faster.` 라고 적혀 있습니다. 리소스가 안정될 때까지 기다리지 않고 정리한다는 뜻입니다. **이 워크숍에서는 시험해 보지 않았습니다.** 기본값(꺼짐) 그대로 두세요.
 
-**성공 확인**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). 오레곤 prod VPC와 EC2도 함께 지워집니다. 사전 테스트에서 **1분 32초** 걸렸습니다.
+**결과**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). 오레곤 prod VPC와 EC2도 함께 지워집니다. 사전 테스트에서 **1분 32초** 걸렸습니다.
 
 ## 3-4-e. 서울 스택 지우기 { #d-e }
 
@@ -75,7 +75,7 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 !!! warning "이 삭제는 15분쯤 걸립니다"
     사전 테스트에서 **14분 32초** 걸렸습니다. core network를 지우는 데 시간이 걸리기 때문이고, [2-1-b](lab0.md#lab0-b)에서 core network를 만들 때 걸린 15분과 거의 같습니다. 화면을 닫아도 삭제는 계속됩니다.
 
-**성공 확인**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). core network, global network, 서울의 VPC와 EC2가 함께 지워집니다.
+**결과**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). core network, global network, 서울의 VPC와 EC2가 함께 지워집니다.
 
 ### 스택 삭제가 실패할 때 { #d-fail }
 
@@ -102,4 +102,4 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 - [ ] **Network Manager**에 `cwan-ws-global`(global network)과 core network가 없습니다
 - [ ] 서울과 오레곤의 EC2 콘솔에 실습 EC2가 없습니다
 
-**성공 확인**: 위 체크 목록이 모두 확인되었습니다.
+**결과**: 위 체크 목록이 모두 확인되었습니다.
