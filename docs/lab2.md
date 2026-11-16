@@ -32,13 +32,13 @@
     | 항목 | 값 |
     |---|---|
     | Name tag | `cwan-ws-vpn` |
-    | Target gateway type | **Not Associated** |
+    | Target gateway type | **Not associated** — 목록의 네 번째이자 마지막 항목입니다 |
     | Customer gateway | **Existing**, 스택이 만든 `cwan-ws-onprem-cgw` (ASN `65000`) |
     | Routing options | **Dynamic (requires BGP)** |
 
 4. **Create VPN connection**을 누릅니다.
 
-<!-- shot: lab2-vpn-01-create -->
+![Create VPN connection 화면의 Details 패널. Name tag - optional에 cwan-ws-vpn이 들어 있다. Target gateway type은 Virtual private gateway, Transit gateway, Site-to-Site VPN Concentrator, Not associated 네 가지 중 맨 아래 Not associated가 선택되어 있다. Customer gateway는 Existing이 선택되고 Customer gateway ID에 스택이 만든 cgw-로 시작하는 값이 들어 있다. Routing options는 Dynamic (requires BGP)가 선택되어 있고 Static은 선택되지 않았다. 그 아래 Pre-shared key storage, Tunnel bandwidth, Tunnel inside IP version은 모두 기본값이다](images/console/lab2-vpn-01-create.png){ .shot }
 
 !!! info "Target Gateway Type을 `Not Associated`로 두는 이유"
     VPN 연결은 보통 Transit Gateway나 가상 프라이빗 게이트웨이에 연결해 만듭니다. Cloud WAN에 붙일 VPN 연결은 어느 게이트웨이에도 연결하지 않은 상태로 만들고, 다음 단계(2-3-b)에서 core network에 attachment로 붙입니다.
@@ -72,7 +72,7 @@
 
 5. **Create attachment**를 누릅니다.
 
-<!-- shot: lab2-attach-01-form -->
+![Create attachment 화면의 Attachment settings 패널. Name - optional에 cwan-ws-att-onprem-apne2가 들어 있고, Attachment type 드롭다운이 VPN, Edge location 드롭다운이 Asia Pacific (Seoul)로 되어 있다. VPN 연결을 고르는 VPN ID 칸은 종류를 VPN으로 바꾼 뒤에 이 아래에 나타난다](images/console/lab2-attach-01-form.png){ .shot }
 
 attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 attachment를 배정합니다. 그래서 이 태그 하나로 VPN이 `onprem` 세그먼트에 들어갑니다.
 
@@ -88,7 +88,7 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 1. **EC2** 콘솔 → **Instances**에서 `cwan-ws-onprem-router`를 골라 **Connect**를 누릅니다.
 2. **Connect to Linux instance** 화면의 **In web browser** 탭에서 **Connect**를 누릅니다. [2-2-b](lab1.md#lab1-b)와 같은 화면입니다.
 
-<!-- shot: lab2-router-01-connect -->
+![VPN 라우터 cwan-ws-onprem-router의 Connect to Linux instance 화면. 2-2-b에서 본 것과 같은 화면이고 대상 인스턴스만 다르다. In web browser 탭의 Choose how to connect에서 Private subnet access의 EC2 Instance Connect Endpoint를 고른다](images/console/lab2-router-01-connect.png){ .shot }
 
 3. 아래 명령을 **VPN 라우터(`cwan-ws-onprem-router`)** 에서 실행합니다. `<VPN 연결 ID>`는 2-3-a에서 메모한 `vpn-…` 값입니다.
 
@@ -139,7 +139,7 @@ Next:
 
 5. 콘솔에서도 확인합니다. **VPC** 콘솔 → **Site-to-Site VPN connections** → 2-3-a에서 만든 연결 → **Tunnel details** 탭을 엽니다. 그 안의 **Tunnel state** 표를 봅니다.
 
-<!-- shot: lab2-vpn-02-tunnels -->
+![Site-to-Site VPN 연결의 Tunnel details 탭에 있는 Tunnel state 표. 두 줄이 Tunnel 1과 Tunnel 2이고, 각각 AWS 쪽 Outside IP address와 Inside IPv4 CIDR(169.254.x.x/30)을 가진다. 둘 다 Status가 초록색 Up, Provisioning status가 Available이고 Details 열에 1 BGP ROUTES라고 적혀 있다. Inside IPv4 CIDR의 두 대역이 라우터에서 본 BGP 이웃 주소가 나온 자리다](images/console/lab2-vpn-02-tunnels.png){ .shot }
 
 사전 테스트에서 나온 출력입니다.
 
@@ -193,11 +193,11 @@ BGP routing table entry for 172.16.1.0/24, version 1
 1. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 에서 **Routes** 탭을 엽니다.
 2. **Route Filter** 에서 **Segment** 를 `onprem`, **Edge location** 을 `ap-northeast-2` 로 고르고 **Search routes** 를 누릅니다.
 
-    <!-- shot: lab2-routes-01-onprem-segment -->
+    ![core network Routes 탭에서 Segment를 onprem, Edge location을 ap-northeast-2로 조회한 결과. 경로가 두 개뿐이다. 10.30.1.0/24는 Destinations가 서울 shared attachment와 그 VPC이고, 172.16.1.0/24는 Destinations가 VPN attachment와 vpn 연결 ID다. 둘 다 Route type이 PROPAGATED, Route state가 ACTIVE다. prod 대역 10.10.1.0/24는 이 표에 없다](images/console/lab2-routes-01-onprem-segment.png){ .shot }
 
 3. 같은 방법으로 **Segment** 를 `shared` 로 바꿔 다시 조회합니다.
 
-    <!-- shot: lab2-routes-02-shared-segment -->
+    ![같은 Routes 탭에서 Segment만 shared로 바꿔 조회한 결과. 경로가 다섯 개다. 서울 prod 10.10.1.0/24, shared 10.30.1.0/24, dev 10.20.1.0/24가 각자 attachment와 VPC를 가리키고, 172.16.1.0/24는 VPN attachment를, 10.11.1.0/24는 shared | us-west-2를 가리킨다. 다섯 줄 모두 Route type이 PROPAGATED, Route state가 ACTIVE다. 온프레미스가 광고한 172.16.1.0/24가 여기까지 전파된 것이 보인다](images/console/lab2-routes-02-shared-segment.png){ .shot }
 
 **성공 확인**
 
@@ -214,7 +214,7 @@ BGP routing table entry for 172.16.1.0/24, version 1
 
 1. **EC2** 콘솔 → **Instances**에서 `cwan-ws-onprem-vm`을 골라 2-3-c와 같은 방법(EC2 Instance Connect Endpoint)으로 접속합니다.
 
-<!-- shot: lab2-vm-01-connect -->
+![온프레미스 VM cwan-ws-onprem-vm의 Connect to Linux instance 화면. 라우터에 접속할 때와 같은 화면이며 대상 인스턴스만 다르다](images/console/lab2-vm-01-connect.png){ .shot }
 
 2. 아래 명령을 **온프레미스 VM(`172.16.1.10`)** 에서 실행합니다.
 

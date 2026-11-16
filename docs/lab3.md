@@ -60,11 +60,11 @@
 
 7. **Create policy** 를 누릅니다. 새 버전이 만들어지고, Cloud WAN이 현재 **LIVE** 버전과 비교해 change set을 만들기 시작합니다.
 
-<!-- shot: lab3-policy-01-edit -->
+![정책 편집기 화면. 제목이 Create policy이고 오른쪽 위에 Cancel과 Create policy 버튼이 있다. Details 패널의 Description 칸에 설명이 들어 있고, Choose policy view mode 패널에서 Visual editor와 JSON 중 JSON이 선택되어 있다. 그 아래 JSON 패널에 현재 정책 전체가 줄 번호가 달린 편집기에 들어 있고, version과 core-network-configuration, asn-ranges, edge-locations가 차례로 보인다](images/console/lab3-policy-01-edit.png){ .shot }
 
 **성공 확인**: 정책 버전 목록에 새 버전이 보입니다.
 
-<!-- shot: lab3-policy-02-versions -->
+![새 버전을 만든 직후의 Policy versions 목록. 두 줄이 있고 Policy version - 1은 Alias가 LIVE에 Change set state가 초록색 Execution succeeded, Policy version - 2는 Alias가 LATEST에 Change set state가 파란색 Ready to execute다. 아직 적용되지 않았다는 뜻이다](images/console/lab3-policy-02-versions.png){ .shot }
 
 ## 2-4-b. change set 검토하기 { #lab3-b }
 
@@ -82,7 +82,7 @@
 !!! tip "세그먼트를 추가·삭제하거나 격리 옵션을 바꿀 때"
     세그먼트를 추가·삭제하거나 격리 옵션을 바꾸면 그 세그먼트의 모든 edge에 작업이 생깁니다. 이번 변경은 share 추가입니다.
 
-<!-- shot: lab3-policy-03-changeset -->
+![Policy version - 2 change sets 화면. 제목 옆에 변경 개수 7이 적혀 있고 오른쪽 위에 Compare policy versions와 Apply change set 버튼이 있다. 표에는 Type이 Core network segment이고 Action이 Modify인 줄이 네 개, Type이 Attachment route propagation이고 Action이 Add인 줄이 세 개 있다. Identifier 열은 모두 비어 있고, 구체적인 내용은 New values의 Details 링크로 본다](images/console/lab3-policy-03-changeset.png){ .shot }
 
 `share` 한 줄을 넣었을 뿐인데 사전 테스트에서는 변경이 **7건** 나왔습니다. 무엇이 바뀌는지 읽어 보면 이렇습니다.
 
@@ -108,8 +108,8 @@ change set을 실행해 새 버전을 적용합니다.
 
 반영은 사전 테스트에서 **약 1분** 걸렸습니다. 상태가 **Executing policy** 에 머무르는 동안에는 다음 단계로 가지 말고 기다립니다.
 
-<!-- shot: lab3-policy-04-executing -->
-<!-- shot: lab3-policy-05-live -->
+![change set을 실행한 직후의 Policy versions 목록. Policy version - 2의 Change set state가 Executing으로 바뀌었고 Alias는 아직 LATEST다. Policy version - 1이 여전히 LIVE를 달고 있다](images/console/lab3-policy-04-executing.png){ .shot }
+![실행이 끝난 뒤의 Policy versions 목록. Policy version - 2의 Alias가 LIVE, LATEST가 되고 Change set state가 Execution succeeded다. Policy version - 1에는 Alias가 없다. 새 정책이 적용됐다는 뜻이다](images/console/lab3-policy-05-live.png){ .shot }
 
 **성공 확인**: change set 상태가 **Execution succeeded**이고, 새 정책 버전이 **LIVE**로 표시됩니다.
 
