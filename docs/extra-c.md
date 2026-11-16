@@ -10,7 +10,7 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 2. core network를 열고 경로(routes)를 보는 화면으로 갑니다.
 3. 세그먼트(예: `prod`)와 edge 위치(예: `ap-northeast-2`)를 고릅니다.
 
-<!-- shot: extraC-01-route-table-prod-seoul -->
+![prod 세그먼트를 서울 edge에서 조회한 경로 테이블. 경로가 네 개다. 10.10.1.0/24와 10.30.1.0/24는 Destinations가 서울 attachment와 그 VPC로 직접 적혀 있고, 172.16.1.0/24는 VPN attachment를, 10.11.1.0/24는 prod | us-west-2를 가리킨다. 같은 리전의 것은 attachment 이름으로, 다른 리전의 것은 세그먼트와 리전 이름으로 나타난다는 차이가 보인다](images/console/extraC-01-route-table-prod-seoul.png){ .shot }
 
 !!! info "화면 이름은 사전 테스트에서 확인합니다"
     경로 화면의 탭 이름과 필터 위치는 사전 테스트에서 확인한 뒤 이 절에 적습니다.
@@ -44,7 +44,7 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 2. `prod`와 `dev` 경로 테이블 양쪽에 `shared` 대역(`10.30.1.0/24`)이 있나요? 있다면 그것이 `share`의 효과입니다.
 3. [2-4](lab3.md)를 마쳤다면 `prod` 경로 테이블에 `onprem` 대역(`172.16.1.0/24`)이 있나요? 있다면 어느 연결에서 온 경로인가요?
 
-<!-- shot: extraC-02-route-table-dev -->
+![dev 세그먼트를 서울 edge에서 조회한 경로 테이블. 경로가 세 개다. 10.20.1.0/24는 서울 dev attachment, 10.30.1.0/24는 서울 shared attachment, 10.21.1.0/24는 dev | us-west-2를 가리킨다. prod 대역 10.10.1.0/24와 온프레미스 대역 172.16.1.0/24가 모두 없는 것이 prod 쪽 표와 다른 점이다](images/console/extraC-02-route-table-dev.png){ .shot }
 
 **성공 확인**: 세그먼트마다 경로 테이블에 들어 있는 대역이 다르다는 것을 표로 보였고, 그 차이가 ping 결과와 맞습니다.
 
@@ -56,7 +56,7 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 2. `10.11.1.0/24`를 찾습니다. 이 경로의 연결이 오레곤 prod VPC 연결인지 확인합니다.
 3. edge 위치를 `us-west-2`로 바꿔 같은 세그먼트의 경로 테이블을 봅니다. 이번에는 `10.10.1.0/24`가 보이는지 확인합니다.
 
-<!-- shot: extraC-03-prod-oregon-route -->
+![같은 prod 세그먼트를 이번에는 오레곤 edge에서 조회한 경로 테이블. 경로가 네 개인데 Destinations의 모양이 서울 쪽과 반대다. 오레곤에 있는 10.11.1.0/24만 attachment와 VPC로 직접 적혀 있고, 10.10.1.0/24와 10.30.1.0/24, 172.16.1.0/24는 모두 prod | ap-northeast-2로 서울 edge를 가리킨다. 다른 리전의 것은 개별 연결이 아니라 그 리전의 세그먼트를 거쳐 간다는 뜻이다](images/console/extraC-03-prod-oregon-route.png){ .shot }
 
 연결 태그 한 줄로 경로가 세그먼트에 들어왔고, 서울과 오레곤 양쪽의 같은 세그먼트 경로 테이블에 서로의 대역이 나타납니다. 정책은 바꾸지 않았습니다.
 

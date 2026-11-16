@@ -46,9 +46,9 @@
 4. **Actions** → **Accept** 를 누릅니다. 같은 메뉴에 **Reject** 도 있습니다.
 5. 상태가 **Creating** → **Pending network update** → **Available** 순으로 바뀝니다.
 
-<!-- shot: extraA-b1-pending-acceptance -->
+![core network의 Attachments 목록. 방금 만든 cwan-ws-att-dev-usw2 한 줄만 State가 주황색 경고 아이콘과 함께 Pending attachment acceptance이고, 나머지 줄은 모두 초록색 Available이다. Segment 열은 오른쪽에 있어 이 그림에서는 잘려 있다](images/console/extraA-b1-pending-acceptance.png){ .shot }
 
-<!-- shot: extraA-b2-accept-attachment -->
+![승인 대기 중인 연결의 행을 선택하고 Actions 메뉴를 연 모습. 메뉴에 Accept, Reject, Edit, Delete, Manage 1:1 NAT 다섯 항목이 있다. 승인은 Accept, 거절은 Reject다](images/console/extraA-b2-accept-attachment.png){ .shot }
 
 !!! warning "승인하기 전에는 VPC 라우트를 넣을 수 없습니다"
     사전 테스트에서 확인한 것입니다. 승인 대기 중인 연결의 VPC에서 core network로 가는 경로를 만들려고 하면 `InvalidCoreNetworkArn.NotFound` 로 거부됩니다. VPC가 아직 core network에 붙지 않은 것으로 취급되기 때문입니다. **승인을 먼저 하고 경로를 넣으세요.** 승인이 필요 없는 연결은 `Creating` 중에도 경로를 넣을 수 있습니다.
@@ -84,7 +84,7 @@
 2. 값은 오레곤 스택 `cloudwan-workshop-oregon`의 **Outputs**에서 고릅니다. VPC는 `DevVpcId`, 서브넷은 `DevCwanSubnetAId`와 `DevCwanSubnetBId` 두 개입니다. **prod VPC가 아닙니다.**
 3. **Tags**에 두 개를 넣습니다. `Name` = `cwan-ws-att-dev-usw2`, `segment` = `dev`. 오레곤 prod를 붙였을 때의 `segment` 값은 `prod`였습니다. 태그 값이 세그먼트 이름과 대소문자까지 같아야 합니다. 이름에 리전을 넣는 이유는 [2-2-d](lab1.md#lab1-d)와 같습니다 — `dev` 세그먼트에도 서울과 오레곤 연결이 둘 다 들어갑니다.
 
-<!-- shot: extraA-01-oregon-dev-attachment -->
+![오레곤 dev VPC를 붙이는 Create attachment 화면의 Attachment settings 패널. Name에 cwan-ws-att-dev-usw2, Attachment type에 VPC, Edge location에 United States (Oregon)이 들어 있다. 2-2-d에서 prod를 붙일 때와 같은 화면이고 이름과 VPC, 태그 값만 다르다](images/console/extraA-01-oregon-dev-attachment.png){ .shot }
 
 4. attachment가 `Available`이 되면 상세 화면에서 **Segment**가 `dev`인지 확인합니다. 만드는 데 걸리는 시간은 사전 테스트에서 측정합니다.
 5. 오레곤 dev 앱 서브넷의 라우트 테이블에 core network 경로를 넣습니다([2-2-e](lab1.md#lab1-e)와 같습니다). 라우트 테이블 ID는 오레곤 스택 **Outputs**의 dev용 항목에서 찾습니다.
@@ -94,7 +94,7 @@
     | `10.0.0.0/8` | core network |
     | `172.16.0.0/12` | core network |
 
-<!-- shot: extraA-02-oregon-dev-route -->
+![core network Routes 탭에서 Segment를 dev, Edge location을 ap-northeast-2로 조회한 결과. 경로가 세 개다. 10.20.1.0/24는 서울 dev attachment를, 10.30.1.0/24는 서울 shared attachment를 가리키고, 10.21.1.0/24는 dev | us-west-2로 오레곤 쪽 dev 세그먼트를 가리킨다. 셋 다 Route type이 PROPAGATED, Route state가 ACTIVE다. prod 대역은 없다](images/console/extraA-02-oregon-dev-route.png){ .shot }
 
 **성공 확인**: attachment가 `Available`이고 **Segment**가 `dev`입니다. 오레곤 dev 라우트 테이블의 경로 2개가 `Active`입니다.
 
@@ -142,7 +142,7 @@ rtt min/avg/max/mdev = 120.849/122.037/126.761/2.361 ms
 
 3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). 실행이 끝나는 데 걸리는 시간은 사전 테스트에서 측정합니다.
 
-<!-- shot: extraA-04-isolate-change-set -->
+![isolate-attachments를 켠 정책 버전의 change set 화면. 변경이 두 건뿐이고, 하나는 Type이 Segments configuration에 Action이 Modify, 다른 하나는 Type이 Attachment route propagation에 Action이 Remove다. share를 추가했던 2-4의 일곱 건과 대비된다](images/console/extraA-04-isolate-change-set.png){ .shot }
 
 4. `Execution succeeded`가 된 뒤 서울 dev EC2에서 두 곳으로 보냅니다.
 
