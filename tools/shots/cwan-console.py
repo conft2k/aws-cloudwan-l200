@@ -90,8 +90,15 @@ def nav(name, must=None, tries=3):
         if not link.count():
             page.wait_for_timeout(WAIT)
             continue
-        link.first.click()
-        page.wait_for_timeout(WAIT)
+        # The link for the page you are already on is aria-disabled, and
+        # clicking it waits for an element that never becomes enabled.
+        here = (link.first.get_attribute("aria-current") == "page"
+                or link.first.get_attribute("aria-disabled") == "true")
+        if here:
+            print(f".. {name}: already on this page")
+        else:
+            link.first.click()
+            page.wait_for_timeout(WAIT)
         f = app()
         if not must or must in body(f):
             return f
@@ -208,10 +215,17 @@ def attachments(expect):
     print("prod-apne2 rows:", row.count())
     try:
       if row.count():
-          # Click the cell that shows the name, not a fixed column index: which
-          # column sits where depends on what table_columns() has hidden.
-          cell = row.first.locator("td").filter(has_text="cwan-ws-att-prod-apne2")
-          (cell.first if cell.count() else row.first.locator("td").nth(1)).click()
+          # Prefer the row's link - the Attachment ID cell - because that opens
+          # the attachment itself. Clicking the name cell only ticks the row.
+          # (An earlier probe saw no link in the row because that run had the
+          # Attachment ID column hidden.)
+          link = row.first.get_by_role("link")
+          if link.count():
+              print("   opening via the row link:", link.first.inner_text().strip()[:30])
+              link.first.click()
+          else:
+              cell = row.first.locator("td").filter(has_text="cwan-ws-att-prod-apne2")
+              (cell.first if cell.count() else row.first.locator("td").nth(1)).click()
           page.wait_for_timeout(WAIT)
           # The detail pane opens below the table and takes a moment to appear.
           tags = None
