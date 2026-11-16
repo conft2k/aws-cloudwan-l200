@@ -120,7 +120,7 @@ ping -c 5 10.30.1.10
     attachment가 `Available`이 되기까지 걸리는 시간은 사전 테스트에서 측정합니다. 생성하는 동안 다음 소절의 준비를 합니다.
 
 1. 콘솔 오른쪽 위에서 리전을 **US West (Oregon)** 으로 바꿉니다.
-2. **Network Manager** 콘솔 → **Core networks**에서 같은 core network를 엽니다.
+2. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 를 엽니다. Cloud WAN은 리전에 묶이지 않으므로 이 화면은 서울에서 보던 것과 같습니다. 리전을 바꾼 것은 **VPC와 서브넷 목록**을 오레곤 것으로 보기 위해서입니다.
 3. 왼쪽 메뉴에서 **Attachments** 를 누르고 **Create attachment** 를 누른 뒤, 종류로 **VPC**를 고릅니다.
 4. 아래 값을 넣습니다.
 

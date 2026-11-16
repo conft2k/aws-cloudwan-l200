@@ -319,6 +319,47 @@ def main() -> int:
             P().wait_for_timeout(3000)
             return True
 
+        def card(heading: str, frame=None, exact: bool = False):
+            """The panel that holds `heading`, to pass to shot(clip=...).
+
+            A full console window is mostly chrome: the service navigation, the
+            top bar, the footer and a lot of empty space. A workshop page wants
+            the one panel its text is talking about, so crop to the Cloudscape
+            container (header, controls and body) around that heading.
+
+            Returns a locator, or None when the heading is not on the page - the
+            caller should then shoot the whole window rather than nothing.
+            """
+            f = frame if frame is not None else app()
+            h = f.get_by_role("heading", name=heading, exact=exact)
+            if not h.count():
+                print(f"!! card: no heading {heading!r}")
+                return None
+            box = h.first.locator(
+                "xpath=ancestor::div[contains(@class,'awsui_variant-default')"
+                " or contains(@class,'awsui_variant-container')][1]")
+            if not box.count():
+                print(f"!! card: {heading!r} has no container ancestor")
+                return None
+            return box.first
+
+        def span(*locators, margin: int = 16):
+            """A clip box covering several panels, for shot(clip=...).
+
+            Some steps read two panels together - the Routes tab's filter says
+            which segment the table below belongs to, so cropping to the table
+            alone drops the thing that makes it meaningful.
+            """
+            boxes = [l.bounding_box() for l in locators if l is not None]
+            boxes = [b for b in boxes if b]
+            if not boxes:
+                return None
+            vw = P().viewport_size
+            return (max(0, min(b["x"] for b in boxes) - margin),
+                    max(0, min(b["y"] for b in boxes) - margin),
+                    min(vw["width"], max(b["x"] + b["width"] for b in boxes) + margin),
+                    min(vw["height"], max(b["y"] + b["height"] for b in boxes) + margin))
+
         def resize_column(header: str, width: int, frame=None):
             """Widen one column of a console table by dragging its resize handle.
 
@@ -437,7 +478,7 @@ def main() -> int:
             exec(script, {"page": page, "use": use, "app": app, "goto": goto, "close_tours": close_tours, "shot": shot, "mask": mask,
                           "collapse_nav": collapse_nav, "expand_nav": expand_nav, "select_row": select_row,
                           "table_columns": table_columns, "resize_column": resize_column,
-                          "REGION": REGION, "ROOT": ROOT, "re": re})
+                          "card": card, "span": span, "REGION": REGION, "ROOT": ROOT, "re": re})
         finally:
             STATE.parent.mkdir(parents=True, exist_ok=True)
             ctx.storage_state(path=str(STATE))

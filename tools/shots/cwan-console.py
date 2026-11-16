@@ -41,7 +41,13 @@ def body(f):
         return ""
 
 
-def take(f, name, must=None):
+def take(f, name, must=None, crop=None):
+    """Shoot `name`, cropped to the panel(s) the workshop page talks about.
+
+    `crop` is a panel heading, or a tuple of them when a step reads two panels
+    together. Without it the whole window is kept, which is mostly navigation
+    and empty space.
+    """
     t = body(f)
     if "could not be fetched" in t or "Failed to fetch" in t:
         print(f"!! {name}: console reported a fetch error, not shooting")
@@ -50,7 +56,14 @@ def take(f, name, must=None):
         print(f"!! {name}: expected {must!r} missing, not shooting")
         print("   body:", t[:400].replace("\n", " | "))
         return False
-    shot(name)
+    clip = None
+    if crop:
+        names = (crop,) if isinstance(crop, str) else tuple(crop)
+        cards = [card(n) for n in names]
+        clip = cards[0] if len(cards) == 1 and cards[0] is not None else span(*cards)
+        if clip is None:
+            print(f"!! {name}: no panel for {names}, keeping the whole window")
+    shot(name, clip=clip)
     return True
 
 
@@ -127,7 +140,7 @@ def open_core_network():
     goto(NETWORKS)
     page.wait_for_timeout(WAIT)
     f = app()
-    take(f, "lab0-cnet-00-global-networks", "cwan-ws-global")
+    take(f, "lab0-cnet-00-global-networks", "cwan-ws-global", crop="Global networks")
     f.get_by_role("link", name=re.compile(r"^global-network-")).first.click()
     page.wait_for_timeout(WAIT)
     return nav("Core network", must="Edge locations")
@@ -154,7 +167,7 @@ def routes(segment, name, must=None):
     f = app()
     print(f"--- routes {segment} ---")
     print(body(f)[:1200].replace("\n", " | "))
-    return take(f, name, must)
+    return take(f, name, must, crop=("Route Filter", "Routes"))
 
 
 def attachments(expect):
@@ -172,7 +185,7 @@ def attachments(expect):
         row.first.locator("td").nth(1).click()
         page.wait_for_timeout(WAIT)
         f = tab(app(), "Tags", must="segment")
-        take(f, "lab1-core-03-attachment-tags", "segment")
+        take(f, "lab1-core-03-attachment-tags", "segment", crop="Tags")
     else:
         print("!! no row named cwan-ws-att-prod-apne2")
 
@@ -183,12 +196,12 @@ def attachments(expect):
     f = nav("Attachments", must="cwan-ws-att")
     table_columns(hide=NOISE + ["Attachment ID"])
     resize_column("Name", 330)
-    take(app(), "lab1-core-02-attachments", expect)
+    take(app(), "lab1-core-02-attachments", expect, crop="Attachments")
 
 
 def policy_versions(shot_name):
     f = nav("Policy versions", must="Policy version - 1")
-    take(f, shot_name, "Policy version - 1")
+    take(f, shot_name, "Policy version - 1", crop="Policy versions")
     return f
 
 
@@ -196,7 +209,7 @@ print(f"=== stage {STAGE} ===")
 
 if STAGE == "core":
     f = open_core_network()
-    take(f, "lab1-core-01-overview", "Edge locations")
+    take(f, "lab1-core-01-overview", "Edge locations", crop="Inventory")
     attachments("cwan-ws-att-shared-apne2")
     policy_versions("lab0-cnet-01-policy-versions")
 
@@ -223,7 +236,7 @@ elif STAGE == "policy":
         print("--- editor ---")
         print("tabs:", [x.inner_text().strip() for x in f.get_by_role("tab").all()])
         print(body(f)[:2000])
-        take(f, "lab3-policy-01-edit")
+        take(f, "lab3-policy-01-edit", crop="Create policy")
 
 else:
     raise SystemExit(f"unknown CWAN_STAGE {STAGE!r}")

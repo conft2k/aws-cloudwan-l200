@@ -34,6 +34,29 @@ def body(f):
         return ""
 
 
+def heads(f):
+    """Panel headings on the page. The CloudFormation console names its panels
+    differently from Network Manager, so log them and pin the crops afterwards."""
+    try:
+        return [h.strip() for h in f.get_by_role("heading").all_inner_texts() if h.strip()][:14]
+    except Exception:
+        return []
+
+
+def cshot(name, *headings):
+    """Shoot cropped to the first of `headings` that is on the page."""
+    f = app()
+    print(f"   headings for {name}: {heads(f)}")
+    for h in headings:
+        c = card(h, f)
+        if c is not None:
+            shot(name, clip=c)
+            return True
+    print(f"!! {name}: none of {headings} found, keeping the whole window")
+    shot(name)
+    return False
+
+
 def click(f, name, exact=True, wait=WAIT):
     b = f.get_by_role("button", name=name, exact=exact)
     if not b.count():
@@ -76,8 +99,8 @@ print("file inputs:", inp.count())
 inp.first.set_input_files(TEMPLATE)
 page.wait_for_timeout(WAIT)
 f = app()
-shot(SHOT_UPLOAD)
 print("uploaded; body says:", body(f)[:200].replace("\n", " | "))
+cshot(SHOT_UPLOAD, "Specify template", "Create stack", "Prepare template")
 
 click(app(), "Next")
 
@@ -93,7 +116,7 @@ else:
     print("!! stack name box not found")
 f = app()
 if SEOUL:
-    shot("lab0-cfn-02-parameters")
+    cshot("lab0-cfn-02-parameters", "Specify stack details", "Parameters", "Stack name")
 print("PARAMETERS PAGE:", body(f)[:600].replace("\n", " | "))
 
 click(app(), "Next")
@@ -120,7 +143,7 @@ print("acknowledgement boxes ticked:", checked)
 page.wait_for_timeout(1500)
 f = app()
 if SEOUL:
-    shot("lab0-cfn-03-ack")
+    cshot("lab0-cfn-03-ack", "Capabilities and transforms", "Capabilities", "Review")
 
 # --- submit -----------------------------------------------------------------
 if not click(app(), "Submit", wait=12000):
@@ -129,4 +152,4 @@ if not click(app(), "Submit", wait=12000):
 page.wait_for_timeout(10000)
 f = app()
 print("AFTER SUBMIT:", body(f)[:400].replace("\n", " | "))
-shot(SHOT_RUNNING)
+cshot(SHOT_RUNNING, "Overview", "Events", STACK)
