@@ -28,7 +28,7 @@ VPN 연결과 달리 DX gateway attachment에는 지켜야 할 조건이 여럿 
 | allowed prefixes 불가 | Transit Gateway 연결에서 쓰던 allowed prefixes(허용된 접두사) 목록을 설정할 수 없습니다. DX 가이드는 세그먼트에 있는 모든 접두사가 그 세그먼트에 연결된 DX gateway로 광고된다고 적습니다 |
 | ASN 범위 | DX gateway의 ASN(Autonomous System Number, 자율 시스템 번호)은 core network policy의 `asn-ranges` **밖**이어야 합니다 |
 | 한 세그먼트 | DX 가이드는 DX gateway가 core network의 세그먼트 하나에만 연결된다고 적습니다 |
-| transport 유형의 제약 | DX gateway attachment를 transport 유형으로 쓸 때는 Private IP VPN attachment와 Connect attachment가 지원되지 않습니다 |
+| 위에 얹을 수 없는 연결 | Private IP VPN attachment와 Connect attachment는 **다른 연결 위에 얹어** 쓰는 것인데, 그 밑에 깔린 것(**transport**)이 DX gateway attachment이면 지원되지 않습니다. 공식 문서의 문장은 "Private IP VPN and Connect attachments are not supported when a Direct Connect gateway attachment is the transport type."입니다 |
 
 !!! warning "ASN을 겹치지 않게 정하세요"
     실습 정책의 `asn-ranges`는 `64512-64520`입니다([4-1-b](concepts.md#config)). 여기에 DX gateway를 붙인다면 DX gateway의 ASN은 이 범위 밖이어야 합니다. core network edge의 ASN은 만든 뒤에 바꿀 수 없으므로, 전용선을 붙일 계획이 있다면 범위를 처음에 넉넉히 떼어 두세요.
@@ -100,7 +100,7 @@ Cloud WAN에 온프레미스나 외부 네트워크를 붙이는 방법을 모�
 
 Cloud WAN은 core network edge 한 개당 시간 요금과 연결(attachment) 한 개당 시간 요금, 그리고 데이터 전송 요금으로 나뉩니다. 연결 요금은 연결 종류와 리전에 따라 다릅니다.
 
-!!! warning "DX gateway attachment의 시간당 요금은 공식 가격 페이지에서 확인하세요"
-    숫자가 필요하면 [AWS Cloud WAN 요금](https://aws.amazon.com/cloud-wan/pricing/) 페이지를 보세요. 전용선 자체의 포트 요금과 데이터 전송 요금은 Direct Connect 쪽에서 따로 청구됩니다.
+!!! warning "DX gateway attachment의 단가는 공식 가격 페이지에서 확인하세요"
+    공식 문서는 DX gateway attachment에도 **다른 연결과 똑같이 시간당 요금과 GB당 요금이 붙는다**고만 적고 단가는 가격 페이지로 넘깁니다. 숫자가 필요하면 [AWS Cloud WAN 요금](https://aws.amazon.com/cloud-wan/pricing/)을 보세요. 전용선 자체의 포트 요금과 데이터 전송 요금은 Direct Connect 쪽에서 따로 청구됩니다.
 
 출처: [AWS Cloud WAN 요금](https://aws.amazon.com/cloud-wan/pricing/)

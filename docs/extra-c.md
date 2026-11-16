@@ -66,7 +66,7 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 
 ## 3-3-d. 지표와 이벤트 { #c-d }
 
-Cloud WAN은 CloudWatch에 지표를 내보내고, 연결 상태나 정책 변경 같은 이벤트도 알려 줍니다. Network Manager 대시보드에서도 core network와 연결의 상태, 지표를 볼 수 있습니다.
+Cloud WAN은 CloudWatch에 지표를 내보내고, 연결 상태나 정책 변경 같은 이벤트도 알려 줍니다. **Network Manager** 콘솔에도 core network 대시보드가 있습니다([공식 문서](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-visualize-networks-core.html)).
 
 !!! warning "지표는 서울이 아니라 **오레곤**에 올라옵니다"
     공식 문서는 Cloud WAN 지표를 **US West (Oregon)** 리전에 게시한다고 적습니다. 이 워크숍은 서울에서 진행하므로, 서울 **CloudWatch** 콘솔에서 찾으면 **아무것도 나오지 않습니다.** 리전을 오레곤으로 바꾸고 보세요.
