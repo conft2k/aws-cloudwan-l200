@@ -6,9 +6,12 @@
 
 1. 강사가 알려 준 계정 정보로 AWS 콘솔에 로그인합니다.
 2. 콘솔 오른쪽 위의 리전 선택 메뉴에서 **Asia Pacific (Seoul)** 을 고릅니다.
-3. 화면 언어를 영어로 맞춥니다. 이 워크숍의 버튼 이름은 모두 영어 화면 기준입니다. 콘솔 아래쪽(또는 오른쪽 위 설정 메뉴)의 언어 설정에서 **English (US)** 를 고릅니다.
+3. 화면 언어를 영어로 맞춥니다. 이 워크숍의 버튼 이름은 모두 영어 화면 기준입니다. 리전 선택 메뉴 왼쪽의 **톱니바퀴 아이콘**을 누르면 **Current user settings** 창이 열립니다. **Language** 에서 **English (US)** 를 고릅니다.
 
-    <!-- shot: lab0-login-01-region-language -->
+    ![콘솔 오른쪽 위를 잘라낸 화면. 위쪽 줄에 CloudShell, 알림, 도움말 아이콘에 이어 파란색으로 켜진 톱니바퀴 아이콘이 있고 그 오른쪽에 리전 선택 메뉴 Asia Pacific (Seoul)이 있다. 톱니바퀴 아래로 Current user settings 창이 열려 있다. 창 안에는 Language 항목에 Browser default가 선택된 드롭다운이 있고, 그 아래 Visual mode - beta 항목에 Browser default, Light, Dark 세 개의 라디오 버튼이 있으며 Light가 선택되어 있다. 맨 아래에는 See all user settings 링크가 있다. 언어는 이 창에서 바꾸고, 콘솔 아래쪽 푸터에는 언어를 바꾸는 항목이 없다](images/console/lab0-login-01-region-language.png){ .shot }
+
+    !!! tip "언어 설정은 콘솔 아래쪽이 아니라 오른쪽 위입니다"
+        사전 테스트에서 확인했습니다. 푸터(화면 맨 아래)에는 **Privacy**, **Terms**, **Cookie preferences** 와 서비스 바로가기만 있고 언어를 바꾸는 항목이 없습니다. 언어는 오른쪽 위 톱니바퀴의 **Current user settings** 에서 바꿉니다. 기본값은 **Browser default** 라서, 브라우저가 한국어면 콘솔도 한국어로 나옵니다. 더 많은 설정은 같은 창의 **See all user settings** 에 있습니다.
 
 **성공 확인**: 콘솔 오른쪽 위에 **Asia Pacific (Seoul)** 이 보이고, 메뉴가 영어로 나옵니다.
 

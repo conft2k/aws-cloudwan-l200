@@ -60,7 +60,9 @@ def retouch(im: Image.Image, spec: dict) -> Image.Image:
         out.paste(im.crop((0, a, w, b)), (0, at))
         at += b - a
     for box in spec.get("erase", []):
-        out.paste("white", tuple(box))
+        # [x0, y0, x1, y1] fills with white; a fifth item gives another colour,
+        # for a strip whose background is not white (the top navigation is #F9F9F9).
+        out.paste(box[4] if len(box) > 4 else "white", tuple(box[:4]))
     return out
 
 
