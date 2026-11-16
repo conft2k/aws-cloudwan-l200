@@ -585,6 +585,20 @@ STATE: PENDING cannot be modified by ACTION: DELETE
 
 **상태 파일:** `~/.cache/cwan-shots/` 에 단계별 로그를 남긴다. Claude 세션이 끊기면 거기서 이어 간다.
 
+### 15-0. 2차 리허설 실측 (2026-11-16, `demo1`)
+
+| 시각 (KST) | 사건 |
+|---|---|
+| 21:03:38 | 서울·오레곤 스택 생성 시작 (CLI, 템플릿은 S3 경유) |
+| 21:10 | 오레곤 스택 `CREATE_COMPLETE` — **약 7분** |
+| **21:19:17** | **core network `AVAILABLE`, 정책 1 `LIVE`/`EXECUTION_SUCCEEDED` — 15분 14초** |
+
+core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 공식 문서 상한(30분)의 절반 근처**이고, 이론 강의 1시간 안에 끝난다는 진행표 전제가 두 번 확인됐다.
+
+서울 스택은 core network가 준비된 뒤에도 `CREATE_IN_PROGRESS` 다. EC2 부트스트랩과 VPC attachment 생성이 남아서다. **2-1-d가 스택 상태가 아니라 정책 상태를 준비 기준으로 삼은 것이 맞다.**
+
+인라인 템플릿은 51,200자 한도를 넘는다(서울 템플릿 71KB). CLI로 배포하려면 S3에 올려 `--template-url` 을 써야 한다. 참가자는 콘솔의 **Upload a template file** 을 쓰므로 콘솔이 알아서 올린다. 문서에 영향 없다.
+
 ### 15-1. 2차 리허설에서 답을 내야 하는 미확인 항목
 
 | 항목 | 지금 문서 | 확인할 것 |

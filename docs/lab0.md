@@ -81,9 +81,7 @@
 
     <!-- shot: lab0-cnet-01-policy-versions -->
 
-4. 정책이 **LIVE** 이고 **Change set state** 가 **Execution succeeded** 이면 준비가 끝난 것입니다.
-
-    <!-- shot: lab0-cnet-02-live-succeeded -->
+4. 정책이 **LIVE** 이고 **Change set state** 가 **Execution succeeded** 이면 준비가 끝난 것입니다. 위 그림의 **Alias** 와 **Change set state** 열에서 봅니다.
 
 아직 준비되지 않았으면 여기서 기다리지 않습니다. 이론 강의를 들으러 갑니다.
 
