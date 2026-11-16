@@ -125,18 +125,47 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
 <!-- shot: lab2-vpn-02-tunnels -->
 
+사전 테스트에서 나온 출력입니다.
+
+```text
+$ sudo swanctl --list-sas
+aws-tunnel2: #2, ESTABLISHED, IKEv2, b16dcffae62b2e93_i* 8f3a8afcb0412ebf_r
+  aws-tunnel2: #2, reqid 1, INSTALLED, TUNNEL-in-UDP, ESP:AES_CBC-256/HMAC_SHA2_256_128
+aws-tunnel1: #1, ESTABLISHED, IKEv2, bb499a9dfc03a4fc_i* 2ed50f8d35aed47d_r
+  aws-tunnel1: #1, reqid 2, INSTALLED, TUNNEL-in-UDP, ESP:AES_CBC-256/HMAC_SHA2_256_128
+
+$ sudo vtysh -c 'show bgp summary'
+BGP router identifier 169.254.203.158, local AS number 65000 VRF default vrf-id 0
+
+Neighbor        V         AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd   PfxSnt
+169.254.203.157 4      64512         6         7        2    0    0 00:00:21            0        2
+169.254.241.109 4      64512         7         7        2    0    0 00:00:21            1        2
+
+Total number of neighbors 2
+
+$ sudo vtysh -c 'show ip route bgp'
+B>* 10.30.1.0/24 [20/100] via 169.254.241.109, vti2, weight 1, 00:00:20
+
+$ sudo vtysh -c 'show ip bgp 172.16.1.0/24'
+BGP routing table entry for 172.16.1.0/24, version 1
+  Advertised to peers:
+  169.254.203.157 169.254.241.109
+```
+
+이웃 주소 `169.254.x.x` 는 **여러분 계정에서는 다른 값**입니다. AWS가 VPN 연결마다 새로 배정합니다.
+
 **성공 확인**
 
-- **Tunnel details**의 터널 2개가 모두 **Status**가 **UP**입니다.
-- `show bgp summary`에 이웃 2개가 보이고 상태가 **Established**(표의 마지막 열에 경로 수)입니다.
-- **`show ip route bgp`에 `10.30.1.0/24`(shared)가 보입니다.** 양쪽 터널로 두 줄이 나옵니다.
-- `show ip bgp 172.16.1.0/24` 에 이 대역이 있습니다. AWS까지 전파됐는지는 [2-3-d](#lab2-d)에서 봅니다.
+- `swanctl --list-sas` 에 `aws-tunnel1` 과 `aws-tunnel2` 가 모두 `ESTABLISHED` 이고 `INSTALLED` 입니다.
+- `show bgp summary` 에 **Total number of neighbors 2** 가 보이고, 두 줄 모두 **Up/Down** 이 시간(`00:00:21`)으로 나옵니다. 숫자가 아니라 `Active`/`Connect` 로 나오면 아직 올라오는 중입니다.
+- **`show ip route bgp` 에 `10.30.1.0/24`(shared)가 보입니다.**
+- `show ip bgp 172.16.1.0/24` 의 **Advertised to peers** 에 이웃 두 개가 모두 적혀 있습니다. 우리 대역을 양쪽 터널로 광고하고 있다는 뜻입니다.
 
 !!! tip "`10.10.1.0/24`(prod)는 보이지 않는 것이 맞습니다"
     `show ip route bgp` 에 shared 대역만 오고 prod 대역은 오지 않습니다. `onprem` 세그먼트가 `shared` 와만 공유되어 있기 때문입니다. **왜 prod로 통신이 안 되는지가 이 한 줄로 설명됩니다.** [2-3-f](#lab2-f)에서 ping으로 다시 확인하고, [2-4](lab3.md)에서 이 경로가 생기는 것을 봅니다.
 
 !!! warning "경로가 아직 안 보이면 기다립니다"
-    터널과 BGP 세션이 올라와도 경로가 설치되기까지 잠시 걸립니다. **`show ip route bgp` 에 `10.30.1.0/24` 가 나타난 뒤에 다음 소절로 넘어가세요.** 그 전에 ping을 하면 실패합니다. 사전 테스트에서도 스크립트 직후에는 실패했고, 경로가 온 뒤에는 성공했습니다. 고장이 아니라 수렴을 기다리는 것입니다.
+    터널과 BGP 세션이 올라와도 경로가 설치되기까지 잠시 걸릴 수 있습니다. **`show ip route bgp` 에 `10.30.1.0/24` 가 나타난 뒤에 다음 소절로 넘어가세요.** 그 전에 ping을 하면 실패합니다. 사전 테스트에서는 스크립트가 끝났을 때 이미 경로가 들어와 있었지만, 늦어지면 같은 명령을 몇 번 더 돌려 보세요. 고장이 아니라 수렴을 기다리는 것입니다.
 
 스크립트가 실패하면 화면에 `FAILED at:` 줄과 확인할 명령이 나옵니다. 그 내용을 강사에게 보여 주세요.
 
@@ -172,12 +201,27 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 2. 아래 명령을 **온프레미스 VM(`172.16.1.10`)** 에서 실행합니다.
 
     ```bash
-    ping -c 4 10.30.1.10
+    ping -c 5 10.30.1.10
     ```
 
-<!-- shot: lab2-vm-02-ping-shared -->
+사전 테스트에서 나온 출력입니다.
 
-**성공 확인**: `4 packets transmitted, 4 received`처럼 응답이 옵니다.
+```text
+PING 10.30.1.10 (10.30.1.10) 56(84) bytes of data.
+64 bytes from 10.30.1.10: icmp_seq=1 ttl=124 time=8.92 ms
+64 bytes from 10.30.1.10: icmp_seq=2 ttl=124 time=2.69 ms
+64 bytes from 10.30.1.10: icmp_seq=3 ttl=124 time=2.64 ms
+64 bytes from 10.30.1.10: icmp_seq=4 ttl=124 time=2.73 ms
+64 bytes from 10.30.1.10: icmp_seq=5 ttl=124 time=2.72 ms
+
+--- 10.30.1.10 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4007ms
+rtt min/avg/max/mdev = 2.644/3.940/8.917/2.488 ms
+```
+
+왕복이 약 2.7밀리초입니다. [2-2-c](lab1.md#lab1-c)의 VPC 사이 통신이 약 1밀리초였으니, IPsec 터널을 거치면서 1.7밀리초쯤 더 걸린 셈입니다. 첫 패킷만 8.9밀리초로 느린 것은 경로를 처음 쓰면서 생기는 지연입니다.
+
+**성공 확인**: `0% packet loss` 이고 5개 모두 응답합니다.
 
 성공하는 이유는 정책에서 `shared` 세그먼트가 `onprem` 세그먼트에도 share하기 때문입니다. 온프레미스는 `shared`의 경로를 받고, `shared`도 온프레미스의 `172.16.1.0/24`를 받습니다.
 
@@ -188,12 +232,19 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 1. 아래 명령을 **온프레미스 VM(`172.16.1.10`)** 에서 실행합니다.
 
     ```bash
-    ping -c 4 10.10.1.10
+    ping -c 5 10.10.1.10
     ```
 
-<!-- shot: lab2-vm-03-ping-prod -->
-
 **결과(실패가 맞습니다)**: `100% packet loss`입니다. 응답이 없는 것이 정상입니다.
+
+```text
+PING 10.10.1.10 (10.10.1.10) 56(84) bytes of data.
+
+--- 10.10.1.10 ping statistics ---
+5 packets transmitted, 0 received, 100% packet loss, time 4182ms
+```
+
+바로 앞 소절과 **같은 터널, 같은 VM**입니다. 달라진 것은 목적지 하나뿐입니다. 터널이 멀쩡한데도 막히는 것이니, 막은 것은 네트워크 연결이 아니라 정책입니다.
 
 `onprem` 세그먼트는 아직 `prod`와 공유되어 있지 않습니다. 세그먼트는 기본적으로 자기 세그먼트 안에서만 통신하므로 `onprem`은 `prod`의 경로를 받지 못합니다. 다음 실습 [2-4](lab3.md)에서 정책에 한 줄을 추가해 이 연결을 엽니다.
 
