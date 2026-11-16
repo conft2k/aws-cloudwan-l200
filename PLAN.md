@@ -299,6 +299,11 @@ SPAL은 EPEL9 파생이고 **AWS Enterprise Support 대상이 아니다.** 보�
 
 ## 9. 초기 core network policy 초안
 
+!!! warning "`description` 에 한글을 쓰지 않는다"
+    정책 JSON의 `description` 은 전부 영어로 쓴다. 참가자가 콘솔에서 읽고 **실습 2-4에서 직접 편집**하는 대상이고, 콘솔 언어도 English로 안내한다. 비ASCII 문자가 허용되는지도 확인된 바 없다. 보안 그룹 규칙 Description이 작은따옴표 하나로 배포를 실패시킨 전례가 있다(14-2절). 실습 한가운데서 그 위험을 감수할 이유가 없다.
+
+아래는 배포된 템플릿의 `PolicyDocument` 를 그대로 옮긴 것이다. 템플릿이 기준이고, 이 절은 그 사본이다.
+
 ```json
 {
   "version": "2021.12",
@@ -311,10 +316,10 @@ SPAL은 EPEL9 파생이고 **AWS Enterprise Support 대상이 아니다.** 보�
     ]
   },
   "segments": [
-    { "name": "prod", "description": "운영 환경", "require-attachment-acceptance": false },
-    { "name": "dev", "description": "개발 환경", "require-attachment-acceptance": false },
-    { "name": "shared", "description": "공유 서비스", "require-attachment-acceptance": false },
-    { "name": "onprem", "description": "온프레미스", "require-attachment-acceptance": false }
+    { "name": "prod", "description": "Production", "require-attachment-acceptance": false },
+    { "name": "dev", "description": "Development", "require-attachment-acceptance": false },
+    { "name": "shared", "description": "Shared services", "require-attachment-acceptance": false },
+    { "name": "onprem", "description": "On-premises", "require-attachment-acceptance": false }
   ],
   "segment-actions": [
     {
@@ -327,13 +332,15 @@ SPAL은 EPEL9 파생이고 **AWS Enterprise Support 대상이 아니다.** 보�
   "attachment-policies": [
     {
       "rule-number": 100,
-      "description": "segment 태그 값에 따라 세그먼트에 배정",
+      "description": "Put an attachment in the segment named by its segment tag",
       "conditions": [{ "type": "tag-exists", "key": "segment" }],
       "action": { "association-method": "tag", "tag-value-of-key": "segment" }
     }
   ]
 }
 ```
+
+edge ASN을 파라미터가 아니라 정수 리터럴로 적은 이유가 있다. `Number` 파라미터를 `!Ref` 로 읽으면 문자열이 되는데 edge ASN은 JSON 숫자여야 한다. 생성 후 변경할 수 없는 값이기도 해서 파라미터로 둘 이유가 없다.
 
 실습 2-4에서 참가자가 `segment-actions`에 다음을 추가한다.
 
@@ -458,6 +465,60 @@ Codex 리뷰가 커밋 `746d903` 의 서울 템플릿에서 찾은 것이다. **
 수정 기회는 1회다(전역 지침). 수정 뒤에도 차단이 남으면 작은 잔여 항목을 빼고는 설계를 다시 본다.
 
 ## 14. 사전 테스트 측정 로그
+
+### 14-1. 1차 리허설 (2026-11-16, `cwan` 계정)
+
+| 시각 (KST) | 사건 |
+|---|---|
+| 16:29:47 | 서울·오레곤 스택 배포 시작 |
+| 16:30:19 | 서울 스택 `CREATE_FAILED` — `OnPremRouterSg` (아래 실패 1) |
+| 약 16:40 | 오레곤 스택 `CREATE_COMPLETE` (약 10분) |
+| 16:41 | 서울 스택 `ROLLBACK_FAILED` (아래 실패 2) |
+| **16:43:59** | **core network `AVAILABLE`. 생성에 14분 12초** (문서는 "최대 30분") |
+
+**확인된 것**
+
+- **core network 생성은 14분대다.** 공식 문서 상한의 절반이다. 이론 강의 1시간 안에 넉넉히 끝나므로 진행표의 전제가 성립한다.
+- **인라인 `PolicyDocument` 가 동작한다.** core network가 edge 2개, 세그먼트 4개로 만들어졌다. 8-7절의 미확인 항목이 해소됐다.
+- **서울 리전 스택이 global network와 core network를 만든다.** 사전 점검의 결론과 일치한다.
+
+### 14-2. 실패 1 — 보안 그룹 규칙 Description의 작은따옴표
+
+```
+Invalid rule description. Valid descriptions are strings less than 256 characters
+from the following set:  a-zA-Z0-9. _-:/()#,@[]+=&;{}!$*
+```
+
+`OnPremRouterSg` 의 규칙 설명에 `the LAN's transit traffic` 을 써서 작은따옴표가 들어갔다. **허용 문자 집합에 `'` 가 없다.** cfn-lint도 Codex 리뷰 두 번도 잡지 못했다. EC2 API만 아는 제약이기 때문이다.
+
+얄궂게도 이것은 **리뷰의 백로그 항목을 고치다 생겼다.** "SG 주석이 실제 규칙과 다르다"는 지적을 받아 설명을 사실에 맞게 다시 쓰면서 들어갔다.
+
+고친 방법: `LAN's` → `LAN`. 템플릿 전체의 Description을 허용 문자 집합으로 다시 훑어 다른 위반이 없음을 확인했다.
+
+**교훈:** 보안 그룹 규칙 Description에는 작은따옴표·큰따옴표·물음표를 쓰지 않는다. 템플릿을 고칠 때마다 Description을 허용 문자 집합으로 훑는다.
+
+### 14-3. 실패 2 — 롤백이 `PENDING` core network를 지우지 못한다 (참가자에게도 일어난다)
+
+```
+STATE: PENDING cannot be modified by ACTION: DELETE
+```
+
+스택 생성이 실패하면 CloudFormation이 롤백에서 core network 삭제를 시도한다. 그런데 core network는 생성에 14분 이상 걸리므로 그 시점에 `PENDING` 이다. 삭제가 거부되고 스택은 **`ROLLBACK_FAILED`** 로 멈춘다.
+
+**이것은 참가자에게 그대로 일어난다.** 파라미터 실수나 한도 초과로 스택이 실패하면 똑같이 막히고, 참가자는 손쓸 방법이 없다.
+
+**복구 순서**
+
+1. core network가 `PENDING` 을 벗어날 때까지 기다린다(최대 30분, 실측 14분).
+   ```bash
+   aws networkmanager get-core-network --profile <p> --region us-west-2 \
+     --core-network-id <id> --query 'CoreNetwork.State' --output text
+   ```
+2. `AVAILABLE` 이 되면 스택을 다시 삭제한다. `aws cloudformation delete-stack` 으로 된다.
+3. 삭제가 끝난 뒤 재배포한다.
+
+**문서에 반영할 것:** 4-3(문제 해결)에 이 증상과 복구 순서를 넣는다. 참가자가 혼자 판단할 수 있어야 한다.
+
 
 아직 하지 않았다. 측정할 항목은 다음과 같다.
 

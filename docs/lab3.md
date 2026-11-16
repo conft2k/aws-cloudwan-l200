@@ -14,7 +14,10 @@
 현재 정책을 바탕으로 새 policy version을 만듭니다. `segment-actions`에 share 하나를 더 넣습니다.
 
 1. **Network Manager** 콘솔에서 이 워크숍의 core network를 엽니다.
-2. **Policies**로 이동해 현재 정책을 편집하고, 새 policy version을 만듭니다.
+2. **Policy versions**로 이동해 현재 정책을 편집하고, 새 policy version을 만듭니다.
+
+    !!! warning "왼쪽 메뉴의 **Policies**가 아닙니다"
+        왼쪽 메뉴에도 **Policies**라는 항목이 있지만 그것은 VPC IP Address Manager 쪽이라 전혀 다른 화면입니다. core network 안의 **Policy versions**로 가세요.
 3. `segment-actions` 배열에 다음 항목을 추가합니다.
 
     ```json

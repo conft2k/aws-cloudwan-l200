@@ -208,7 +208,10 @@ Resources:
         ApplianceModeSupport: false
         Ipv6Support: false
       Tags:
-        - { Key: Name, Value: cwan-ws-attach-prod }
+        - Key: Name
+          Value: !Sub
+            - "cwan-ws-att-prod-${R}"
+            - R: !FindInMap [RegionCode, !Ref "AWS::Region", Short]
         - { Key: segment, Value: prod }
 
   ProdRouteCloudPrefix:
@@ -414,7 +417,10 @@ Resources:
         ApplianceModeSupport: false
         Ipv6Support: false
       Tags:
-        - { Key: Name, Value: cwan-ws-attach-dev }
+        - Key: Name
+          Value: !Sub
+            - "cwan-ws-att-dev-${R}"
+            - R: !FindInMap [RegionCode, !Ref "AWS::Region", Short]
         - { Key: segment, Value: dev }
 
   DevRouteCloudPrefix:
@@ -619,7 +625,10 @@ Resources:
         ApplianceModeSupport: false
         Ipv6Support: false
       Tags:
-        - { Key: Name, Value: cwan-ws-attach-shared }
+        - Key: Name
+          Value: !Sub
+            - "cwan-ws-att-shared-${R}"
+            - R: !FindInMap [RegionCode, !Ref "AWS::Region", Short]
         - { Key: segment, Value: shared }
 
   SharedRouteCloudPrefix:
@@ -842,7 +851,7 @@ Resources:
         # All protocols and ports, because this carries the LAN's transit
         # traffic to AWS. It also reaches SSH on this instance, so the EICE
         # rule below is not the only path to port 22.
-        - { IpProtocol: -1, CidrIp: 172.16.1.0/24, Description: "all ports from the on-premises VPC: the LAN's transit traffic" }
+        - { IpProtocol: -1, CidrIp: 172.16.1.0/24, Description: "all ports from the on-premises VPC - carries the LAN transit traffic" }
         - { IpProtocol: icmp, FromPort: -1, ToPort: -1, CidrIp: 10.0.0.0/8, Description: ping from any lab VPC }
         - { IpProtocol: tcp, FromPort: 80, ToPort: 80, CidrIp: 10.0.0.0/8, Description: curl from any lab VPC }
       Tags:
@@ -1088,6 +1097,18 @@ Resources:
         - { Key: Name, Value: cwan-ws-onprem-cgw }
 
 Mappings:
+  # Short Region codes for resource names. Cloud WAN puts attachments from both
+  # Regions into the same segment, so the Region has to be in the name or the
+  # console list shows two entries that look identical. Spelling out
+  # "ap-northeast-2" makes the names too long to scan, hence the short form.
+  # Running this workshop in another Region means adding its code here.
+  RegionCode:
+    ap-northeast-2: { Short: apne2 }
+    us-west-2: { Short: usw2 }
+    ap-northeast-1: { Short: apne1 }
+    us-east-1: { Short: use1 }
+    eu-west-1: { Short: euw1 }
+
   Scripts:
     # ------------------------------------------------------------------ test
     Http:
@@ -1206,7 +1227,7 @@ Mappings:
         say "checking that swanctl and vtysh really arrived"
         command -v swanctl >/dev/null 2>&1 || die "swanctl is still missing after the install"
         command -v vtysh   >/dev/null 2>&1 || die "vtysh is still missing after the install"
-        say "$(swanctl --version 2>/dev/null | head -1) / $(vtysh --version 2>/dev/null | head -1)"
+        say "$(swanctl --version 2>/dev/null | head -1) / $(rpm -q frr 2>/dev/null || echo frr)"
 
         say "making sure the AWS CLI is available"
         if ! command -v aws >/dev/null 2>&1; then

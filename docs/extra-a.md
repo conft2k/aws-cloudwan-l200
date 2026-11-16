@@ -80,8 +80,8 @@
 [2-2-d](lab1.md#lab1-d)에서 오레곤 prod VPC를 붙인 것과 같은 절차입니다. 다른 점은 대상 VPC와 태그 값입니다.
 
 1. 리전을 **US West (Oregon)** 으로 바꾸고, **Network Manager** 콘솔에서 core network의 **Attachments** 탭으로 가 VPC attachment를 만듭니다([2-2-d](lab1.md#lab1-d)의 1~4단계).
-2. 값은 오레곤 스택 `cloudwan-workshop-oregon`의 **Outputs**에서 **dev VPC와 그 attachment 전용 서브넷**을 골라 넣습니다. prod VPC가 아닙니다. Outputs의 키 이름은 사전 테스트에서 확인해 이 줄에 적습니다.
-3. **Tags**에 `segment` = `dev`를 넣습니다. 오레곤 prod를 붙였을 때의 값은 `prod`였습니다. 태그 값이 세그먼트 이름과 대소문자까지 같아야 합니다.
+2. 값은 오레곤 스택 `cloudwan-workshop-oregon`의 **Outputs**에서 고릅니다. VPC는 `DevVpcId`, 서브넷은 `DevCwanSubnetAId`와 `DevCwanSubnetBId` 두 개입니다. **prod VPC가 아닙니다.**
+3. **Tags**에 두 개를 넣습니다. `Name` = `cwan-ws-att-dev-usw2`, `segment` = `dev`. 오레곤 prod를 붙였을 때의 `segment` 값은 `prod`였습니다. 태그 값이 세그먼트 이름과 대소문자까지 같아야 합니다. 이름에 리전을 넣는 이유는 [2-2-d](lab1.md#lab1-d)와 같습니다 — `dev` 세그먼트에도 서울과 오레곤 연결이 둘 다 들어갑니다.
 
 <!-- shot: extraA-01-oregon-dev-attachment -->
 
@@ -121,7 +121,7 @@ ping -c 3 10.21.1.10
 2. `segments`의 `dev` 항목에 `isolate-attachments`를 추가합니다.
 
     ```json
-    { "name": "dev", "description": "개발 환경", "require-attachment-acceptance": false, "isolate-attachments": true }
+    { "name": "dev", "description": "Development", "require-attachment-acceptance": false, "isolate-attachments": true }
     ```
 
 3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). 실행이 끝나는 데 걸리는 시간은 사전 테스트에서 측정합니다.

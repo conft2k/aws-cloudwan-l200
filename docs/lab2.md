@@ -107,9 +107,15 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
     # BGP 이웃 상태 (이웃 2개가 Established이어야 합니다)
     sudo vtysh -c 'show bgp summary'
 
-    # Cloud WAN에서 받은 경로 (10.x.x.x 대역이 보여야 합니다)
+    # Cloud WAN에서 받은 경로 (10.30.1.0/24 한 줄이 보여야 합니다)
     sudo vtysh -c 'show ip route bgp'
+
+    # 우리가 AWS로 광고한 경로 (172.16.1.0/24 한 줄만 보면 됩니다)
+    sudo vtysh -c 'show ip bgp neighbors 169.254.21.1 advertised-routes' | grep 172.16.1.0
     ```
+
+    !!! info "광고 목록에 10.x 대역도 함께 보입니다"
+        `advertised-routes` 를 `grep` 없이 보면 `172.16.1.0/24` 말고 AWS에서 받은 `10.10.1.0/24` 같은 대역도 같이 나옵니다. 경로 필터가 없어서 한쪽 터널에서 배운 것을 다른 터널로 되광고하기 때문입니다. AWS는 AS 경로에 자기 번호가 들어 있는 것을 보고 버리므로 통신에는 문제가 없습니다. 이 실습에서 확인할 것은 **우리가 `172.16.1.0/24` 를 광고하고 있다**는 것 하나입니다.
 
 5. 콘솔에서도 확인합니다. **VPC** 콘솔 → **Site-to-Site VPN connections** → 2-3-a에서 만든 연결 → **Tunnel details** 탭을 엽니다.
 
@@ -119,11 +125,36 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
 - **Tunnel details**의 터널 2개가 모두 **Status**가 **UP**입니다.
 - `show bgp summary`에 이웃 2개가 보이고 상태가 **Established**(표의 마지막 열에 경로 수)입니다.
-- `show ip route bgp`에 AWS 쪽에서 받은 경로가 있습니다. 어떤 대역이 보이는지는 사전 테스트에서 확인합니다.
+- **`show ip route bgp`에 `10.30.1.0/24`(shared)가 보입니다.** 양쪽 터널로 두 줄이 나옵니다.
+- `advertised-routes` 의 `grep` 결과에 `172.16.1.0/24` 가 있습니다.
 
-터널이 올라오는 데 걸리는 시간은 사전 테스트에서 측정합니다. 스크립트가 실패하면 화면에 `FAILED at:` 줄과 확인할 명령이 나옵니다. 그 내용을 강사에게 보여 주세요.
+!!! tip "`10.10.1.0/24`(prod)는 보이지 않는 것이 맞습니다"
+    `show ip route bgp` 에 shared 대역만 오고 prod 대역은 오지 않습니다. `onprem` 세그먼트가 `shared` 와만 공유되어 있기 때문입니다. **왜 prod로 통신이 안 되는지가 이 한 줄로 설명됩니다.** [2-3-f](#lab2-f)에서 ping으로 다시 확인하고, [2-4](lab3.md)에서 이 경로가 생기는 것을 봅니다.
 
-## 2-3-d. 온프레미스에서 공유 서비스로 통신해 보기 { #lab2-d }
+!!! warning "경로가 아직 안 보이면 기다립니다"
+    터널과 BGP 세션이 올라와도 경로가 설치되기까지 잠시 걸립니다. **`show ip route bgp` 에 `10.30.1.0/24` 가 나타난 뒤에 다음 소절로 넘어가세요.** 그 전에 ping을 하면 실패합니다. 사전 테스트에서도 스크립트 직후에는 실패했고, 경로가 온 뒤에는 성공했습니다. 고장이 아니라 수렴을 기다리는 것입니다.
+
+스크립트가 실패하면 화면에 `FAILED at:` 줄과 확인할 명령이 나옵니다. 그 내용을 강사에게 보여 주세요.
+
+## 2-3-d. Cloud WAN 쪽 경로 확인하기 { #lab2-d }
+
+앞 소절에서는 **온프레미스 라우터가 받은** 경로를 봤습니다. 이번에는 반대쪽, **Cloud WAN이 받은** 경로를 봅니다. 양쪽이 다 있어야 왕복 통신이 됩니다.
+
+1. **Network Manager** 콘솔 → **Core networks**에서 core network를 열고 **Routes**를 엽니다.
+2. 세그먼트 `onprem`, edge location `ap-northeast-2` 를 골라 조회합니다.
+3. 같은 방법으로 세그먼트 `shared` 도 조회합니다.
+
+<!-- shot: lab2-routes-01-onprem-segment -->
+
+**성공 확인**
+
+- `onprem` 세그먼트에 `10.30.1.0/24`(shared)가 있습니다. `10.10.1.0/24`(prod)는 **없습니다**.
+- `shared` 세그먼트에 `172.16.1.0/24`(온프레미스)가 있습니다. **Type**이 `PROPAGATED` 입니다. 온프레미스 라우터가 BGP로 광고한 대역이 Cloud WAN까지 전파된 것입니다.
+
+!!! info "이 두 줄이 다음 두 소절의 답입니다"
+    `shared` 쪽에 온프레미스 대역이 있으니 [2-3-e](#lab2-e)의 통신이 됩니다. `onprem` 쪽에 prod 대역이 없으니 [2-3-f](#lab2-f)의 통신은 안 됩니다. ping을 하기 전에 결과를 경로로 먼저 알 수 있습니다.
+
+## 2-3-e. 온프레미스에서 공유 서비스로 통신해 보기 { #lab2-e }
 
 온프레미스 VM에서 서울 shared EC2로 ping을 보냅니다.
 
@@ -143,7 +174,7 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
 성공하는 이유는 정책에서 `shared` 세그먼트가 `onprem` 세그먼트에도 share하기 때문입니다. 온프레미스는 `shared`의 경로를 받고, `shared`도 온프레미스의 `172.16.1.0/24`를 받습니다.
 
-## 2-3-e. 온프레미스에서 운영으로 통신해 보기 { #lab2-e }
+## 2-3-f. 온프레미스에서 운영으로 통신해 보기 { #lab2-f }
 
 같은 VM에서 서울 prod EC2로 ping을 보냅니다.
 
@@ -159,7 +190,7 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
 `onprem` 세그먼트는 아직 `prod`와 공유되어 있지 않습니다. 세그먼트는 기본적으로 자기 세그먼트 안에서만 통신하므로 `onprem`은 `prod`의 경로를 받지 못합니다. 다음 실습 [2-4](lab3.md)에서 정책에 한 줄을 추가해 이 연결을 엽니다.
 
-## 2-3-f. 정리 { #lab2-f }
+## 2-3-g. 정리 { #lab2-g }
 
 | 확인한 것 | 결과 |
 |---|---|

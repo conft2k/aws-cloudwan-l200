@@ -123,7 +123,11 @@ ping -c 5 10.30.1.10
 
     | Key | Value |
     |---|---|
+    | `Name` | `cwan-ws-att-prod-usw2` |
     | `segment` | `prod` |
+
+    !!! tip "이름에 리전을 넣는 이유"
+        `prod` 세그먼트에는 서울 연결과 오레곤 연결이 **둘 다** 들어갑니다. 이름에 리전이 없으면 콘솔 목록에서 어느 쪽인지 구분되지 않습니다. 스택이 만든 서울 연결도 `cwan-ws-att-prod-apne2` 로 되어 있습니다. `apne2` 와 `usw2` 는 리전 이름을 줄인 것입니다.
 
 6. 만들기 버튼을 누릅니다.
 
@@ -138,7 +142,7 @@ ping -c 5 10.30.1.10
 ```json
 {
   "rule-number": 100,
-  "description": "segment 태그 값에 따라 세그먼트에 배정",
+  "description": "Put an attachment in the segment named by its segment tag",
   "conditions": [{ "type": "tag-exists", "key": "segment" }],
   "action": { "association-method": "tag", "tag-value-of-key": "segment" }
 }

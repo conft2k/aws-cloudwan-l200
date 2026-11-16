@@ -104,6 +104,8 @@ Cloud WAN은 global network 하나 안에 core network 하나를 두고, 리전�
 
 워크로드 VPC(prod, dev, shared)의 EC2는 모두 프라이빗 서브넷에 있습니다. 인터넷에서 직접 접속할 수 없고, 접속은 **EC2 Instance Connect Endpoint**로 합니다.
 
+서울 EC2에는 `tcpdump` 같은 진단 도구가 들어 있습니다. 오레곤 EC2는 ping과 HTTP 응답을 받아 주는 **대상 전용**이라 진단 도구를 설치하지 않습니다. 패킷을 들여다볼 일이 있으면 서울 쪽 EC2에서 합니다.
+
 온프레미스 모사 VPC는 Cloud WAN에 VPC 연결로 붙이지 않습니다. 오직 Site-to-Site VPN으로만 연결합니다. 그래야 실제 온프레미스와 같은 경로로 동작하고, BGP로 경로를 주고받는 것도 확인할 수 있습니다.
 
 ASN은 다음과 같이 씁니다. core network edge의 ASN은 만든 뒤에 바꿀 수 없으므로 템플릿에서 리전별로 미리 정해 둡니다.

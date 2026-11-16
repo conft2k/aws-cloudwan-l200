@@ -18,10 +18,10 @@ AWS Cloud WAN에서 여러분이 다루는 것은 사실상 **core network polic
     ]
   },
   "segments": [
-    { "name": "prod", "description": "운영 환경", "require-attachment-acceptance": false },
-    { "name": "dev", "description": "개발 환경", "require-attachment-acceptance": false },
-    { "name": "shared", "description": "공유 서비스", "require-attachment-acceptance": false },
-    { "name": "onprem", "description": "온프레미스", "require-attachment-acceptance": false }
+    { "name": "prod", "description": "Production", "require-attachment-acceptance": false },
+    { "name": "dev", "description": "Development", "require-attachment-acceptance": false },
+    { "name": "shared", "description": "Shared services", "require-attachment-acceptance": false },
+    { "name": "onprem", "description": "On-premises", "require-attachment-acceptance": false }
   ],
   "segment-actions": [
     {
@@ -34,7 +34,7 @@ AWS Cloud WAN에서 여러분이 다루는 것은 사실상 **core network polic
   "attachment-policies": [
     {
       "rule-number": 100,
-      "description": "segment 태그 값에 따라 세그먼트에 배정",
+      "description": "Put an attachment in the segment named by its segment tag",
       "conditions": [{ "type": "tag-exists", "key": "segment" }],
       "action": { "association-method": "tag", "tag-value-of-key": "segment" }
     }
@@ -147,7 +147,7 @@ core network가 **어디에 생길지**를 정하는 덩어리입니다. 여기�
 | `shared` ↔ `dev` | 가능 | `share`로 양방향 |
 | `shared` ↔ `onprem` | 가능 | `share`로 양방향 |
 | `prod` ↔ `dev` | 불가 | 둘 다 `shared`와만 공유되고 서로는 아님 |
-| `prod` ↔ `onprem` | 불가 | 같은 이유 ([2-3-e](lab2.md#lab2-e)에서 확인합니다) |
+| `prod` ↔ `onprem` | 불가 | 같은 이유 ([2-3-f](lab2.md#lab2-f)에서 확인합니다) |
 | `dev` ↔ `onprem` | 불가 | 같은 이유 |
 
 이 비대칭이 공유 서비스 패턴의 핵심입니다. 로그·인증·모니터링은 모두에게 열어 주면서, 운영과 개발과 온프레미스는 서로 못 보게 하는 것을 `share` 한 덩어리로 끝냅니다. 실습 [2-4](lab3.md)에서는 여기에 `onprem` → `prod` 공유를 한 덩어리 더 넣어 온프레미스와 운영 사이만 엽니다. `dev`는 그대로 막혀 있습니다.
@@ -214,7 +214,7 @@ core network가 **어디에 생길지**를 정하는 덩어리입니다. 여기�
 ```json
 {
   "rule-number": 100,
-  "description": "segment 태그 값에 따라 세그먼트에 배정",
+  "description": "Put an attachment in the segment named by its segment tag",
   "conditions": [{ "type": "tag-exists", "key": "segment" }],
   "action": { "association-method": "tag", "tag-value-of-key": "segment" }
 }
