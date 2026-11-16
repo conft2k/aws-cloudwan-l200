@@ -676,7 +676,7 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 
 **확인 창 중복은 해소했다 (2026-11-16).** 2026-11-16 리뷰가 판단 사안으로 올린 것이다 — `tools/shots/extra-delete.py` 의 `confirm_dialog()` 와 `tools/shots/probe-stack-delete.py` 가 확인 창 입력 선택자와 "이름 입력 → 대기 → 버튼 클릭" 순서를 똑같이 갖고 있어서, 콘솔 확인 절차가 바뀌면 두 곳을 함께 고쳐야 했다. 두 파일은 `tools/console.py` 가 `exec` 으로 돌리는 스크립트라 서로 import 할 수 없으므로, 리뷰 때 적어 둔 대로 **`console.py` 의 exec 전역으로 옮겼다.** 이제 `confirm_dialog(shot_name, type_name, probe)` 와 `body(f)` 는 `page`·`app`·`shot` 과 같은 자리에서 주입된다.
 
-- `probe=True` 는 스크린샷 대신 **버튼이 입력 전후에 활성인지**를 찍는다. 15-10을 알아낸 방식이 인자 하나로 남았다.
+- `probe=True` 는 **버튼이 입력 전후에 활성인지**를 덧붙여 찍는다. 15-10을 알아낸 방식이 인자 하나로 남았다. 캡처 여부는 `shot_name` 이 정한다 — 둘은 별개다.
 - 두 파일에 똑같이 있던 `body(f)` 도 같이 올렸다.
 - 두 스크립트의 **목적은 여전히 다르다.** `extra-delete.py` 는 캡처와 삭제를, `probe-stack-delete.py` 는 "이 화면의 버튼 이름이 진짜 무엇인가"를 찍는 진단을 맡는다. 진단 쪽에는 그 일을 하는 `buttons()` 만 남았고, 찾기를 시도하는 선택자 목록에 `^Delete stack$` 을 넣어 두어 다음에 같은 일이 생기면 어느 방식이 빗나가는지 한눈에 보인다.
 
@@ -829,7 +829,7 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 global network 0 / core network 0        (리전 무관, us-west-2 에서 조회)
 ```
 
-시작 전에 같은 확인을 다시 한다. Cloud WAN 리소스가 0이어야 global network 한도(계정당 5개)에 걸리지 않는다. `network-manager` 는 Service Quotas 에 서비스 코드가 없으므로 쿼터 API 로는 조회되지 않는다. 사용량 0을 직접 확인하는 것으로 갈음한다.
+시작 전에 같은 확인을 다시 한다. `tools/check-empty.sh demo1` 이 두 리전과 Cloud WAN을 한 번에 세어 주고, 하나라도 0이 아니면 0이 아닌 코드로 끝난다. Cloud WAN 리소스가 0이어야 global network 한도(계정당 5개)에 걸리지 않는다. `network-manager` 는 Service Quotas 에 서비스 코드가 없으므로 쿼터 API 로는 조회되지 않는다. 사용량 0을 직접 확인하는 것으로 갈음한다.
 
 ### 16-4. 미리 해 둘 것
 
@@ -837,4 +837,4 @@ core network 생성에 **15분쯤** 걸리므로, 사람이 시작하기 전에 
 
 ### 16-5. 요금과 정리
 
-core network edge 는 리전당 시간당 $0.50 이고 2개 리전이다. attachment·EC2·VPN 을 더해 2시간 30분 기준 **$5~8** 로 본다. 끝나면 [3-4](docs/extra-d.md) 순서대로 지우고 16-3 의 확인 명령을 다시 돌려 **잔재 0** 을 확인한다. 이번에는 **실제 청구 내역**도 확인해 `1-2-e` 의 추정치와 대조한다.
+core network edge 는 리전당 시간당 $0.50 이고 2개 리전이다. attachment·EC2·VPN 을 더해 2시간 30분 기준 **$5~8** 로 본다. 끝나면 [3-4](docs/extra-d.md) 순서대로 지우고 `tools/check-empty.sh demo1` 을 다시 돌려 **잔재 0** 을 확인한다. 이번에는 **실제 청구 내역**도 확인해 `1-2-e` 의 추정치와 대조한다.

@@ -51,6 +51,8 @@ tries = [
     ("text ^Delete$", lambda: f.locator("button").filter(has_text=re.compile(r"^Delete$"))),
     ("text ^Delete stack$", lambda: f.locator("button").filter(
         has_text=re.compile(r"^Delete stack$"))),
+    ("awsui class + ^Delete$", lambda: f.locator('button[class*="awsui_button"]').filter(
+        has_text=re.compile(r"^Delete$"))),
     ("any button Delete", lambda: f.locator("button", has_text=re.compile(r"Delete"))),
 ]
 btn = None

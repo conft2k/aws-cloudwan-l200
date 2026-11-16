@@ -540,14 +540,17 @@ def main() -> int:
             button says Delete. A stack's says `Type "<stack name>" to confirm
             deletion of the stack.`, keeps the button disabled until that exact
             name is in the box, and labels the button Delete stack. Pass
-            `type_name` for the second kind. `probe=True` prints whether the
-            button was enabled before and after typing and takes no screenshot,
-            which is how the stack dialog was worked out in the first place.
+            `type_name` for the second kind. `shot_name` decides whether a
+            screenshot is taken; `probe=True` additionally reports whether the
+            button was enabled before and after typing, which is how the stack
+            dialog was worked out in the first place.
 
-            Returns the number of confirm buttons it found, 0 meaning it did
-            nothing - the caller decides whether that is a failure.
+            Returns the number of confirm buttons found BEFORE clicking, 0
+            meaning it did nothing - the caller decides whether that is a
+            failure. Counting after the click would read 0 on success, because
+            the dialog it looks in has closed by then.
             """
-            page.wait_for_timeout(2500)
+            page.wait_for_timeout(3000)
             f = app()
             dlg = f.get_by_role("dialog")
             print("dialogs:", dlg.count())
@@ -560,32 +563,34 @@ def main() -> int:
             for i in range(box.count()):
                 print("   placeholder:", box.nth(i).get_attribute("placeholder"),
                       "| aria-label:", box.nth(i).get_attribute("aria-label"))
-            btn = f.locator('[role=dialog] button').filter(
+            # Only widen to the whole page when no dialog opened at all. Inside
+            # a dialog the page's own Delete stack button is a click away, and
+            # pressing that again would reopen what we are trying to confirm.
+            where = '[role=dialog] button' if dlg.count() else 'button'
+            btn = f.locator(where).filter(
                 has_text=re.compile(r"^(Delete stack|Delete|Confirm)$"))
-            if not btn.count():
-                btn = f.locator("button").filter(
-                    has_text=re.compile(r"^(Delete stack|Delete|Confirm)$"))
-            print("confirm buttons:", btn.count())
+            found = btn.count()
+            print("confirm buttons:", found, f"(searched {where!r})")
 
             def enabled():
                 return (btn.last.get_attribute("disabled") is None
                         and btn.last.get_attribute("aria-disabled") != "true")
 
-            if probe and btn.count():
+            if probe and found:
                 print("  confirm enabled before typing:", enabled())
             if box.count() and type_name:
                 box.first.fill(type_name)
                 page.wait_for_timeout(1200)
-                if probe and btn.count():
+                if probe and found:
                     print("  confirm enabled after typing the name:", enabled())
             elif box.count():
                 print("!! the dialog has an input and no type_name was given")
-            if btn.count():
+            if found:
                 btn.last.click()
                 page.wait_for_timeout(8000)
                 print("after confirm:",
                       " | ".join(t for t in body().split("\n")[:14] if t.strip()))
-            return btn.count()
+            return found
 
         if not STATE.exists():
             page.goto(signin_url(), wait_until="domcontentloaded")
