@@ -11,8 +11,9 @@ GREEN = "#1D8102"
 BLOCK = "#D13212"
 
 # ---- grid ---------------------------------------------------------------
-W, H = 1198, 947
+W, H = 1198, 1062
 r1, r2, r3, r4, r5 = 200, 345, 495, 645, 795      # dev / shared / onprem(main) / prod / 오레곤
+r6 = 900                                           # 오레곤 dev VPC (추가 과제 3-1에서 붙인다)
 
 # left block
 PANE = (12, 86, 636, 403)                          # 번호 설명 패널
@@ -22,8 +23,8 @@ y_vm = 660
 x_cgw, x_net, x_vpn = 310, 430, 560
 
 # cloud block
-CL = (654, 86, 1186, 935)                          # AWS Cloud
-CN = (670, 126, 1170, 915)                         # core network
+CL = (654, 86, 1186, 1050)                         # AWS Cloud
+CN = (670, 126, 1170, 1030)                        # core network
 x_edge, x_bus, x_seg, x_vpc, x_or = 768, 874, 941, 1078, 988
 
 d.raw(markers("arrow", "arrowGreen", "arrowRed"))
@@ -69,6 +70,9 @@ d.node(VPC, x_vpc, r1, [("dev VPC", "name"), ("서울 10.20.1.0/24", "sub"), ("V
 d.node(VPC, x_vpc, r2, [("shared VPC", "name"), ("서울 10.30.1.0/24", "sub"), ("EC2 10.30.1.10", "sub")])
 d.node(VPC, x_vpc, r4, [("prod VPC", "name"), ("서울 10.10.1.0/24", "sub"), ("EC2 10.10.1.10", "sub")])
 d.node(VPC, x_vpc, r5, [("prod VPC", "name"), ("오레곤 10.11.1.0/24", "sub")])
+# 오레곤 dev VPC: 실습 2-3 시점에는 attachment가 없다 (추가 과제 3-1에서 참가자가 붙인다)
+d.node(VPC, x_vpc, r6, [("dev VPC", "name"), ("오레곤 10.21.1.0/24", "sub"),
+                        ("attachment 없음", "sub"), ("(추가 과제 3-1)", "sub")])
 for y in (r1, r2, r4):
     d.line(x_vpc - S / 2 - 4, y - 16, x_seg + S / 2 + 4, y - 16)
 d.poly([(x_vpc - S / 2 - 4, r5), (x_or, r5), (x_or, r4 + 55), (x_seg, r4 + 55), (x_seg, r4 + S / 2 + 4)])

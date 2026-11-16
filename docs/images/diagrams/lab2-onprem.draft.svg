@@ -1,15 +1,15 @@
-<svg viewBox="0 0 1198 947" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans CJK KR', 'Pretendard', Arial, sans-serif">
-<rect width="1198" height="947" fill="#FFFFFF"/>
+<svg viewBox="0 0 1198 1062" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans CJK KR', 'Pretendard', Arial, sans-serif">
+<rect width="1198" height="1062" fill="#FFFFFF"/>
 <defs>
 <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#232F3E"/></marker>
 <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1D8102"/></marker>
 <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D13212"/></marker>
 </defs>
 
-<rect x="654" y="86" width="532" height="849" fill="none" stroke="#232F3E" stroke-width="2"/>
+<rect x="654" y="86" width="532" height="964" fill="none" stroke="#232F3E" stroke-width="2"/>
 <image href="bundle:group/AWS-Cloud-logo_32" x="654" y="86" width="32" height="32"/>
 <text x="696" y="109" font-size="19" font-weight="600" fill="#232F3E">AWS Cloud</text>
-<rect x="670" y="126" width="500" height="789" fill="none" stroke="#8C4FFF" stroke-width="2" stroke-dasharray="6,4"/>
+<rect x="670" y="126" width="500" height="904" fill="none" stroke="#8C4FFF" stroke-width="2" stroke-dasharray="6,4"/>
 <image href="bundle:service/AWS-Cloud-WAN" x="670" y="126" width="24" height="24"/>
 <text x="702" y="145" font-size="19" font-weight="600" fill="#8C4FFF">core network</text>
 <text x="702" y="163" font-size="16" fill="#232F3E">AWS Cloud WAN</text>
@@ -52,6 +52,11 @@
 <image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1054" y="771" width="48" height="48"/>
 <text x="1078" y="839" font-size="19" text-anchor="middle" fill="#232F3E">prod VPC</text>
 <text x="1078" y="860" font-size="16" text-anchor="middle" fill="#3B4552">오레곤 10.11.1.0/24</text>
+<image href="bundle:resource/Amazon-VPC_Virtual-private-cloud-VPC" x="1054" y="876" width="48" height="48"/>
+<text x="1078" y="944" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
+<text x="1078" y="965" font-size="16" text-anchor="middle" fill="#3B4552">오레곤 10.21.1.0/24</text>
+<text x="1078" y="986" font-size="16" text-anchor="middle" fill="#3B4552">attachment 없음</text>
+<text x="1078" y="1007" font-size="16" text-anchor="middle" fill="#3B4552">(추가 과제 3-1)</text>
 <line x1="1050" y1="184" x2="969" y2="184" stroke="#232F3E" stroke-width="1.5"/>
 <line x1="1050" y1="329" x2="969" y2="329" stroke="#232F3E" stroke-width="1.5"/>
 <line x1="1050" y1="629" x2="969" y2="629" stroke="#232F3E" stroke-width="1.5"/>

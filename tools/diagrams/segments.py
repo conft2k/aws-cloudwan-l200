@@ -42,13 +42,14 @@ GAP_IN = 110      # gap between two node label boxes inside one segment
 
 PROD_A = [("서울 prod VPC", L), ("10.10.1.0/24", M)]
 PROD_B = [("오레곤 prod VPC", L), ("10.11.1.0/24", M)]
-DEV_N = [("서울 dev VPC", L), ("10.20.1.0/24", M)]
+DEV_A = [("서울 dev VPC", L), ("10.20.1.0/24", M)]
+DEV_B = [("오레곤 dev VPC", L), ("10.21.1.0/24", M)]
 SHARED_N = [("서울 shared VPC", L), ("10.30.1.0/24", M)]
 VPN_N = [("Site-to-Site VPN", L), ("온프레미스 172.16.1.0/24", M)]
 
 w_onprem = max(2 * PAD + node_w(VPN_N), head_w("onprem", "온프레미스"))
 w_shared = max(2 * PAD + node_w(SHARED_N), head_w("shared", "공유 서비스"))
-w_dev = max(2 * PAD + node_w(DEV_N), head_w("dev", "개발 환경"))
+w_dev = max(2 * PAD + node_w(DEV_A) + GAP_IN + node_w(DEV_B), head_w("dev", "개발 환경"))
 w_prod = max(2 * PAD + node_w(PROD_A) + GAP_IN + node_w(PROD_B), head_w("prod", "운영 환경"))
 
 # columns
@@ -68,7 +69,7 @@ Y_BOT = Y_DEV + 118                      # onprem -> dev run, below the dev cent
 prod_cxs, _ = seg_box(X_RT, Y_PROD, w_prod, "prod", "운영 환경", [(VPC, PROD_A), (VPC, PROD_B)])
 seg_box(X_SH, Y_MID, w_shared, "shared", "공유 서비스", [(VPC, SHARED_N)])
 on_cxs, _ = seg_box(X_ON, Y_MID, w_onprem, "onprem", "온프레미스", [(VPN, VPN_N)])
-seg_box(X_RT, Y_DEV, w_dev, "dev", "개발 환경", [(VPC, DEV_N)])
+dev_cxs, _ = seg_box(X_RT, Y_DEV, w_dev, "dev", "개발 환경", [(VPC, DEV_A), (VPC, DEV_B)])
 
 ON_CX = X_ON + w_onprem / 2
 SH_CX = X_SH + w_shared / 2
@@ -88,10 +89,10 @@ def lab(pts):
     d.poly(pts, stroke=GREEN, dash="7,5")
 
 
-# prod 안: 리전이 달라도 같은 세그먼트라서 통신된다
-a, b = prod_cxs
-d.line(a + S / 2 + 4, Y_UP, b - S / 2 - 4, Y_UP)
-d.text((a + b) / 2, Y_UP - 9, "리전 간 통신 " + ALLOW, M, anchor="middle")
+# prod 와 dev 안: 리전이 달라도 같은 세그먼트라서 통신된다
+for (a, b), cy in ((prod_cxs, Y_UP), (dev_cxs, Y_DN)):
+    d.line(a + S / 2 + 4, cy, b - S / 2 - 4, cy)
+    d.text((a + b) / 2, cy - 9, "리전 간 통신 " + ALLOW, M, anchor="middle")
 
 # shared -> onprem / prod / dev : share
 allow([(ON_R + 4, MID), (X_SH - 4, MID)])

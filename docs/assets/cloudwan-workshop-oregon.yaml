@@ -31,7 +31,8 @@ Rules:
         AssertDescription: This template is for the Oregon (us-west-2) Region only.
 
 Resources:
-  Vpc:
+  # ---------------------------------------------------------------- prod VPC
+  ProdVpc:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.11.1.0/24
@@ -40,28 +41,28 @@ Resources:
       Tags:
         - { Key: Name, Value: cwan-ws-prod-vpc }
 
-  AppSubnet:
+  ProdAppSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref Vpc
+      VpcId: !Ref ProdVpc
       CidrBlock: 10.11.1.0/26
       AvailabilityZone: !Select [0, !GetAZs ""]   # the Region's first AZ
       Tags:
         - { Key: Name, Value: cwan-ws-prod-app-az1 }
 
-  CwanSubnetA:
+  ProdCwanSubnetA:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref Vpc
+      VpcId: !Ref ProdVpc
       CidrBlock: 10.11.1.224/28
       AvailabilityZone: !Select [0, !GetAZs ""]   # the Region's first AZ
       Tags:
         - { Key: Name, Value: cwan-ws-prod-cwan-az1 }
 
-  CwanSubnetB:
+  ProdCwanSubnetB:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref Vpc
+      VpcId: !Ref ProdVpc
       CidrBlock: 10.11.1.240/28
       AvailabilityZone: !Select [1, !GetAZs ""]   # the Region's second AZ (attachment ENIs only)
       Tags:
@@ -69,58 +70,58 @@ Resources:
 
   # The app route table has no Cloud WAN routes on purpose: the participant adds
   # 10.0.0.0/8 and 172.16.0.0/12 -> core network after creating the attachment.
-  AppRouteTable:
+  ProdAppRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref Vpc
+      VpcId: !Ref ProdVpc
       Tags:
         - { Key: Name, Value: cwan-ws-prod-app }
 
-  AppRouteTableAssoc:
+  ProdAppRouteTableAssoc:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref AppSubnet
-      RouteTableId: !Ref AppRouteTable
+      SubnetId: !Ref ProdAppSubnet
+      RouteTableId: !Ref ProdAppRouteTable
 
-  CwanRouteTable:
+  ProdCwanRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref Vpc
+      VpcId: !Ref ProdVpc
       Tags:
         - { Key: Name, Value: cwan-ws-prod-cwan }
 
-  CwanRouteTableAssocA:
+  ProdCwanRouteTableAssocA:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref CwanSubnetA
-      RouteTableId: !Ref CwanRouteTable
+      SubnetId: !Ref ProdCwanSubnetA
+      RouteTableId: !Ref ProdCwanRouteTable
 
-  CwanRouteTableAssocB:
+  ProdCwanRouteTableAssocB:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref CwanSubnetB
-      RouteTableId: !Ref CwanRouteTable
+      SubnetId: !Ref ProdCwanSubnetB
+      RouteTableId: !Ref ProdCwanRouteTable
 
-  EiceSg:
+  ProdEiceSg:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: cwan-ws EICE, SSH out to the test EC2 only
-      VpcId: !Ref Vpc
+      VpcId: !Ref ProdVpc
       SecurityGroupEgress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          DestinationSecurityGroupId: !Ref Ec2Sg
+          DestinationSecurityGroupId: !Ref ProdEc2Sg
           Description: SSH to the test EC2
       Tags:
         - { Key: Name, Value: cwan-ws-prod-eice }
 
   # Isolation between segments is done by Cloud WAN, not by this security group.
-  Ec2Sg:
+  ProdEc2Sg:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: cwan-ws test EC2, ICMP and HTTP from 10.0.0.0/8 and 172.16.0.0/12
-      VpcId: !Ref Vpc
+      VpcId: !Ref ProdVpc
       SecurityGroupIngress:
         - { IpProtocol: icmp, FromPort: -1, ToPort: -1, CidrIp: 10.0.0.0/8, Description: ping from 10.0.0.0/8 }
         - { IpProtocol: tcp, FromPort: 80, ToPort: 80, CidrIp: 10.0.0.0/8, Description: HTTP from 10.0.0.0/8 }
@@ -129,29 +130,29 @@ Resources:
       Tags:
         - { Key: Name, Value: cwan-ws-prod-ec2 }
 
-  Ec2SgSshFromEice:
+  ProdEc2SgSshFromEice:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
-      GroupId: !Ref Ec2Sg
+      GroupId: !Ref ProdEc2Sg
       IpProtocol: tcp
       FromPort: 22
       ToPort: 22
-      SourceSecurityGroupId: !Ref EiceSg
+      SourceSecurityGroupId: !Ref ProdEiceSg
       Description: SSH from EICE only
 
-  Eice:
+  ProdEice:
     Type: AWS::EC2::InstanceConnectEndpoint
-    DependsOn: Instance  # its ENI must not take the instance's fixed IP
+    DependsOn: ProdInstance  # its ENI must not take the instance's fixed IP
     Properties:
-      SubnetId: !Ref AppSubnet
-      SecurityGroupIds: [!Ref EiceSg]
+      SubnetId: !Ref ProdAppSubnet
+      SecurityGroupIds: [!Ref ProdEiceSg]
       PreserveClientIp: false
       Tags:
         - { Key: Name, Value: cwan-ws-prod-eice }
 
-  Instance:
+  ProdInstance:
     Type: AWS::EC2::Instance
-    DependsOn: AppRouteTableAssoc
+    DependsOn: ProdAppRouteTableAssoc
     Properties:
       ImageId: !Ref ImageId
       InstanceType: !Ref InstanceType
@@ -163,8 +164,8 @@ Resources:
           Ebs: { VolumeType: gp3, VolumeSize: 8, Encrypted: true, DeleteOnTermination: true }
       NetworkInterfaces:
         - DeviceIndex: "0"
-          SubnetId: !Ref AppSubnet
-          GroupSet: [!Ref Ec2Sg]
+          SubnetId: !Ref ProdAppSubnet
+          GroupSet: [!Ref ProdEc2Sg]
           PrivateIpAddress: 10.11.1.10
       UserData:
         Fn::Base64: !Sub
@@ -193,6 +194,133 @@ Resources:
             EchoServer: !FindInMap [Scripts, Echo, Py]
       Tags:
         - { Key: Name, Value: cwan-ws-prod-ec2 }
+
+  # ---------------------------------------------------------------- dev VPC (no attachment, no EICE)
+  DevVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.21.1.0/24
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - { Key: Name, Value: cwan-ws-dev-vpc }
+
+  DevAppSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref DevVpc
+      CidrBlock: 10.21.1.0/26
+      AvailabilityZone: !Select [0, !GetAZs ""]   # the Region's first AZ
+      Tags:
+        - { Key: Name, Value: cwan-ws-dev-app-az1 }
+
+  DevCwanSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref DevVpc
+      CidrBlock: 10.21.1.224/28
+      AvailabilityZone: !Select [0, !GetAZs ""]   # the Region's first AZ
+      Tags:
+        - { Key: Name, Value: cwan-ws-dev-cwan-az1 }
+
+  DevCwanSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref DevVpc
+      CidrBlock: 10.21.1.240/28
+      AvailabilityZone: !Select [1, !GetAZs ""]   # the Region's second AZ (attachment ENIs only)
+      Tags:
+        - { Key: Name, Value: cwan-ws-dev-cwan-az2 }
+
+  DevAppRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref DevVpc
+      Tags:
+        - { Key: Name, Value: cwan-ws-dev-app }
+
+  DevAppRouteTableAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref DevAppSubnet
+      RouteTableId: !Ref DevAppRouteTable
+
+  DevCwanRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref DevVpc
+      Tags:
+        - { Key: Name, Value: cwan-ws-dev-cwan }
+
+  DevCwanRouteTableAssocA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref DevCwanSubnetA
+      RouteTableId: !Ref DevCwanRouteTable
+
+  DevCwanRouteTableAssocB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref DevCwanSubnetB
+      RouteTableId: !Ref DevCwanRouteTable
+
+  DevEc2Sg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: cwan-ws test EC2, ICMP and HTTP from 10.0.0.0/8 and 172.16.0.0/12
+      VpcId: !Ref DevVpc
+      SecurityGroupIngress:
+        - { IpProtocol: icmp, FromPort: -1, ToPort: -1, CidrIp: 10.0.0.0/8, Description: ping from 10.0.0.0/8 }
+        - { IpProtocol: tcp, FromPort: 80, ToPort: 80, CidrIp: 10.0.0.0/8, Description: HTTP from 10.0.0.0/8 }
+        - { IpProtocol: icmp, FromPort: -1, ToPort: -1, CidrIp: 172.16.0.0/12, Description: ping from 172.16.0.0/12 }
+        - { IpProtocol: tcp, FromPort: 80, ToPort: 80, CidrIp: 172.16.0.0/12, Description: HTTP from 172.16.0.0/12 }
+      Tags:
+        - { Key: Name, Value: cwan-ws-dev-ec2 }
+
+  DevInstance:
+    Type: AWS::EC2::Instance
+    DependsOn: DevAppRouteTableAssoc
+    Properties:
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      MetadataOptions:
+        HttpTokens: required
+        HttpEndpoint: enabled
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs: { VolumeType: gp3, VolumeSize: 8, Encrypted: true, DeleteOnTermination: true }
+      NetworkInterfaces:
+        - DeviceIndex: "0"
+          SubnetId: !Ref DevAppSubnet
+          GroupSet: [!Ref DevEc2Sg]
+          PrivateIpAddress: 10.21.1.10
+      UserData:
+        Fn::Base64: !Sub
+          - |
+            #!/bin/bash
+            set -euxo pipefail
+            hostnamectl set-hostname ${Host}
+            install -d /opt/cwan
+            cat > /opt/cwan/echo.py <<'PY'
+            ${EchoServer}
+            PY
+            cat > /etc/systemd/system/cwan-echo.service <<'UNIT'
+            [Unit]
+            Description=cwan workshop echo server (TCP 80 HTTP)
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            ExecStart=/usr/bin/python3 -u /opt/cwan/echo.py
+            Restart=always
+            [Install]
+            WantedBy=multi-user.target
+            UNIT
+            systemctl daemon-reload
+            systemctl enable --now cwan-echo
+          - Host: oregon-dev-ec2
+            EchoServer: !FindInMap [Scripts, Echo, Py]
+      Tags:
+        - { Key: Name, Value: cwan-ws-dev-ec2 }
 
 Mappings:
   Scripts:
@@ -223,22 +351,40 @@ Mappings:
         S(("0.0.0.0", 80), H).serve_forever()
 
 Outputs:
-  VpcId:
-    Description: Prod VPC (10.11.1.0/24). Select it when you create the Cloud WAN VPC attachment.
-    Value: !Ref Vpc
-  CwanSubnetAId:
-    Description: Subnet for the attachment, AZ 1 (10.11.1.224/28).
-    Value: !Ref CwanSubnetA
-  CwanSubnetBId:
-    Description: Subnet for the attachment, AZ 2 (10.11.1.240/28).
-    Value: !Ref CwanSubnetB
-  InstancePrivateIp:
-    Description: Private IP of the test EC2.
-    Value: !GetAtt Instance.PrivateIp
-  InstanceId:
-    Value: !Ref Instance
-  AppRouteTableId:
-    Description: Add the routes for 10.0.0.0/8 and 172.16.0.0/12 to this route table after the attachment is available.
-    Value: !Ref AppRouteTable
-  EiceId:
-    Value: !Ref Eice
+  ProdVpcId:
+    Description: Prod VPC (10.11.1.0/24). Select it when you create the prod Cloud WAN VPC attachment (tag segment=prod).
+    Value: !Ref ProdVpc
+  ProdCwanSubnetAId:
+    Description: Prod subnet for the attachment, AZ 1 (10.11.1.224/28).
+    Value: !Ref ProdCwanSubnetA
+  ProdCwanSubnetBId:
+    Description: Prod subnet for the attachment, AZ 2 (10.11.1.240/28).
+    Value: !Ref ProdCwanSubnetB
+  ProdInstancePrivateIp:
+    Description: Private IP of the prod test EC2.
+    Value: !GetAtt ProdInstance.PrivateIp
+  ProdInstanceId:
+    Value: !Ref ProdInstance
+  ProdAppRouteTableId:
+    Description: Add the routes for 10.0.0.0/8 and 172.16.0.0/12 to this route table after the prod attachment is available.
+    Value: !Ref ProdAppRouteTable
+  ProdEiceId:
+    Description: EC2 Instance Connect Endpoint of the prod VPC (the only one in this stack).
+    Value: !Ref ProdEice
+  DevVpcId:
+    Description: Dev VPC (10.21.1.0/24). Select it when you create the dev Cloud WAN VPC attachment (tag segment=dev) in the extra exercise.
+    Value: !Ref DevVpc
+  DevCwanSubnetAId:
+    Description: Dev subnet for the attachment, AZ 1 (10.21.1.224/28).
+    Value: !Ref DevCwanSubnetA
+  DevCwanSubnetBId:
+    Description: Dev subnet for the attachment, AZ 2 (10.21.1.240/28).
+    Value: !Ref DevCwanSubnetB
+  DevInstancePrivateIp:
+    Description: Private IP of the dev test EC2.
+    Value: !GetAtt DevInstance.PrivateIp
+  DevInstanceId:
+    Value: !Ref DevInstance
+  DevAppRouteTableId:
+    Description: Add the routes for 10.0.0.0/8 and 172.16.0.0/12 to this route table after the dev attachment is available.
+    Value: !Ref DevAppRouteTable

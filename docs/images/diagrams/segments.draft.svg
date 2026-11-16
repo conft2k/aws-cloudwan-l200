@@ -25,15 +25,20 @@
 <image href="bundle:service/AWS-Site-to-Site-VPN" x="117.6" y="308" width="48" height="48"/>
 <text x="141.6" y="376" font-size="18" text-anchor="middle" fill="#232F3E">Site-to-Site VPN</text>
 <text x="141.6" y="398" font-size="16" text-anchor="middle" fill="#232F3E">온프레미스 172.16.1.0/24</text>
-<rect x="707.4" y="490" width="168.5" height="150" fill="none" stroke="#7D8998" stroke-width="2" stroke-dasharray="6,4"/>
+<rect x="707.4" y="490" width="398.4" height="150" fill="none" stroke="#7D8998" stroke-width="2" stroke-dasharray="6,4"/>
 <image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="707.4" y="490" width="24" height="24"/>
 <text x="739.4" y="511" font-size="18" font-weight="700" fill="#7D8998">dev</text>
 <text x="791.1" y="511" font-size="16" fill="#3B4552">개발 환경</text>
 <image href="bundle:service/Amazon-Virtual-Private-Cloud" x="761" y="530" width="48" height="48"/>
 <text x="785" y="598" font-size="18" text-anchor="middle" fill="#232F3E">서울 dev VPC</text>
 <text x="785" y="620" font-size="16" text-anchor="middle" fill="#232F3E">10.20.1.0/24</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="995.2" y="530" width="48" height="48"/>
+<text x="1019.2" y="598" font-size="18" text-anchor="middle" fill="#232F3E">오레곤 dev VPC</text>
+<text x="1019.2" y="620" font-size="16" text-anchor="middle" fill="#232F3E">10.21.1.0/24</text>
 <line x1="817.95" y1="121" x2="1006.05" y2="121" stroke="#232F3E" stroke-width="1.5"/>
 <text x="912" y="112" font-size="16" text-anchor="middle" fill="#232F3E">리전 간 통신 허용</text>
+<line x1="813" y1="565" x2="991.2" y2="565" stroke="#232F3E" stroke-width="1.5"/>
+<text x="902.1" y="556" font-size="16" text-anchor="middle" fill="#232F3E">리전 간 통신 허용</text>
 <polyline points="267.2,343 409.2,343" fill="none" stroke="#232F3E" stroke-width="1.5"/>
 <text x="338.2" y="334" font-size="16" text-anchor="middle" fill="#232F3E">share → 허용</text>
 <polyline points="520.3,264 520.3,121 703.4,121" fill="none" stroke="#232F3E" stroke-width="1.5"/>

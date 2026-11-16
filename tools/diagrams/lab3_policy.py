@@ -27,7 +27,7 @@ VPN_CX = 110
 CORE_X, CORE_W = 280, 728           # core network container
 ON_X, ON_W = 294, 170               # onprem segment box
 SEG_X = 540                         # segment boxes on the right
-PROD_W, OTH_W = 369, 250
+PROD_W, OTH_W = 369, 250           # VPC 2개 박스 / 1개 박스
 BOX_H, GAP = 118, 44                # 세그먼트 박스 높이와 행 간격
 CORE_H = 36 + 3 * BOX_H + 2 * GAP + 16
 SEG_CX, V1_CX, V2_CX = 590, 720, 850
@@ -76,7 +76,9 @@ def panel(ct, after):
            [(VPCI, [("prod VPC", "name"), ("서울", "sub")]),
             (VPCI, [("prod VPC", "name"), ("오레곤", "sub")])])
     segbox(SEG_X, r2, OTH_W, BOX_H, "shared", [(VPCI, [("shared VPC", "name"), ("서울", "sub")])])
-    segbox(SEG_X, r3, OTH_W, BOX_H, "dev", [(VPCI, [("dev VPC", "name"), ("서울", "sub")])])
+    segbox(SEG_X, r3, PROD_W, BOX_H, "dev",
+           [(VPCI, [("dev VPC", "name"), ("서울", "sub")]),
+            (VPCI, [("dev VPC", "name"), ("오레곤", "sub")])])
 
     ocx = ON_X + ON_W / 2
     # onprem <-> shared: 처음부터 통신됨 (shared 가 onprem 에 share)
@@ -96,7 +98,7 @@ def panel(ct, after):
     link([(640, r1 + BOX_H + 4), (640, r2 - 4)], True, "통신됨", 650, (r1 + BOX_H + r2) / 2 + 6, "start")
     link([(700, r2 + BOX_H + 4), (700, r3 - 4)], True, "통신됨", 710, (r2 + BOX_H + r3) / 2 + 6, "start")
     # prod <-> dev: 세그먼트 기본 동작으로 차단
-    link([(SEG_X + PROD_W + 4, cy1), (COR_X, cy1), (COR_X, cy3), (SEG_X + OTH_W + 4, cy3)],
+    link([(SEG_X + PROD_W + 4, cy1), (COR_X, cy1), (COR_X, cy3), (SEG_X + PROD_W + 4, cy3)],
          False, "차단", COR_X + 12, cy2 + 6, "start")
 
 

@@ -4,9 +4,8 @@
 
 아래 그림 1의 번호 순서로 진행합니다. 처음 보는 용어는 [1-3. 용어 풀이](glossary.md)를 보세요.
 
-<!-- alt-pending: lab1-global -->
 <figure markdown="span">
-  ![실습 2-2 구성: 서울 리전의 core network edge에 prod, dev, shared 세그먼트의 VPC 3개가 연결되어 있다. 서울 prod EC2(10.10.1.10)가 dev EC2(10.20.1.10)로 보내는 ping은 세그먼트가 달라 실패하고(번호 1), shared EC2(10.30.1.10)로 보내는 ping은 shared 세그먼트가 prod에 공유되어 성공한다(번호 2). 오레곤 리전에는 참가자가 segment=prod 태그를 붙여 만든 VPC attachment(번호 3)가 있고, attachment policy가 태그를 보고 이 연결을 prod 세그먼트에 배정한다(번호 4). 서울 prod EC2에서 오레곤 prod EC2(10.11.1.10)로 보내는 ping은 두 edge 사이 연결을 거쳐 성공한다(번호 5)](images/diagrams/lab1-global.png)
+  ![AWS Cloud 안에 왼쪽은 아시아 태평양(서울) 리전, 가운데는 Cloud WAN core network(서울 edge AS 64512, 오레곤 edge AS 64513), 오른쪽은 미국 서부(오레곤) 리전이 있는 구성도. 서울 리전에는 위에서부터 dev VPC 10.20.1.0/24, prod VPC 10.10.1.0/24, shared VPC 10.30.1.0/24가 있고, 각 VPC 안에는 ICMP를 허용한 보안 그룹과 테스트용 EC2(10.20.1.10, 10.10.1.10, 10.30.1.10)가 들어 있다. core network 안은 dev, prod, shared 세 세그먼트가 가로 레인으로 나뉘어 있고, 각 레인에는 그 세그먼트에 배정된 VPC attachment가 놓여 있다. 번호 1은 prod 세그먼트에서 dev 세그먼트로 향하는 빨간 점선 화살표에 차단과 실패, 100% packet loss가 붙어, 보안 그룹이 열려 있어도 세그먼트가 기본 격리이므로 서울 prod EC2에서 서울 dev EC2로 가는 ping이 실패함을 보여 준다. 2는 prod 세그먼트에서 shared 세그먼트로 내려가는 녹색 화살표에 성공, 응답 있음이 붙어, 정책의 share 덕분에 서울 prod에서 shared로 가는 통신이 성공함을 보여 준다. 3은 오른쪽 오레곤 리전의 prod VPC 10.11.1.0/24(EC2 10.11.1.10)를 core network에 붙이는 VPC attachment 위의 segment=prod 태그 칩으로, 참가자가 attachment를 만들고 태그를 붙이는 단계다. 4는 그 attachment가 prod 세그먼트 레인 안에 들어가 있는 자리에 붙어, attachment policy 규칙 100의 tag-exists, segment 조건이 태그 값을 보고 attachment를 prod 세그먼트에 자동 배정했음을 나타낸다. 참가자는 세그먼트를 직접 고르지 않는다. 5는 prod 세그먼트 레인 안에서 서울 prod attachment에서 오레곤 prod attachment로 가는 녹색 화살표에 성공, 응답 있음이 붙어, 서울 edge와 오레곤 edge가 이미 연결되어 있고 prod 세그먼트 경로가 리전 간에 자동 전파되므로 서울 prod EC2에서 오레곤 prod EC2로 가는 ping이 성공함을 보여 준다. 그림 아래 범례에 1부터 5까지의 설명이 번호 순서로 적혀 있다](images/diagrams/lab1-global.png)
   <figcaption>그림 1. 실습 2-2에서 하는 일</figcaption>
 </figure>
 
@@ -115,8 +114,8 @@ ping -c 5 10.30.1.10
     |---|---|
     | Core network | 서울에서 본 core network |
     | Edge location | `us-west-2` |
-    | VPC | 오레곤 스택 **Outputs**의 `VpcId`에 있는 VPC (`cwan-ws-prod-vpc`) |
-    | Subnets | 오레곤 스택 **Outputs**의 `CwanSubnetAId`, `CwanSubnetBId` 두 개 (`cwan-ws-prod-cwan-az1`, `cwan-ws-prod-cwan-az2`) |
+    | VPC | 오레곤 스택 **Outputs**의 `ProdVpcId`에 있는 VPC (`cwan-ws-prod-vpc`) |
+    | Subnets | 오레곤 스택 **Outputs**의 `ProdCwanSubnetAId`, `ProdCwanSubnetBId` 두 개 (`cwan-ws-prod-cwan-az1`, `cwan-ws-prod-cwan-az2`) |
 
 5. **Tags**에 아래 태그를 추가합니다.
 
@@ -158,7 +157,7 @@ attachment 상태가 `Available`이 되면 상세 화면에서 **Segment**가 `p
 
 오레곤 앱 서브넷의 라우트 테이블에 경로 2개를 넣습니다. 리전은 **US West (Oregon)** 그대로입니다.
 
-1. **CloudFormation** 콘솔에서 오레곤 스택 `cloudwan-workshop-oregon`의 **Outputs** 탭을 열고 `AppRouteTableId` 값을 확인합니다.
+1. **CloudFormation** 콘솔에서 오레곤 스택 `cloudwan-workshop-oregon`의 **Outputs** 탭을 열고 `ProdAppRouteTableId` 값을 확인합니다.
 2. **VPC** 콘솔 → **Route tables**에서 그 ID의 라우트 테이블(`cwan-ws-prod-app`)을 엽니다.
 3. **Routes** 탭 → **Edit routes** → **Add route**를 누릅니다.
 4. 아래 두 경로를 넣습니다. 대상(**Target**)은 종류로 **Core Network**를 고르고 core network를 고릅니다.

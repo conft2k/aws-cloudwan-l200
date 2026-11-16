@@ -7,7 +7,7 @@
 
 | 순서 | 지울 것 | 누가 만들었나 |
 |---|---|---|
-| 1 | 오레곤 VPC attachment | 참가자([2-2-d](lab1.md)) |
+| 1 | 오레곤 VPC attachment (prod, 그리고 [3-1](extra-a.md)을 했다면 dev도) | 참가자([2-2-d](lab1.md), [3-1-d](extra-a.md#a-d)) |
 | 2 | Site-to-Site VPN attachment | 참가자([2-3-b](lab2.md)) |
 | 3 | Site-to-Site VPN 연결 | 참가자([2-3-a](lab2.md)) |
 | 4 | 오레곤 스택 `cloudwan-workshop-oregon` | CloudFormation |
@@ -19,10 +19,14 @@
 
 1. **Network Manager** → **Global networks** → `cwan-ws-global` → **Core network** → **Attachments**로 갑니다.
 2. 오레곤(`us-west-2`)의 prod VPC 연결을 고르고 삭제합니다. 확인 창이 나오면 한 번 더 확인합니다.
+3. 추가 과제 [3-1](extra-a.md)을 했다면 오레곤의 **dev VPC 연결도** 같은 방법으로 삭제합니다. 이 연결은 `segment=dev` 태그가 붙어 있습니다.
+
+    !!! warning "오레곤 연결을 하나라도 남기면 뒤 단계가 막힙니다"
+        오레곤 VPC 연결이 남아 있으면 오레곤 스택의 VPC가 지워지지 않고, 서울 스택의 core network도 지워지지 않습니다.
 
 <!-- shot: extraD-01-delete-attachment -->
 
-**성공 확인**: 연결이 목록에서 사라지거나 삭제된 상태가 됩니다. 연결 목록에서 오레곤 VPC 연결이 더 보이지 않을 때까지 기다린 뒤 다음으로 넘어갑니다.
+**성공 확인**: 연결이 목록에서 사라지거나 삭제된 상태가 됩니다. 오레곤 VPC 연결이 **하나도** 보이지 않을 때까지 기다린 뒤 다음으로 넘어갑니다.
 
 ## 3-4-b. Site-to-Site VPN attachment 지우기 (사전 테스트에서 측정합니다) { #d-b }
 
@@ -81,7 +85,7 @@ VPN attachment를 먼저 지워야 VPN 연결을 지울 수 있습니다.
 
 아래를 모두 확인하면 정리가 끝납니다.
 
-- [ ] 오레곤 VPC attachment가 없습니다
+- [ ] 오레곤 VPC attachment가 없습니다(prod, 그리고 [3-1](extra-a.md)을 했다면 dev도)
 - [ ] Site-to-Site VPN attachment가 없습니다
 - [ ] Site-to-Site VPN 연결이 **Deleted**입니다(서울)
 - [ ] 스택 `cloudwan-workshop-oregon`이 `DELETE_COMPLETE`입니다(오레곤)

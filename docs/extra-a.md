@@ -5,7 +5,7 @@
 - `require-attachment-acceptance`: 연결을 만들어도 **승인해야** 세그먼트에 들어갑니다.
 - `isolate-attachments`: 같은 세그먼트 안의 연결끼리도 **서로 통신하지 못합니다**.
 
-시간이 남거나 워크숍이 끝난 뒤에 혼자 해 보는 과제입니다. 3-1-c는 정책을 직접 바꾸므로 [2-4](lab3.md)까지 마친 뒤에 하세요.
+3-1-a와 3-1-b는 읽고 이해하는 설명입니다. 3-1-c부터 3-1-g까지는 `isolate-attachments`를 **직접 해 보는 과제**입니다. 시간이 남거나 워크숍이 끝난 뒤에 혼자 해 보는 과제이며, [2-4](lab3.md)까지 마친 뒤에 하세요. 과제 전체가 몇 분 걸리는지는 사전 테스트에서 측정합니다.
 
 ## 3-1-a. 연결 승인 요구하기 { #a-a }
 
@@ -45,9 +45,9 @@
 3. 연결이 어느 세그먼트로 가려는지 확인하고 승인합니다.
 4. 상태가 **Available**로 바뀌고 해당 세그먼트의 경로 테이블에 경로가 들어옵니다.
 
-<!-- shot: extraA-01-pending-acceptance -->
+<!-- shot: extraA-b1-pending-acceptance -->
 
-<!-- shot: extraA-02-accept-attachment -->
+<!-- shot: extraA-b2-accept-attachment -->
 
 !!! info "화면 이름은 사전 테스트에서 확인합니다"
     승인 대기 상태의 표시 이름과 승인 버튼의 위치는 사전 테스트에서 확인한 뒤 이 절에 적습니다. 위 순서는 흐름만 설명합니다.
@@ -56,9 +56,9 @@
 
 **성공 확인**: 승인 전에는 연결이 세그먼트의 경로 테이블에 경로를 내지 않고, 승인한 뒤에야 경로가 보입니다.
 
-## 3-1-c. 과제: `dev`를 격리하기 { #a-c }
+## 3-1-c. 과제 준비: 격리가 하는 일 { #a-c }
 
-`isolate-attachments`를 `true`로 두면 그 세그먼트 안의 연결끼리도 통신하지 못합니다. 세그먼트는 기본적으로 같은 세그먼트 안의 연결끼리 통신합니다. 이 옵션은 그 기본값을 끕니다. 남는 경로는 두 가지뿐입니다.
+`isolate-attachments`를 `true`로 두면 그 세그먼트 안의 연결끼리도 통신하지 못합니다. 세그먼트는 기본적으로 같은 세그먼트 안의 연결끼리 통신하는데, 이 옵션은 그 기본값을 끕니다. 남는 경로는 두 가지뿐입니다.
 
 - 다른 세그먼트에서 **share**로 받은 경로
 - **static route**(정적 경로)
@@ -66,33 +66,99 @@
 !!! info "Transit Gateway route table attachment는 예외입니다"
     Transit Gateway route table attachment를 통해 들어오는 경로는 `isolate-attachments`의 영향을 받지 않습니다. 이 옵션을 켠 세그먼트에서도 그런 경로는 그대로 남습니다.
 
-실습 환경의 `dev` 세그먼트에는 서울 dev VPC 연결이 하나뿐입니다. 연결끼리 통신하는지 직접 보려면 연결이 둘 이상 있어야 하므로, 이 과제는 **`shared`로 가는 경로가 그대로 남는지**를 봅니다.
+이 과제에서는 `dev` 세그먼트에 연결을 두 개 둡니다. 서울 dev VPC(`10.20.1.0/24`)는 이미 붙어 있고, 오레곤 dev VPC(`10.21.1.0/24`)를 직접 붙입니다. 오레곤 스택이 VPC와 EC2(`10.21.1.10`)는 만들었지만 attachment는 만들지 않았습니다.
 
-### 해 보기
+| 순서 | 하는 일 | 예상 결과 |
+|---|---|---|
+| 1 | 오레곤 dev VPC를 `dev`에 붙인다 | 서울 dev와 오레곤 dev가 통신한다 |
+| 2 | `isolate-attachments`를 켠다 | 둘 사이 통신이 끊긴다 |
+| 3 | 같은 상태에서 `shared`로 보낸다 | 그대로 통신한다 |
+| 4 | 되돌린다 | 다시 통신한다 |
 
-1. **Network Manager** → **Core network** → **Policy versions**에서 `LIVE` 정책을 열어 새 버전을 만듭니다([2-4-a](lab3.md)와 같은 방법입니다).
+## 3-1-d. 오레곤 dev VPC를 `dev` 세그먼트에 붙이기 { #a-d }
+
+[2-2-d](lab1.md#lab1-d)에서 오레곤 prod VPC를 붙인 것과 같은 절차입니다. 다른 점은 대상 VPC와 태그 값입니다.
+
+1. 리전을 **US West (Oregon)** 으로 바꾸고, **Network Manager** 콘솔에서 core network의 **Attachments** 탭으로 가 VPC attachment를 만듭니다([2-2-d](lab1.md#lab1-d)의 1~4단계).
+2. 값은 오레곤 스택 `cloudwan-workshop-oregon`의 **Outputs**에서 **dev VPC와 그 attachment 전용 서브넷**을 골라 넣습니다. prod VPC가 아닙니다. Outputs의 키 이름은 사전 테스트에서 확인해 이 줄에 적습니다.
+3. **Tags**에 `segment` = `dev`를 넣습니다. 오레곤 prod를 붙였을 때의 값은 `prod`였습니다. 태그 값이 세그먼트 이름과 대소문자까지 같아야 합니다.
+
+<!-- shot: extraA-01-oregon-dev-attachment -->
+
+4. attachment가 `Available`이 되면 상세 화면에서 **Segment**가 `dev`인지 확인합니다. 만드는 데 걸리는 시간은 사전 테스트에서 측정합니다.
+5. 오레곤 dev 앱 서브넷의 라우트 테이블에 core network 경로를 넣습니다([2-2-e](lab1.md#lab1-e)와 같습니다). 라우트 테이블 ID는 오레곤 스택 **Outputs**의 dev용 항목에서 찾습니다.
+
+    | Destination | Target |
+    |---|---|
+    | `10.0.0.0/8` | core network |
+    | `172.16.0.0/12` | core network |
+
+<!-- shot: extraA-02-oregon-dev-route -->
+
+**성공 확인**: attachment가 `Available`이고 **Segment**가 `dev`입니다. 오레곤 dev 라우트 테이블의 경로 2개가 `Active`입니다.
+
+## 3-1-e. 격리를 켜기 전에 통신 확인하기 { #a-e }
+
+서울 dev EC2(`10.20.1.10`)와 오레곤 dev EC2(`10.21.1.10`)가 서로 닿는지 먼저 봅니다.
+
+<!-- 미정: dev EC2에 접속하는 방법(스택에 dev용 접속 수단이 없다). 사전 테스트 전에 정해야 한다. -->
+
+서울 dev EC2에서 실행합니다.
+
+```bash
+ping -c 3 10.21.1.10
+```
+
+<!-- shot: extraA-03-ping-dev-to-dev-ok -->
+
+**결과**: 응답이 옵니다. 두 연결이 같은 `dev` 세그먼트에 있고, 세그먼트의 경로는 리전을 넘어 전파되기 때문입니다.
+
+**성공 확인**: `0% packet loss`입니다. **Network Manager**에서 `dev` 세그먼트 경로 테이블에 `10.20.1.0/24`와 `10.21.1.0/24`가 모두 보입니다.
+
+## 3-1-f. `isolate-attachments` 켜고 다시 확인하기 { #a-f }
+
+1. 정책의 새 버전을 만듭니다([2-4-a](lab3.md#lab3-a)와 같은 방법입니다).
 2. `segments`의 `dev` 항목에 `isolate-attachments`를 추가합니다.
 
     ```json
     { "name": "dev", "description": "개발 환경", "require-attachment-acceptance": false, "isolate-attachments": true }
     ```
 
-3. change set을 검토하고 실행합니다([2-4-b](lab3.md), [2-4-c](lab3.md)).
-4. `Execution succeeded`가 된 뒤, 서울 dev EC2(`10.20.1.10`)에서 다음을 확인합니다.
+3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). 실행이 끝나는 데 걸리는 시간은 사전 테스트에서 측정합니다.
+
+<!-- shot: extraA-04-isolate-change-set -->
+
+4. `Execution succeeded`가 된 뒤 서울 dev EC2에서 두 곳으로 보냅니다.
 
     ```bash
+    ping -c 3 -W 1 10.21.1.10
     ping -c 3 10.30.1.10
     ```
 
-<!-- shot: extraA-03-isolate-change-set -->
+<!-- shot: extraA-05-ping-after-isolate -->
 
-**결과**: `dev` 연결이 하나뿐이므로 `shared`로 가는 ping은 그대로 성공합니다. `shared`는 share로 경로를 받기 때문입니다. 격리가 막는 것은 **같은 세그먼트 안의 다른 연결**입니다. `dev`에 VPC를 하나 더 붙이면 두 VPC는 서로 통신하지 못하지만 둘 다 `shared`에는 닿습니다.
+**결과(실패가 맞습니다)**
 
-### 되돌리기
+- 오레곤 dev(`10.21.1.10`): `100% packet loss`. 같은 `dev` 세그먼트인데도 연결끼리 통신하지 못합니다.
+- `shared`(`10.30.1.10`): 응답이 옵니다. `shared`가 share로 내려 준 경로는 격리의 영향을 받지 않기 때문입니다.
 
-1. `LIVE` 정책에서 새 버전을 만들어 `isolate-attachments`를 `false`로 바꾸거나 키를 지웁니다.
-2. change set을 검토하고 실행합니다.
+이 둘을 나란히 보는 것이 이 과제의 핵심입니다. 격리는 같은 세그먼트 안의 연결 사이를 막고, share로 받은 경로는 막지 않습니다.
 
-또는 **Policy versions**에서 이전 버전(격리를 넣기 전 버전)을 골라 다시 `LIVE`로 만들 수도 있습니다. 이 방법을 쓸 때의 화면은 사전 테스트에서 확인합니다.
+**성공 확인**: 오레곤 dev로는 실패하고 `shared`로는 성공합니다. **Network Manager**의 `dev` 경로 테이블에서 서울 edge에는 `10.21.1.0/24`가, 오레곤 edge에는 `10.20.1.0/24`가 사라지고 `shared` 대역(`10.30.1.0/24`)은 남습니다. 경로 화면에서 보이는 모양은 사전 테스트에서 확인합니다.
 
-**성공 확인**: change set에 `dev`의 변경이 보이고 `Execution succeeded`가 됩니다. 되돌린 뒤에는 change set에 반대 방향의 변경이 보입니다.
+## 3-1-g. 되돌리기 { #a-g }
+
+!!! warning "반드시 되돌리세요"
+    되돌리지 않으면 [3-3](extra-c.md)에서 `dev` 경로 테이블이 다르게 보입니다.
+
+1. 정책의 새 버전에서 `isolate-attachments`를 `false`로 바꾸거나 그 줄을 지웁니다.
+2. change set을 검토하고 실행합니다. change set에는 3-1-f와 반대 방향의 변경이 보입니다.
+3. `Execution succeeded`가 된 뒤 서울 dev EC2에서 다시 확인합니다.
+
+    ```bash
+    ping -c 3 10.21.1.10
+    ```
+
+<!-- shot: extraA-06-ping-after-revert -->
+
+**성공 확인**: 오레곤 dev로 다시 응답이 옵니다. 오레곤 dev attachment는 [3-4](extra-d.md)에서 지웁니다.

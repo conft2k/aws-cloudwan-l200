@@ -29,12 +29,15 @@
 <image href="bundle:service/Amazon-Virtual-Private-Cloud" x="696" y="266" width="48" height="48"/>
 <text x="720" y="334" font-size="19" text-anchor="middle" fill="#232F3E">shared VPC</text>
 <text x="720" y="355" font-size="16" text-anchor="middle" fill="#3B4552">서울</text>
-<rect x="540" y="416" width="250" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
+<rect x="540" y="416" width="369" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
 <image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="566" y="428" width="48" height="48"/>
 <text x="590" y="496" font-size="19" font-weight="600" text-anchor="middle" fill="#232F3E">dev</text>
 <image href="bundle:service/Amazon-Virtual-Private-Cloud" x="696" y="428" width="48" height="48"/>
 <text x="720" y="496" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
 <text x="720" y="517" font-size="16" text-anchor="middle" fill="#3B4552">서울</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="826" y="428" width="48" height="48"/>
+<text x="850" y="496" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
+<text x="850" y="517" font-size="16" text-anchor="middle" fill="#3B4552">오레곤</text>
 <polyline points="468,290 536,290" fill="none" stroke="#1D8102" stroke-width="2"/>
 <text x="502" y="280" font-size="16" font-weight="700" text-anchor="middle" fill="#1D8102">통신됨</text>
 <polyline points="379,250 379,128 536,128" fill="none" stroke="#D13212" stroke-width="2" stroke-dasharray="5,4"/>
@@ -45,7 +48,7 @@
 <text x="650" y="238" font-size="16" font-weight="700" text-anchor="start" fill="#1D8102">통신됨</text>
 <polyline points="700,376 700,412" fill="none" stroke="#1D8102" stroke-width="2"/>
 <text x="710" y="400" font-size="16" font-weight="700" text-anchor="start" fill="#1D8102">통신됨</text>
-<polyline points="913,128 938,128 938,452 794,452" fill="none" stroke="#D13212" stroke-width="2" stroke-dasharray="5,4"/>
+<polyline points="913,128 938,128 938,452 913,452" fill="none" stroke="#D13212" stroke-width="2" stroke-dasharray="5,4"/>
 <text x="950" y="296" font-size="16" font-weight="700" text-anchor="start" fill="#D13212">차단</text>
 <rect x="16" y="574" width="992" height="180" fill="#F8F9F9" stroke="#D5DBDB" stroke-width="1"/>
 <text x="36" y="606" font-size="19" font-weight="700" fill="#232F3E">실습 2-4 — segment-actions 에 share 한 줄 추가</text>
@@ -86,12 +89,15 @@
 <image href="bundle:service/Amazon-Virtual-Private-Cloud" x="696" y="1012" width="48" height="48"/>
 <text x="720" y="1080" font-size="19" text-anchor="middle" fill="#232F3E">shared VPC</text>
 <text x="720" y="1101" font-size="16" text-anchor="middle" fill="#3B4552">서울</text>
-<rect x="540" y="1162" width="250" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
+<rect x="540" y="1162" width="369" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
 <image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="566" y="1174" width="48" height="48"/>
 <text x="590" y="1242" font-size="19" font-weight="600" text-anchor="middle" fill="#232F3E">dev</text>
 <image href="bundle:service/Amazon-Virtual-Private-Cloud" x="696" y="1174" width="48" height="48"/>
 <text x="720" y="1242" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
 <text x="720" y="1263" font-size="16" text-anchor="middle" fill="#3B4552">서울</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="826" y="1174" width="48" height="48"/>
+<text x="850" y="1242" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
+<text x="850" y="1263" font-size="16" text-anchor="middle" fill="#3B4552">오레곤</text>
 <polyline points="468,1036 536,1036" fill="none" stroke="#1D8102" stroke-width="2"/>
 <text x="502" y="1026" font-size="16" font-weight="700" text-anchor="middle" fill="#1D8102">통신됨</text>
 <polyline points="379,996 379,874 536,874" fill="none" stroke="#1D8102" stroke-width="3"/>
@@ -104,6 +110,6 @@
 <text x="650" y="984" font-size="16" font-weight="700" text-anchor="start" fill="#1D8102">통신됨</text>
 <polyline points="700,1122 700,1158" fill="none" stroke="#1D8102" stroke-width="2"/>
 <text x="710" y="1146" font-size="16" font-weight="700" text-anchor="start" fill="#1D8102">통신됨</text>
-<polyline points="913,874 938,874 938,1198 794,1198" fill="none" stroke="#D13212" stroke-width="2" stroke-dasharray="5,4"/>
+<polyline points="913,874 938,874 938,1198 913,1198" fill="none" stroke="#D13212" stroke-width="2" stroke-dasharray="5,4"/>
 <text x="950" y="1042" font-size="16" font-weight="700" text-anchor="start" fill="#D13212">차단</text>
 </svg>
