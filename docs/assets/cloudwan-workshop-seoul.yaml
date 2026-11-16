@@ -462,6 +462,43 @@ Resources:
       Tags:
         - { Key: Name, Value: cwan-ws-dev-ec2 }
 
+  DevEiceSg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: cwan-ws dev EICE, SSH out to the test EC2 only
+      VpcId: !Ref DevVpc
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          DestinationSecurityGroupId: !Ref DevEc2Sg
+          Description: SSH to the test EC2
+      Tags:
+        - { Key: Name, Value: cwan-ws-dev-eice }
+
+  DevEc2SgSshFromEice:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref DevEc2Sg
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      SourceSecurityGroupId: !Ref DevEiceSg
+      Description: SSH from EICE only
+
+  # The dev EC2 needs a shell of its own: extra exercise 3-1 pings the Oregon
+  # dev instance from here, and prod cannot reach dev - that block is exactly
+  # what this workshop demonstrates.
+  DevEice:
+    Type: AWS::EC2::InstanceConnectEndpoint
+    DependsOn: DevInstance  # its ENI must not take the instance's fixed IP
+    Properties:
+      SubnetId: !Ref DevAppSubnet
+      SecurityGroupIds: [!Ref DevEiceSg]
+      PreserveClientIp: false
+      Tags:
+        - { Key: Name, Value: cwan-ws-dev-eice }
+
   DevInstance:
     Type: AWS::EC2::Instance
     DependsOn: [DevS3Endpoint, DevAppRouteTableAssoc]
@@ -802,7 +839,10 @@ Resources:
         - { IpProtocol: udp, FromPort: 500, ToPort: 500, CidrIp: 0.0.0.0/0, Description: IKE from the AWS VPN endpoints }
         - { IpProtocol: udp, FromPort: 4500, ToPort: 4500, CidrIp: 0.0.0.0/0, Description: IPsec NAT-T from the AWS VPN endpoints }
         - { IpProtocol: "50", CidrIp: 0.0.0.0/0, Description: ESP from the AWS VPN endpoints }
-        - { IpProtocol: -1, CidrIp: 172.16.1.0/24, Description: "everything from the on-premises VPC, including transit traffic" }
+        # All protocols and ports, because this carries the LAN's transit
+        # traffic to AWS. It also reaches SSH on this instance, so the EICE
+        # rule below is not the only path to port 22.
+        - { IpProtocol: -1, CidrIp: 172.16.1.0/24, Description: "all ports from the on-premises VPC: the LAN's transit traffic" }
         - { IpProtocol: icmp, FromPort: -1, ToPort: -1, CidrIp: 10.0.0.0/8, Description: ping from any lab VPC }
         - { IpProtocol: tcp, FromPort: 80, ToPort: 80, CidrIp: 10.0.0.0/8, Description: curl from any lab VPC }
       Tags:
@@ -816,7 +856,7 @@ Resources:
       FromPort: 22
       ToPort: 22
       SourceSecurityGroupId: !Ref OnPremEiceSg
-      Description: SSH from EICE only
+      Description: SSH from EICE (the VPC-wide rule on this group also reaches port 22)
 
   OnPremVmSg:
     Type: AWS::EC2::SecurityGroup
@@ -1127,20 +1167,34 @@ Mappings:
         say() { printf '\n==> %s\n' "$*"; }
         die() { printf '\n!!! ROUTER BOOTSTRAP FAILED: %s\n\n' "$*" >&2; exit 1; }
 
+        # Egress may still be settling when cloud-init runs, and repository
+        # mirrors sometimes stall, so every repository call gets retries.
+        retry() {
+            local n=1 max=10
+            until "$@"; do
+                if [ "$n" -ge "$max" ]; then
+                    return 1
+                fi
+                printf '    attempt %d of %d failed, retrying in 15s: %s\n' "$n" "$max" "$*"
+                n=$((n + 1))
+                sleep 15
+            done
+        }
+
         say "installing the IPsec and BGP packages"
         if command -v dnf >/dev/null 2>&1; then
             say "enabling the SPAL repository"
-            dnf install -y spal-release \
+            retry dnf install -y spal-release \
                 || die "could not install spal-release from the core repository. Without SPAL this AMI has no strongswan and no frr package. Check that the instance can reach the Amazon Linux repositories."
             [ -f /etc/yum.repos.d/amazonlinux-spal.repo ] \
                 || die "spal-release is installed but /etc/yum.repos.d/amazonlinux-spal.repo is missing"
             say "installing strongswan and frr from SPAL"
-            dnf install -y strongswan frr iproute jq python3 tcpdump unzip \
+            retry dnf install -y strongswan frr iproute jq python3 tcpdump unzip \
                 || die "dnf could not install strongswan and frr. Run 'dnf repoquery strongswan frr' to see what the repositories offer."
         elif command -v apt-get >/dev/null 2>&1; then
             export DEBIAN_FRONTEND=noninteractive
-            apt-get update -y || die "apt-get update failed"
-            apt-get install -y \
+            retry apt-get update -y || die "apt-get update failed"
+            retry apt-get install -y \
                 strongswan strongswan-swanctl charon-systemd \
                 frr frr-pythontools \
                 iproute2 jq python3 tcpdump unzip curl ca-certificates \
@@ -1675,6 +1729,9 @@ Outputs:
   ProdEiceId:
     Description: EC2 Instance Connect Endpoint for the prod VPC.
     Value: !Ref ProdEice
+  DevEiceId:
+    Description: EC2 Instance Connect Endpoint for the dev VPC.
+    Value: !Ref DevEice
   OnPremEiceId:
     Description: EC2 Instance Connect Endpoint for the on-premises VPC. Reaches both the router and the VM.
     Value: !Ref OnPremEice
