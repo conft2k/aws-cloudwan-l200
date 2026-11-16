@@ -1,22 +1,22 @@
-<svg viewBox="0 0 1162 916" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans CJK KR', 'Pretendard', Arial, sans-serif">
+<svg viewBox="0 0 1162 944" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans CJK KR', 'Pretendard', Arial, sans-serif">
 <defs>
 <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#232F3E"/></marker>
 <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1D8102"/></marker>
 <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D13212"/></marker>
 </defs>
-<rect width="1162" height="916" fill="#FFFFFF"/>
-<rect x="14" y="14" width="1134" height="700" fill="none" stroke="#232F3E" stroke-width="2"/>
+<rect width="1162" height="944" fill="#FFFFFF"/>
+<rect x="14" y="14" width="1134" height="728" fill="none" stroke="#232F3E" stroke-width="2"/>
 <image href="bundle:group/AWS-Cloud-logo_32" x="14" y="14" width="32" height="32"/>
 <text x="56" y="37" font-size="19" font-weight="600" fill="#232F3E">AWS Cloud</text>
-<rect x="26" y="60" width="264" height="640" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="3,3"/>
+<rect x="26" y="60" width="264" height="668" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="3,3"/>
 <image href="bundle:group/Region_32" x="26" y="60" width="24" height="24"/>
 <text x="58" y="79" font-size="19" font-weight="600" fill="#00A4A6">아시아 태평양(서울)</text>
 <text x="58" y="97" font-size="16" fill="#232F3E">ap-northeast-2</text>
-<rect x="872" y="256" width="264" height="230" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="3,3"/>
-<image href="bundle:group/Region_32" x="872" y="256" width="24" height="24"/>
-<text x="904" y="275" font-size="19" font-weight="600" fill="#00A4A6">미국 서부(오레곤)</text>
-<text x="904" y="293" font-size="16" fill="#232F3E">us-west-2</text>
-<rect x="322" y="60" width="520" height="640" fill="none" stroke="#8C4FFF" stroke-width="2" stroke-dasharray="6,4"/>
+<rect x="872" y="60" width="264" height="454" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="3,3"/>
+<image href="bundle:group/Region_32" x="872" y="60" width="24" height="24"/>
+<text x="904" y="79" font-size="19" font-weight="600" fill="#00A4A6">미국 서부(오레곤)</text>
+<text x="904" y="97" font-size="16" fill="#232F3E">us-west-2</text>
+<rect x="322" y="60" width="520" height="668" fill="none" stroke="#8C4FFF" stroke-width="2" stroke-dasharray="6,4"/>
 <image href="bundle:service/AWS-Cloud-WAN" x="322" y="60" width="24" height="24"/>
 <text x="354" y="79" font-size="19" font-weight="600" fill="#8C4FFF">Cloud WAN core network</text>
 <text x="354" y="97" font-size="16" fill="#232F3E">서울 edge AS 64512 · 오레곤 edge AS 64513</text>
@@ -31,39 +31,52 @@
 <text x="136" y="211.5" font-size="19" fill="#232F3E">EC2</text>
 <text x="136" y="232.5" font-size="16" fill="#3B4552">10.20.1.10</text>
 </g>
-<rect x="38" y="308" width="240" height="164" fill="none" stroke="#8C4FFF" stroke-width="2"/>
-<image href="bundle:group/Virtual-private-cloud-VPC_32" x="38" y="308" width="24" height="24"/>
-<text x="70" y="327" font-size="19" font-weight="600" fill="#8C4FFF">prod VPC</text>
-<text x="70" y="345" font-size="16" fill="#232F3E">10.10.1.0/24</text>
-<rect x="54" y="358" width="208" height="100" fill="none" stroke="#DD344C" stroke-width="1.5"/>
-<text x="66" y="377" font-size="19" font-weight="600" fill="#DD344C">SG: ICMP 허용</text>
+<rect x="38" y="336" width="240" height="164" fill="none" stroke="#8C4FFF" stroke-width="2"/>
+<image href="bundle:group/Virtual-private-cloud-VPC_32" x="38" y="336" width="24" height="24"/>
+<text x="70" y="355" font-size="19" font-weight="600" fill="#8C4FFF">prod VPC</text>
+<text x="70" y="373" font-size="16" fill="#232F3E">10.10.1.0/24</text>
+<rect x="54" y="386" width="208" height="100" fill="none" stroke="#DD344C" stroke-width="1.5"/>
+<text x="66" y="405" font-size="19" font-weight="600" fill="#DD344C">SG: ICMP 허용</text>
 <g id="node:ec2-prod">
-<image href="bundle:service/Amazon-EC2" x="76" y="388" width="48" height="48"/>
-<text x="136" y="407.5" font-size="19" fill="#232F3E">EC2</text>
-<text x="136" y="428.5" font-size="16" fill="#3B4552">10.10.1.10</text>
+<image href="bundle:service/Amazon-EC2" x="76" y="416" width="48" height="48"/>
+<text x="136" y="435.5" font-size="19" fill="#232F3E">EC2</text>
+<text x="136" y="456.5" font-size="16" fill="#3B4552">10.10.1.10</text>
 </g>
-<rect x="38" y="504" width="240" height="164" fill="none" stroke="#8C4FFF" stroke-width="2"/>
-<image href="bundle:group/Virtual-private-cloud-VPC_32" x="38" y="504" width="24" height="24"/>
-<text x="70" y="523" font-size="19" font-weight="600" fill="#8C4FFF">shared VPC</text>
-<text x="70" y="541" font-size="16" fill="#232F3E">10.30.1.0/24</text>
-<rect x="54" y="554" width="208" height="100" fill="none" stroke="#DD344C" stroke-width="1.5"/>
-<text x="66" y="573" font-size="19" font-weight="600" fill="#DD344C">SG: ICMP 허용</text>
+<rect x="38" y="532" width="240" height="164" fill="none" stroke="#8C4FFF" stroke-width="2"/>
+<image href="bundle:group/Virtual-private-cloud-VPC_32" x="38" y="532" width="24" height="24"/>
+<text x="70" y="551" font-size="19" font-weight="600" fill="#8C4FFF">shared VPC</text>
+<text x="70" y="569" font-size="16" fill="#232F3E">10.30.1.0/24</text>
+<rect x="54" y="582" width="208" height="100" fill="none" stroke="#DD344C" stroke-width="1.5"/>
+<text x="66" y="601" font-size="19" font-weight="600" fill="#DD344C">SG: ICMP 허용</text>
 <g id="node:ec2-shared">
-<image href="bundle:service/Amazon-EC2" x="76" y="584" width="48" height="48"/>
-<text x="136" y="603.5" font-size="19" fill="#232F3E">EC2</text>
-<text x="136" y="624.5" font-size="16" fill="#3B4552">10.30.1.10</text>
+<image href="bundle:service/Amazon-EC2" x="76" y="612" width="48" height="48"/>
+<text x="136" y="631.5" font-size="19" fill="#232F3E">EC2</text>
+<text x="136" y="652.5" font-size="16" fill="#3B4552">10.30.1.10</text>
 </g>
-<rect x="884" y="308" width="240" height="164" fill="none" stroke="#8C4FFF" stroke-width="2"/>
-<image href="bundle:group/Virtual-private-cloud-VPC_32" x="884" y="308" width="24" height="24"/>
-<text x="916" y="327" font-size="19" font-weight="600" fill="#8C4FFF">prod VPC</text>
-<text x="916" y="345" font-size="16" fill="#232F3E">10.11.1.0/24</text>
-<rect x="900" y="358" width="208" height="100" fill="none" stroke="#DD344C" stroke-width="1.5"/>
-<text x="912" y="377" font-size="19" font-weight="600" fill="#DD344C">SG: ICMP 허용</text>
+<rect x="884" y="336" width="240" height="164" fill="none" stroke="#8C4FFF" stroke-width="2"/>
+<image href="bundle:group/Virtual-private-cloud-VPC_32" x="884" y="336" width="24" height="24"/>
+<text x="916" y="355" font-size="19" font-weight="600" fill="#8C4FFF">prod VPC</text>
+<text x="916" y="373" font-size="16" fill="#232F3E">10.11.1.0/24</text>
+<rect x="900" y="386" width="208" height="100" fill="none" stroke="#DD344C" stroke-width="1.5"/>
+<text x="912" y="405" font-size="19" font-weight="600" fill="#DD344C">SG: ICMP 허용</text>
 <g id="node:ec2-prod-or">
-<image href="bundle:service/Amazon-EC2" x="922" y="388" width="48" height="48"/>
-<text x="982" y="407.5" font-size="19" fill="#232F3E">EC2</text>
-<text x="982" y="428.5" font-size="16" fill="#3B4552">10.11.1.10</text>
+<image href="bundle:service/Amazon-EC2" x="922" y="416" width="48" height="48"/>
+<text x="982" y="435.5" font-size="19" fill="#232F3E">EC2</text>
+<text x="982" y="456.5" font-size="16" fill="#3B4552">10.11.1.10</text>
 </g>
+<rect x="884" y="112" width="240" height="164" fill="none" stroke="#8C4FFF" stroke-width="2"/>
+<image href="bundle:group/Virtual-private-cloud-VPC_32" x="884" y="112" width="24" height="24"/>
+<text x="916" y="131" font-size="19" font-weight="600" fill="#8C4FFF">dev VPC</text>
+<text x="916" y="149" font-size="16" fill="#232F3E">10.21.1.0/24</text>
+<rect x="900" y="162" width="208" height="100" fill="none" stroke="#DD344C" stroke-width="1.5"/>
+<text x="912" y="181" font-size="19" font-weight="600" fill="#DD344C">SG: ICMP 허용</text>
+<g id="node:ec2-dev-or">
+<image href="bundle:service/Amazon-EC2" x="922" y="192" width="48" height="48"/>
+<text x="982" y="211.5" font-size="19" fill="#232F3E">EC2</text>
+<text x="982" y="232.5" font-size="16" fill="#3B4552">10.21.1.10</text>
+</g>
+<text x="1004" y="296" font-size="16" text-anchor="middle" fill="#3B4552">attachment 없음</text>
+<text x="1004" y="317" font-size="16" text-anchor="middle" fill="#3B4552">(추가 과제 3-1)</text>
 <rect x="362" y="146" width="460" height="150" fill="none" stroke="#8C4FFF" stroke-width="1.5"/>
 <image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="362" y="146" width="24" height="24"/>
 <text x="394" y="165" font-size="19" font-weight="600" fill="#8C4FFF">dev 세그먼트</text>
@@ -73,69 +86,69 @@
 <text x="470" y="281" font-size="16" text-anchor="middle" fill="#3B4552">서울 dev VPC</text>
 </g>
 <line x1="278" y1="216" x2="442" y2="216" stroke="#232F3E" stroke-width="1.5"/>
-<rect x="362" y="342" width="460" height="150" fill="none" stroke="#8C4FFF" stroke-width="1.5"/>
-<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="362" y="342" width="24" height="24"/>
-<text x="394" y="361" font-size="19" font-weight="600" fill="#8C4FFF">prod 세그먼트</text>
+<rect x="362" y="370" width="460" height="150" fill="none" stroke="#8C4FFF" stroke-width="1.5"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="362" y="370" width="24" height="24"/>
+<text x="394" y="389" font-size="19" font-weight="600" fill="#8C4FFF">prod 세그먼트</text>
 <g id="node:att-prod">
-<image href="bundle:resource/AWS-Transit-Gateway_Attachment" x="446" y="388" width="48" height="48"/>
-<text x="470" y="456" font-size="19" text-anchor="middle" fill="#232F3E">VPC attachment</text>
-<text x="470" y="477" font-size="16" text-anchor="middle" fill="#3B4552">서울 prod VPC</text>
+<image href="bundle:resource/AWS-Transit-Gateway_Attachment" x="446" y="416" width="48" height="48"/>
+<text x="470" y="484" font-size="19" text-anchor="middle" fill="#232F3E">VPC attachment</text>
+<text x="470" y="505" font-size="16" text-anchor="middle" fill="#3B4552">서울 prod VPC</text>
 </g>
-<line x1="278" y1="412" x2="442" y2="412" stroke="#232F3E" stroke-width="1.5"/>
-<rect x="362" y="538" width="460" height="150" fill="none" stroke="#8C4FFF" stroke-width="1.5"/>
-<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="362" y="538" width="24" height="24"/>
-<text x="394" y="557" font-size="19" font-weight="600" fill="#8C4FFF">shared 세그먼트</text>
+<line x1="278" y1="440" x2="442" y2="440" stroke="#232F3E" stroke-width="1.5"/>
+<rect x="362" y="566" width="460" height="150" fill="none" stroke="#8C4FFF" stroke-width="1.5"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="362" y="566" width="24" height="24"/>
+<text x="394" y="585" font-size="19" font-weight="600" fill="#8C4FFF">shared 세그먼트</text>
 <g id="node:att-shared">
-<image href="bundle:resource/AWS-Transit-Gateway_Attachment" x="446" y="584" width="48" height="48"/>
-<text x="470" y="652" font-size="19" text-anchor="middle" fill="#232F3E">VPC attachment</text>
-<text x="470" y="673" font-size="16" text-anchor="middle" fill="#3B4552">서울 shared VPC</text>
+<image href="bundle:resource/AWS-Transit-Gateway_Attachment" x="446" y="612" width="48" height="48"/>
+<text x="470" y="680" font-size="19" text-anchor="middle" fill="#232F3E">VPC attachment</text>
+<text x="470" y="701" font-size="16" text-anchor="middle" fill="#3B4552">서울 shared VPC</text>
 </g>
-<line x1="278" y1="608" x2="442" y2="608" stroke="#232F3E" stroke-width="1.5"/>
+<line x1="278" y1="636" x2="442" y2="636" stroke="#232F3E" stroke-width="1.5"/>
 <g id="node:att-prod-or">
-<image href="bundle:resource/AWS-Transit-Gateway_Attachment" x="686" y="388" width="48" height="48"/>
-<text x="710" y="456" font-size="19" text-anchor="middle" fill="#232F3E">VPC attachment</text>
-<text x="710" y="477" font-size="16" text-anchor="middle" fill="#3B4552">오레곤 prod VPC</text>
+<image href="bundle:resource/AWS-Transit-Gateway_Attachment" x="686" y="416" width="48" height="48"/>
+<text x="710" y="484" font-size="19" text-anchor="middle" fill="#232F3E">VPC attachment</text>
+<text x="710" y="505" font-size="16" text-anchor="middle" fill="#3B4552">오레곤 prod VPC</text>
 </g>
-<line x1="738" y1="412" x2="884" y2="412" stroke="#232F3E" stroke-width="1.5"/>
-<rect x="609.8" y="355.5" width="160.4" height="22" fill="#232F3E" rx="3"/>
-<text x="690" y="372" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">segment=prod 태그</text>
-<circle cx="591.3" cy="366.5" r="10.5" fill="#232F3E"/>
-<text x="591.3" y="372" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">3</text>
-<circle cx="793.5" cy="397.5" r="10.5" fill="#232F3E"/>
-<text x="793.5" y="403" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">4</text>
-<line x1="470" y1="342" x2="470" y2="300" stroke="#D13212" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrowRed)"/>
-<circle cx="440" cy="319.5" r="10.5" fill="#232F3E"/>
-<text x="440" y="325" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">1</text>
-<rect x="490" y="308.5" width="46" height="22" fill="#D13212" rx="3"/>
-<text x="513" y="325" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">차단</text>
-<text x="546" y="325" font-size="16" font-weight="600" fill="#D13212">실패: 100% packet loss</text>
-<line x1="470" y1="496" x2="470" y2="534" stroke="#1D8102" stroke-width="2" marker-end="url(#arrowGreen)"/>
-<circle cx="440" cy="515" r="10.5" fill="#232F3E"/>
-<text x="440" y="520.5" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">2</text>
-<text x="490" y="519" font-size="16" font-weight="600" fill="#1D8102">성공: 응답 있음</text>
-<line x1="498" y1="412" x2="678" y2="412" stroke="#1D8102" stroke-width="2" marker-end="url(#arrowGreen)"/>
-<circle cx="528" cy="397.5" r="10.5" fill="#232F3E"/>
-<text x="528" y="403" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">5</text>
-<text x="546" y="402" font-size="16" font-weight="600" fill="#1D8102">성공: 응답 있음</text>
-<rect x="16" y="730" width="1130" height="170" fill="#F8F9F9" stroke="#D5DBDB" stroke-width="1"/>
-<circle cx="44" cy="754.5" r="10.5" fill="#232F3E"/>
-<text x="44" y="760" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">1</text>
-<text x="66" y="760" font-size="16" font-weight="600" fill="#232F3E">서울 prod → 서울 dev (실패)</text>
-<text x="345.6" y="760" font-size="16" fill="#3B4552">세그먼트는 기본 격리. 보안 그룹은 ICMP 허용인데도 경로가 없어 100% 유실.</text>
-<circle cx="44" cy="784.5" r="10.5" fill="#232F3E"/>
-<text x="44" y="790" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">2</text>
-<text x="66" y="790" font-size="16" font-weight="600" fill="#232F3E">서울 prod → 서울 shared (성공)</text>
-<text x="345.6" y="790" font-size="16" fill="#3B4552">정책의 share(shared → prod·dev·onprem)로 shared 경로만 prod에 전파.</text>
-<circle cx="44" cy="814.5" r="10.5" fill="#232F3E"/>
-<text x="44" y="820" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">3</text>
-<text x="66" y="820" font-size="16" font-weight="600" fill="#232F3E">오레곤 prod attachment 생성</text>
-<text x="345.6" y="820" font-size="16" fill="#3B4552">참가자가 VPC attachment를 만들고 segment=prod 태그를 붙입니다.</text>
-<circle cx="44" cy="844.5" r="10.5" fill="#232F3E"/>
-<text x="44" y="850" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">4</text>
-<text x="66" y="850" font-size="16" font-weight="600" fill="#232F3E">attachment policy 규칙 100</text>
-<text x="345.6" y="850" font-size="16" fill="#3B4552">tag-exists: segment 조건이 태그 값대로 prod 세그먼트에 자동 배정 (참가자가 고르지 않음).</text>
-<circle cx="44" cy="874.5" r="10.5" fill="#232F3E"/>
-<text x="44" y="880" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">5</text>
-<text x="66" y="880" font-size="16" font-weight="600" fill="#232F3E">서울 prod → 오레곤 prod (성공)</text>
-<text x="345.6" y="880" font-size="16" fill="#3B4552">서울 edge AS 64512 ↔ 오레곤 edge AS 64513은 이미 연결. prod 경로가 리전 간 자동 전파.</text>
+<line x1="738" y1="440" x2="884" y2="440" stroke="#232F3E" stroke-width="1.5"/>
+<rect x="609.8" y="383.5" width="160.4" height="22" fill="#232F3E" rx="3"/>
+<text x="690" y="400" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">segment=prod 태그</text>
+<circle cx="591.3" cy="394.5" r="10.5" fill="#232F3E"/>
+<text x="591.3" y="400" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">3</text>
+<circle cx="793.5" cy="425.5" r="10.5" fill="#232F3E"/>
+<text x="793.5" y="431" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">4</text>
+<line x1="470" y1="370" x2="470" y2="300" stroke="#D13212" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrowRed)"/>
+<circle cx="440" cy="333.5" r="10.5" fill="#232F3E"/>
+<text x="440" y="339" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">1</text>
+<rect x="490" y="322.5" width="46" height="22" fill="#D13212" rx="3"/>
+<text x="513" y="339" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">차단</text>
+<text x="546" y="339" font-size="16" font-weight="600" fill="#D13212">실패: 100% packet loss</text>
+<line x1="470" y1="524" x2="470" y2="562" stroke="#1D8102" stroke-width="2" marker-end="url(#arrowGreen)"/>
+<circle cx="440" cy="543" r="10.5" fill="#232F3E"/>
+<text x="440" y="548.5" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">2</text>
+<text x="490" y="547" font-size="16" font-weight="600" fill="#1D8102">성공: 응답 있음</text>
+<line x1="498" y1="440" x2="678" y2="440" stroke="#1D8102" stroke-width="2" marker-end="url(#arrowGreen)"/>
+<circle cx="528" cy="425.5" r="10.5" fill="#232F3E"/>
+<text x="528" y="431" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">5</text>
+<text x="546" y="430" font-size="16" font-weight="600" fill="#1D8102">성공: 응답 있음</text>
+<rect x="16" y="758" width="1130" height="170" fill="#F8F9F9" stroke="#D5DBDB" stroke-width="1"/>
+<circle cx="44" cy="782.5" r="10.5" fill="#232F3E"/>
+<text x="44" y="788" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">1</text>
+<text x="66" y="788" font-size="16" font-weight="600" fill="#232F3E">서울 prod → 서울 dev (실패)</text>
+<text x="345.6" y="788" font-size="16" fill="#3B4552">세그먼트는 기본 격리. 보안 그룹은 ICMP 허용인데도 경로가 없어 100% 유실.</text>
+<circle cx="44" cy="812.5" r="10.5" fill="#232F3E"/>
+<text x="44" y="818" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">2</text>
+<text x="66" y="818" font-size="16" font-weight="600" fill="#232F3E">서울 prod → 서울 shared (성공)</text>
+<text x="345.6" y="818" font-size="16" fill="#3B4552">정책의 share(shared → prod·dev·onprem)로 shared 경로만 prod에 전파.</text>
+<circle cx="44" cy="842.5" r="10.5" fill="#232F3E"/>
+<text x="44" y="848" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">3</text>
+<text x="66" y="848" font-size="16" font-weight="600" fill="#232F3E">오레곤 prod attachment 생성</text>
+<text x="345.6" y="848" font-size="16" fill="#3B4552">참가자가 VPC attachment를 만들고 segment=prod 태그를 붙입니다.</text>
+<circle cx="44" cy="872.5" r="10.5" fill="#232F3E"/>
+<text x="44" y="878" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">4</text>
+<text x="66" y="878" font-size="16" font-weight="600" fill="#232F3E">attachment policy 규칙 100</text>
+<text x="345.6" y="878" font-size="16" fill="#3B4552">tag-exists: segment 조건이 태그 값대로 prod 세그먼트에 자동 배정 (참가자가 고르지 않음).</text>
+<circle cx="44" cy="902.5" r="10.5" fill="#232F3E"/>
+<text x="44" y="908" font-size="15" font-weight="700" text-anchor="middle" fill="#FFFFFF">5</text>
+<text x="66" y="908" font-size="16" font-weight="600" fill="#232F3E">서울 prod → 오레곤 prod (성공)</text>
+<text x="345.6" y="908" font-size="16" fill="#3B4552">서울 edge AS 64512 ↔ 오레곤 edge AS 64513은 이미 연결. prod 경로가 리전 간 자동 전파.</text>
 </svg>

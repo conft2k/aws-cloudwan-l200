@@ -31,20 +31,21 @@ def badge(cx, cy, n):
 
 # ---------------- 좌표 ----------------
 W = 1162
-CLOUD = (14, 14, 1134, 700)                 # x, y, w, h  -> 14..1148, 14..714
-SEOUL = (26, 60, 264, 640)                  # 26..290
-CORE = (322, 60, 520, 640)                  # 322..842
-OREGON = (872, 256, 264, 230)               # 872..1136
+CLOUD = (14, 14, 1134, 728)                 # x, y, w, h  -> 14..1148, 14..742
+SEOUL = (26, 60, 264, 668)                  # 26..290
+CORE = (322, 60, 520, 668)                  # 322..842
+OREGON = (872, 60, 264, 454)                # 872..1136, 60..514
 VPCW, VPCH = 240, 164
 LANE_X, LANE_W, LANE_H = 362, 460, 150      # 362..822
 ROWS = [                                    # (세그먼트, lane y, VPC y, 행 중심 y)
     ("dev", 146, 112, 216),
-    ("prod", 342, 308, 412),
-    ("shared", 538, 504, 608),
+    ("prod", 370, 336, 440),
+    ("shared", 566, 532, 636),
 ]
-AX_S, AX_O = 470, 710
-OY = 412                                    # 오레곤 prod 행 중심                       # attachment 아이콘 중심 x (서울 / 오레곤)
-PANEL_Y = 730
+AX_S, AX_O = 470, 710                       # attachment 아이콘 중심 x (서울 / 오레곤)
+PY = 370                                    # prod 세그먼트 레인 y
+OY = 440                                    # 오레곤 prod 행 중심
+PANEL_Y = 758
 PANEL_H = 170
 H = PANEL_Y + PANEL_H + 16
 
@@ -79,7 +80,11 @@ def vpc_box(x, y, title, cidr, ip, nid):
 for seg, ly, vy, cy in ROWS:
     t, cidr, ip = VPCS[seg]
     vpc_box(38, vy, t, cidr, ip, f"ec2-{seg}")
-vpc_box(884, 308, "prod VPC", "10.11.1.0/24", "10.11.1.10", "ec2-prod-or")
+vpc_box(884, 336, "prod VPC", "10.11.1.0/24", "10.11.1.10", "ec2-prod-or")
+# 오레곤 dev VPC: 실습 2-2 시점에는 attachment가 없다 (추가 과제 3-1에서 참가자가 붙인다)
+vpc_box(884, 112, "dev VPC", "10.21.1.0/24", "10.21.1.10", "ec2-dev-or")
+d.text(1004, 296, "attachment 없음", F_SUB, SUB, None, "middle")
+d.text(1004, 317, "(추가 과제 3-1)", F_SUB, SUB, None, "middle")
 
 # ---------------- 세그먼트 레인 ----------------
 for seg, ly, vy, cy in ROWS:
@@ -104,19 +109,19 @@ d.line(AX_O + S / 2 + 4, OY, 884, OY)
 
 # ---------------- 번호가 붙은 단계 ----------------
 # 3) attachment 생성 + segment=prod 태그
-x0, x1 = d.tag(AX_O - 20, 372, "segment=prod 태그", INK, "middle")
-badge(x0 - 18.5, 366.5, 3)
+x0, x1 = d.tag(AX_O - 20, PY + 30, "segment=prod 태그", INK, "middle")
+badge(x0 - 18.5, PY + 24.5, 3)
 # 4) attachment policy 가 prod 세그먼트에 배정
 badge(793.5, OY - 14.5, 4)
 # 1) prod -> dev 실패
-d.line(AX_S, 342, AX_S, 300, RED_A, 2, "6,4", "arrowRed")
-badge(440, 319.5, 1)
-bx0, bx1 = d.tag(490, 325, "차단", RED_A)
-d.text(bx1 + 10, 325, "실패: 100% packet loss", F_SUB, RED_A, "600")
+d.line(AX_S, PY, AX_S, 300, RED_A, 2, "6,4", "arrowRed")
+badge(440, 333.5, 1)
+bx0, bx1 = d.tag(490, 339, "차단", RED_A)
+d.text(bx1 + 10, 339, "실패: 100% packet loss", F_SUB, RED_A, "600")
 # 2) prod -> shared 성공
-d.line(AX_S, 496, AX_S, 534, GREEN_A, 2, None, "arrowGreen")
-badge(440, 515, 2)
-d.text(490, 519, "성공: 응답 있음", F_SUB, GREEN_A, "600")
+d.line(AX_S, PY + LANE_H + 4, AX_S, 562, GREEN_A, 2, None, "arrowGreen")
+badge(440, 543, 2)
+d.text(490, 547, "성공: 응답 있음", F_SUB, GREEN_A, "600")
 # 5) 서울 prod -> 오레곤 prod 성공
 d.line(AX_S + S / 2 + 4, OY, AX_O - S / 2 - 8, OY, GREEN_A, 2, None, "arrowGreen")
 badge(528, OY - 14.5, 5)
