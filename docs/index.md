@@ -17,7 +17,7 @@ AWS Cloud WAN은 이 일을 **core network policy** 하나로 바꿉니다. 리�
 | 준비물 | 웹 브라우저. 참가자마다 AWS 계정 1개를 드립니다 |
 | 리전 | 아시아 태평양(서울) `ap-northeast-2`와 미국 서부(오레곤) `us-west-2` 두 곳을 씁니다 |
 
-온프레미스 장비는 따로 드리지 않습니다. 온프레미스 네트워크는 AWS 안에 VPC로 모사하고, Site-to-Site VPN으로 Cloud WAN에 연결합니다.
+온프레미스 환경은 AWS 안에 별도의 VPC로 시뮬레이션합니다. 실제 온프레미스처럼 Site-to-Site VPN으로만 Cloud WAN에 연결하므로, 연결 방식과 경로 동작은 실제 구성과 같습니다.
 
 모르는 용어는 [용어 풀이](glossary.md)를 보세요. 실습을 시작하기 전에 준비할 것은 [1-2. 사전 준비](prerequisites.md)에 있습니다.
 
