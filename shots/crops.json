@@ -78,10 +78,10 @@
   900
  ],
  "images/console/lab1-route-01-outputs.png": [
-  726,
-  269,
+  9,
+  223,
   1431,
-  427
+  900
  ],
  "images/console/lab1-route-02-edit.png": [
   0,
@@ -93,12 +93,18 @@
   1,
   453,
   1439,
-  580
+  689
  ],
  "images/console/lab1-routes-01-segment-table.png": [
   309,
   207,
   1432,
   686
+ ],
+ "images/console/lab2-vpn-01-create.png": [
+  0,
+  86,
+  1440,
+  900
  ]
 }
