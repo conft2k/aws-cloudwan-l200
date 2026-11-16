@@ -84,7 +84,9 @@ core network가 **어디에 생길지**를 정하는 덩어리입니다. 여기�
 !!! info "ASN 범위는 끝 값을 포함하지 않습니다"
     콘솔 설명에 따르면 ASN 범위는 왼쪽은 포함하고 오른쪽은 제외합니다. 예를 들어 `64900-64903`은 `64900`~`64902`입니다. 실습의 `64512-64520`은 `64512`~`64519`를 뜻합니다.
 
-#### `inside-cidr-blocks` { #inside-cidr }
+리전은 그 리전에 걸린 연결을 모두 지우기 전에는 `edge-locations`에서 뺄 수 없습니다.
+
+### `inside-cidr-blocks` { #inside-cidr }
 
 **이 워크숍은 Connect attachment를 쓰지 않으므로 이 필드를 비워 두었습니다.** 읽고 넘어가도 됩니다.
 
@@ -96,8 +98,6 @@ core network가 **어디에 생길지**를 정하는 덩어리입니다. 여기�
 ??? info "Connect attachment를 쓰게 될 때 알아야 할 것 (실습에는 필요 없습니다)"
     공식 문서는 "an Inside CIDR block is required for attaching Connect attachments to a Core Network Edge"라고 적습니다. 최소 크기는 IPv4 `/24`, IPv6 `/64`입니다. 큰 범위를 적어 두면 새 edge가 생길 때마다 `/24`와 `/64`를 자동으로 떼어 갑니다. 한 번 edge에 배정된 inside CIDR은 지울 수 없고, 큰 범위에 남은 공간이 없으면 정책 예외(policy exception)가 납니다.
 
-리전은 그 리전에 걸린 연결을 모두 지우기 전에는 `edge-locations`에서 뺄 수 없습니다.
-
 출처: [JSON policy document](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-policies-json.html), [Core network configuration](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-core-network-config.html)
 
 ## 4-1-c. segments { #segments }
@@ -108,9 +108,9 @@ core network가 **어디에 생길지**를 정하는 덩어리입니다. 여기�
 |---|---|---|
 | `name` | 예 | 세그먼트 이름입니다. 쓸 수 있는 문자는 영문자와 숫자(`a`–`z`, `A`–`Z`, `0`–`9`)뿐이라 공백은 넣을 수 없습니다 |
 | `description` | 아니요 | 설명입니다. 통신에는 영향이 없습니다 |
-| `edge-locations` | 아니요 | 이 세그먼트가 존재할 리전을 더 좁힙니다. `core-network-configuration`의 `edge-locations`의 부분집합이어야 합니다 |
+| `edge-locations` | 아니요 | 이 세그먼트가 존재할 리전을 더 좁힙니다. `core-network-configuration`의 `edge-locations`에 적은 리전 가운데서 고릅니다 |
 | `isolate-attachments` | 아니요 | 기본값 `false`입니다. `true`로 하면 같은 세그먼트 안의 연결끼리도 통신하지 못합니다 |
-| `require-attachment-acceptance` | 아니요 | 기본값 `true`입니다. 연결이 세그먼트에 들어오기 전에 사람이 승인해야 합니다 |
+| `require-attachment-acceptance` | 아니요 | 기본값 `true`입니다. `true`이면 연결이 세그먼트에 들어오기 전에 사람이 승인해야 합니다 |
 | `allow-filter` / `deny-filter` | 아니요 | 이 세그먼트가 경로를 받아들일(또는 거부할) 상대 세그먼트 목록입니다 |
 
 실습 정책은 네 세그먼트 모두 `require-attachment-acceptance`를 `false`로 두었습니다. 기본값이 `true`라서 그대로 두면 참가자가 연결을 만들 때마다 **Accept** 버튼을 한 번 더 눌러야 하고, 실습 시간이 그만큼 길어집니다. 승인 동작은 추가 과제 [3-1](extra-a.md)에서 따로 다룹니다.
@@ -204,6 +204,8 @@ core network가 **어디에 생길지**를 정하는 덩어리입니다. 여기�
 | `account` | 연결을 요청한 AWS 계정 ID |
 | `tag-value` | 특정 태그 키의 **값** |
 | `tag-name` | 특정 태그 키가 **있는지** (값은 보지 않습니다) |
+
+태그를 보는 조건에는 볼 태그 키를 `key`에 적고, `tag-value`이면 비교할 값을 `value`에 적습니다.
 
 `operator`는 `equals`, `not-equals`, `contains`, `begins-with` 중 하나입니다. `resource-id`, `region`, `attachment-type`, `account`, `tag-value`에 씁니다. 태그 이름의 존재만 보는 조건에는 `operator`가 필요 없습니다.
 
@@ -303,7 +305,7 @@ Cloud WAN에서 정책을 바꾸는 것은 파일을 저장하는 일이 아니�
 
 읽을 때 주의할 점을 덧붙입니다.
 
-- **global network당 core network는 1개**이고 조정할 수 없습니다. core network를 둘 쓰려면 global network를 둘 만들어야 합니다. 계정당 global network가 5개이므로 임시 실습 계정을 재사용할 때는 이전 워크숍의 global network가 남아 있는지 먼저 확인하세요([1-2. 사전 준비](prerequisites.md)).
+- **global network당 core network는 1개**이고 조정할 수 없습니다. core network를 둘 쓰려면 global network를 둘 만들어야 합니다. 계정당 global network는 5개까지입니다.
 - **리전당 edge는 1개**입니다. 한 리전에 core network edge를 둘 둘 수 없습니다. Transit Gateway를 리전에 여러 개 두던 방식과 다른 점입니다.
 - **core network당 경로 10,000개**는 모든 세그먼트의 경로를 합한 숫자입니다. 정적 경로, 공유로 받은 경로, 동적으로 배운 경로를 모두 셉니다. BGP로 받았지만 설치되지 않은 경로는 세지 않습니다.
 - 그 밖에 정책 문서 크기 1 MB(조정 불가), core network당 정책 버전 10,000개, 연결당 Connect peer 4개(조정 불가), core network당 Direct Connect 연결 40개(조정 가능), VPN을 통해 core network에 광고하는 경로 1,000개가 있습니다.

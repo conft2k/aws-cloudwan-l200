@@ -1,4 +1,4 @@
-# 2-4. 정책으로 통신 범위 바꾸기 (13분)
+# 2-4. 정책으로 통신 범위 바꾸기 (15분)
 
 이 실습이 워크숍의 결론입니다. 정책(policy)에 JSON 몇 줄을 넣고 반영하면, 서울과 오레곤에 걸친 통신 범위가 한 번에 바뀝니다. 리전마다 따로 설정하지 않습니다. 그 변화를 직접 확인합니다.
 
@@ -19,7 +19,7 @@
     !!! warning "왼쪽 메뉴의 **Policies**가 아닙니다"
         왼쪽 메뉴에도 **Policies**라는 항목이 있지만 그것은 VPC IP Address Manager 쪽이라 전혀 다른 화면입니다. core network 안의 **Policy versions**로 가세요.
 
-3. **Alias** 가 **LIVE** 인 버전을 고르고 **Edit** 를 누릅니다. **Create policy** 화면이 열립니다.
+3. **Alias** 가 **LIVE** 인 버전 행의 **선택 버튼**을 누르고, 표 위쪽의 **Edit** 를 누릅니다. **Create policy** 화면이 열립니다.
 4. **Choose policy view mode** 에서 **JSON** 을 고릅니다.
 
     !!! warning "기본값은 **Visual editor** 입니다"
@@ -37,26 +37,26 @@
     }
     ```
 
-넣을 위치는 기존 `shared` share 항목의 바로 뒤입니다. 두 항목 사이에 쉼표(`,`)가 있어야 합니다. 편집을 마친 `segment-actions`는 다음과 같습니다.
+    넣을 위치는 기존 `shared` share 항목의 바로 뒤입니다. 두 항목 사이에 쉼표(`,`)가 있어야 합니다. 편집을 마친 `segment-actions`는 다음과 같습니다.
 
-```json
-  "segment-actions": [
-    {
-      "action": "share",
-      "mode": "attachment-route",
-      "segment": "shared",
-      "share-with": ["prod", "dev", "onprem"]
-    },
-    {
-      "action": "share",
-      "mode": "attachment-route",
-      "segment": "onprem",
-      "share-with": ["prod"]
-    }
-  ],
-```
+    ```json
+      "segment-actions": [
+        {
+          "action": "share",
+          "mode": "attachment-route",
+          "segment": "shared",
+          "share-with": ["prod", "dev", "onprem"]
+        },
+        {
+          "action": "share",
+          "mode": "attachment-route",
+          "segment": "onprem",
+          "share-with": ["prod"]
+        }
+      ],
+    ```
 
-`share-with`에 `dev`는 넣지 않습니다. 고객 요구사항은 온프레미스가 개발 환경에 닿지 않는 것입니다.
+    `share-with`에 `dev`는 넣지 않습니다. 고객 요구사항은 온프레미스가 개발 환경에 닿지 않는 것입니다.
 
 7. **Create policy** 를 누릅니다. 새 버전이 만들어지고, Cloud WAN이 현재 **LIVE** 버전과 비교해 change set을 만들기 시작합니다.
 
@@ -70,7 +70,7 @@
 
 새 버전을 만들면 Cloud WAN이 현재 적용 중인 정책과 새 버전을 비교해 change set(바뀌는 내용의 목록)을 만듭니다. 적용하기 전에 무엇이 바뀌는지 읽어 봅니다.
 
-1. 방금 만든 새 policy version의 change set을 엽니다.
+1. **Policy versions** 목록에서 방금 만든 버전(**Alias** 가 **LATEST**) 행의 **선택 버튼**을 누르고, 표 위쪽의 **View or apply change set** 을 누릅니다. **Policy version - 2 change sets** 처럼 버전 번호가 붙은 화면이 열립니다.
 2. 바뀌는 항목을 읽습니다. 이번 변경에서는 `onprem`과 `prod` 사이의 share가 새로 생기는 것이 보여야 합니다.
 3. 의도하지 않은 항목(세그먼트 삭제 등)이 없는지 확인합니다.
 
@@ -102,11 +102,11 @@
 
 change set을 실행해 새 버전을 적용합니다.
 
-1. change set을 실행합니다.
-2. 상태가 **Ready to execute** → **Executing policy** → **Execution succeeded**로 바뀌는 것을 지켜봅니다. **1분쯤** 걸립니다.
+1. change set 화면 오른쪽 위의 **Apply change set** 을 누릅니다.
+2. **Policy versions** 목록에서 **Change set state** 가 **Ready to execute** → **Executing** → **Execution succeeded** 로 바뀌는 것을 지켜봅니다. **1분쯤** 걸립니다.
 3. 새 정책이 **LIVE**가 되었는지 확인합니다.
 
-반영은 **약 1분** 걸립니다. 상태가 **Executing policy** 에 머무르는 동안에는 다음 단계로 가지 말고 기다립니다.
+**Executing** 에 머무르는 동안에는 다음 소절로 가지 말고 기다립니다. 반영이 끝나기 전에 ping을 하면 그대로 실패합니다.
 
 ![change set을 실행한 직후의 Policy versions 목록. Policy version - 2의 Change set state가 Executing으로 바뀌었고 Alias는 아직 LATEST다. Policy version - 1이 여전히 LIVE를 달고 있다](images/console/lab3-policy-04-executing.png){ .shot }
 ![실행이 끝난 뒤의 Policy versions 목록. Policy version - 2의 Alias가 LIVE, LATEST가 되고 Change set state가 Execution succeeded다. Policy version - 1에는 Alias가 없다. 새 정책이 적용됐다는 뜻이다](images/console/lab3-policy-05-live.png){ .shot }
@@ -115,18 +115,18 @@ change set을 실행해 새 버전을 적용합니다.
 
 ## 2-4-d. 다시 통신해 보기 { #lab3-d }
 
-[2-3](lab2.md)에서 실패했던 통신을 다시 시도합니다. 온프레미스 VM 터미널에서 실행합니다.
+[2-3](lab2.md)에서 실패했던 통신을 다시 시도합니다. 세 ping 모두 **온프레미스 VM(`172.16.1.10`)** 에서 실행합니다. 터미널이 닫혔으면 [2-3-e](lab2.md#lab2-e)와 같은 방법으로 `cwan-ws-onprem-vm`에 다시 **Connect** 합니다.
 
 1. 서울 prod EC2로 ping을 보냅니다.
 
     ```bash
-    ping -c 4 10.10.1.10
+    ping -c 5 10.10.1.10
     ```
 
 2. 오레곤 prod EC2로 ping을 보냅니다.
 
     ```bash
-    ping -c 4 10.11.1.10
+    ping -c 5 10.11.1.10
     ```
 
 출력은 이렇습니다.
@@ -145,11 +145,11 @@ rtt min/avg/max/mdev = 123.230/123.789/125.858/1.035 ms
 
 오레곤은 따로 설정하지 않았는데도 함께 열렸습니다. 정책이 `prod` 세그먼트 전체에 적용되기 때문이고, [2-4-b](#lab3-b)의 change set에 오레곤 prod attachment가 들어 있던 것이 그 예고였습니다. 왕복 123밀리초는 온프레미스에서 서울을 거쳐 오레곤까지 간 거리입니다.
 
-3. dev EC2로 ping을 보냅니다. 고객 요구사항대로 실패해야 합니다.
+이번에는 같은 터미널에서 dev EC2로 ping을 보냅니다. 고객 요구사항대로 실패해야 합니다.
 
-    ```bash
-    ping -c 4 10.20.1.10
-    ```
+```bash
+ping -c 3 10.20.1.10
+```
 
 **결과(실패가 맞습니다)**: **100% packet loss**입니다. `onprem`과 `dev` 사이에는 share가 없습니다.
 
@@ -162,7 +162,7 @@ PING 10.20.1.10 (10.20.1.10) 56(84) bytes of data.
 
 **같은 터널로 prod는 되고 dev는 안 됩니다.** 고객 요구사항이 정확히 그것이었고, 정책의 `share-with` 에 `prod` 만 적고 `dev` 를 적지 않은 결과입니다.
 
-prod ↔ dev도 여전히 막혀 있습니다. 서울 prod EC2에서 dev EC2 `10.20.1.10`으로 ping을 보내 확인해 보세요(2-2에서 쓴 방법과 같습니다). 이쪽도 **결과(실패가 맞습니다)**입니다.
+prod ↔ dev도 여전히 막혀 있습니다. 시간이 있으면 서울 prod EC2에서 dev EC2 `10.20.1.10`으로 ping을 보내 확인해 보세요([2-2-b](lab1.md#lab1-b)와 같은 방법입니다). 이쪽도 응답이 없는 것이 맞습니다.
 
 ## 2-4-e. 워크숍 정리 { #lab3-e }
 

@@ -7,9 +7,9 @@
 
 | 순서 | 지울 것 | 누가 만들었나 | 소요 시간 |
 |---|---|---|---|
-| 1 | 오레곤 VPC attachment (prod, 그리고 [3-1](extra-a.md)을 했다면 dev도) | 참가자([2-2-d](lab1.md), [3-1-d](extra-a.md#a-d)) | **몇 분 안쪽** |
-| 2 | Site-to-Site VPN attachment | 참가자([2-3-b](lab2.md)) | **1분 안쪽** |
-| 3 | Site-to-Site VPN 연결 | 참가자([2-3-a](lab2.md)) | **몇 분 안쪽** |
+| 1 | 오레곤 VPC attachment (prod, 그리고 [3-1](extra-a.md)을 했다면 dev도) | 참가자([2-2-d](lab1.md#lab1-d), [3-1-d](extra-a.md#a-d)) | **몇 분 안쪽** |
+| 2 | Site-to-Site VPN attachment | 참가자([2-3-b](lab2.md#lab2-b)) | **1분 안쪽** |
+| 3 | Site-to-Site VPN 연결 | 참가자([2-3-a](lab2.md#lab2-a)) | **몇 분 안쪽** |
 | 4 | 오레곤 스택 `cloudwan-workshop-oregon` | CloudFormation | **2분 안쪽** |
 | 5 | 서울 스택 `cloudwan-workshop-seoul` | CloudFormation | **15분쯤** |
 
@@ -30,7 +30,7 @@
 
 ## 3-4-b. Site-to-Site VPN attachment 지우기 { #d-b }
 
-같은 **Attachments** 화면에서 온프레미스 쪽 Site-to-Site VPN 연결(`segment=onprem`)을 고르고 삭제합니다.
+같은 **Attachments** 화면에서 온프레미스 쪽 Site-to-Site VPN 연결([2-3-b](lab2.md#lab2-b)에서 만든 `cwan-ws-att-onprem-apne2`, `segment=onprem`)을 고르고 **Actions** → **Delete** 로 지웁니다.
 
 ![Site-to-Site VPN attachment를 지울 때 나오는 같은 모양의 확인 창. 제목의 attachment ID만 다르다](images/console/extraD-02-delete-vpn-attachment.png){ .shot }
 
@@ -47,7 +47,7 @@ UnsupportedOperation: Unable to delete a vpn that's associated to a Core Network
 attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 보입니다. 그 상태가 끝날 때까지 기다리세요.
 
 1. **VPC** 콘솔(서울) → **Site-to-Site VPN connections**로 갑니다.
-2. [2-3-a](lab2.md)에서 만든 VPN 연결을 고르고 **Actions** → **Delete VPN connection**을 누릅니다.
+2. [2-3-a](lab2.md#lab2-a)에서 만든 VPN 연결을 고르고 **Actions** → **Delete VPN connection**을 누릅니다.
 3. 확인 창에서 삭제를 확정합니다.
 
 **결과**: VPN 연결의 상태가 **Deleted**가 됩니다. customer gateway는 스택이 만든 것이므로 그대로 둡니다. 서울 스택을 지울 때 함께 지워집니다.
@@ -64,7 +64,7 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
     !!! info "**Express mode** 는 켜지 마세요"
         같은 창에 **Express mode - new** 라는 선택지가 있고 `Delete this stack faster.` 라고 적혀 있습니다. 리소스가 안정될 때까지 기다리지 않고 정리한다는 뜻입니다. **이 워크숍에서는 시험해 보지 않았습니다.** 기본값(꺼짐) 그대로 두세요.
 
-**결과**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). 오레곤 prod VPC와 EC2도 함께 지워집니다. **2분 안쪽**입니다.
+**결과**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). 오레곤의 prod·dev VPC와 EC2 두 대가 함께 지워집니다. **2분 안쪽**입니다.
 
 ## 3-4-e. 서울 스택 지우기 { #d-e }
 
@@ -73,7 +73,7 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 3. 창의 입력 칸에 `cloudwan-workshop-seoul` 을 적고 **Delete stack** 을 누릅니다. [3-4-d](#d-d)와 같은 창이며, 이름을 입력하기 전에는 버튼이 눌리지 않습니다.
 
 !!! warning "이 삭제는 15분쯤 걸립니다"
-    **15분쯤** 걸립니다. core network를 지우는 데 시간이 걸리기 때문이고, [2-1-b](lab0.md#lab0-b)에서 core network를 만들 때 걸린 15분과 거의 같습니다. 화면을 닫아도 삭제는 계속됩니다.
+    core network를 지우는 데 시간이 걸리기 때문이고, [2-1-b](lab0.md#lab0-b)에서 core network를 만들 때 걸린 15분과 거의 같습니다. 화면을 닫아도 삭제는 계속됩니다.
 
 **결과**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). core network, global network, 서울의 VPC와 EC2가 함께 지워집니다.
 

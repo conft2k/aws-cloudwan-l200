@@ -71,6 +71,7 @@ EC2에는 인터넷 주소가 없습니다. 그래서 스택이 만든 EC2 Insta
 
     !!! warning "바로 위의 **EC2 Instance Connect** 가 아닙니다"
         이름이 비슷한 선택지가 둘 있습니다. **Public subnet access** 묶음의 **EC2 Instance Connect** 는 인스턴스에 퍼블릭 IP가 있을 때 쓰는 것이라 이 실습의 EC2에는 통하지 않습니다. 고를 것은 **Private subnet access** 묶음의 **EC2 Instance Connect Endpoint** 입니다.
+
 3. **Connect**를 누르면 터미널이 열립니다.
 
 ![EC2의 Connect to Linux instance 화면. 위쪽에 대상 인스턴스 정보(인스턴스 ID와 이름, 상태, VPC, 서브넷, 보안 그룹)가 있고, In web browser 탭의 Choose how to connect에 네 가지 선택지가 있다. Public subnet access의 EC2 Instance Connect, Private subnet access의 EC2 Instance Connect Endpoint, Maximum security의 SSM Session Manager, Troubleshoot의 EC2 Serial Console이다. 콘솔은 첫 번째 EC2 Instance Connect 가 선택된 채로 열리고, 그 상태에서는 아래 Settings 패널의 Choose public IP address 라디오 두 개가 모두 흐리게 비활성되며 노란 경고 No public IPv4 or IPv6 address assigned 와 함께 오른쪽 아래 Connect 버튼이 회색으로 눌리지 않는다. 경고문 자체가 대신 EC2 Instance Connect Endpoint 를 써 보라고 알려 준다. 이 실습에서 고를 것은 두 번째다](images/console/lab1-eic-01-connect.png){ .shot }
@@ -93,7 +94,7 @@ PING 10.20.1.10 (10.20.1.10) 56(84) bytes of data.
 5 packets transmitted, 0 received, 100% packet loss, time 4177ms
 ```
 
-응답 줄이 하나도 없습니다. 중간에 아무 오류 메시지도 나오지 않습니다. **경로가 없어서 패킷이 그냥 버려지기 때문입니다.** 보안 그룹이 막으면 보통 이렇게 조용히 끝나지만, 여기서는 보안 그룹이 아니라 세그먼트가 이유입니다.
+응답 줄이 하나도 없습니다. 중간에 아무 오류 메시지도 나오지 않습니다. **경로가 없어서 패킷이 그냥 버려지기 때문입니다.** 보안 그룹이 막을 때도 화면에는 이렇게 똑같이 보입니다.
 
 보안 그룹은 열려 있습니다. dev EC2의 보안 그룹은 `10.0.0.0/8`에서 오는 ICMP(Internet Control Message Protocol, ping에 쓰는 프로토콜)를 허용하고, prod EC2의 주소 `10.10.1.10`도 이 대역 안에 있습니다. 그런데도 막힌 이유는 보안 그룹이 아니라 **Cloud WAN 세그먼트**입니다. `prod`와 `dev`는 서로 다른 세그먼트이고, 둘 사이에 `share`가 없으면 서로의 경로를 배우지 못합니다. 막으려고 따로 설정한 것이 없다는 점이 이 워크숍의 핵심입니다.
 
@@ -160,7 +161,7 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
     |---|---|
     | Name | `cwan-ws-att-prod-usw2` |
     | Attachment type | **VPC** (기본값) |
-    | Edge location | **US West (Oregon)** — 목록에는 리전 코드가 아니라 리전 이름으로 나옵니다 |
+    | Edge location | **United States (Oregon)** — 오른쪽 위 리전 선택 메뉴의 **US West (Oregon)** 과 같은 리전입니다. 이 목록에서만 이름이 다릅니다 |
     | VPC | 오레곤 스택 **Outputs**의 `ProdVpcId` (`cwan-ws-prod-vpc`) |
     | Subnets | 오레곤 스택 **Outputs**의 `ProdCwanSubnetAId`, `ProdCwanSubnetBId` 두 개 (`cwan-ws-prod-cwan-az1`, `cwan-ws-prod-cwan-az2`) |
 
@@ -178,7 +179,7 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
     !!! tip "이름에 리전을 넣는 이유"
         `prod` 세그먼트에는 서울 연결과 오레곤 연결이 **둘 다** 들어갑니다. 이름에 리전이 없으면 콘솔 목록에서 어느 쪽인지 구분되지 않습니다. 스택이 만든 서울 연결도 `cwan-ws-att-prod-apne2` 로 되어 있습니다. `apne2` 와 `usw2` 는 리전 이름을 줄인 것입니다.
 
-6. 만들기 버튼을 누릅니다.
+6. 화면 맨 아래의 **Create attachment** 를 누릅니다.
 
 ![Create attachment 화면의 Attachment settings 패널. Name - optional 칸에 cwan-ws-att-prod-usw2가 입력되어 있고, Attachment type 드롭다운은 VPC, Edge location 드롭다운은 United States (Oregon)으로 되어 있다. core network를 고르는 칸은 없다](images/console/lab1-attach-01-create.png){ .shot }
 ![Create attachment 화면의 VPC attachment 패널. Appliance mode support와 IPv6 support는 꺼져 있고 DNS support와 Security Group Referencing support는 켜져 있다. VPC ID 드롭다운에 cwan-ws-prod-vpc가 선택되어 있고, 그 아래 Subnet IDs 표에 가용 영역마다 한 줄씩 us-west-2b는 cwan-ws-prod-cwan-az2, us-west-2a는 cwan-ws-prod-cwan-az1이 선택되어 있다. 표 위 설명에 가용 영역당 서브넷 하나만 고를 수 있지만 그 영역의 모든 서브넷이 Global network로 트래픽을 보낼 수 있다고 적혀 있다](images/console/lab1-attach-02-subnets.png){ .shot }
@@ -218,7 +219,7 @@ attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행
 1. **CloudFormation** 콘솔에서 오레곤 스택 `cloudwan-workshop-oregon`의 **Outputs** 탭을 열고 `ProdAppRouteTableId` 값을 확인합니다.
 2. **VPC** 콘솔 → **Route tables**에서 그 ID의 라우트 테이블(`cwan-ws-prod-app`)을 엽니다.
 3. **Routes** 탭 → **Edit routes** → **Add route**를 누릅니다.
-4. 아래 두 경로를 넣습니다. 대상(**Target**)은 종류로 **Core Network**를 고르고 core network를 고릅니다.
+4. 아래 두 경로를 넣습니다. 줄이 하나씩 생기므로 **Add route** 는 경로마다 한 번씩 누릅니다. 대상(**Target**)은 종류로 **Core Network** 를 고른 다음 core network를 고릅니다.
 
     | Destination | Target |
     |---|---|
@@ -243,7 +244,9 @@ attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행
 
 그림 1의 ⑤입니다. 서울 prod EC2에서 오레곤 prod EC2로 ping을 보냅니다.
 
-서울 prod EC2 터미널에서 실행합니다. 리전을 **Asia Pacific (Seoul)** 로 되돌리고 `cwan-ws-prod-ec2`에 **Connect**합니다. 열려 있는 터미널이 있으면 그대로 씁니다.
+리전을 **Asia Pacific (Seoul)** 로 되돌리고 `cwan-ws-prod-ec2`에 **Connect**합니다. 열려 있는 터미널이 있으면 그대로 씁니다.
+
+서울 prod EC2 터미널에서 실행합니다.
 
 ```bash
 ping -c 5 10.11.1.10

@@ -79,6 +79,8 @@
 | 3 | 같은 상태에서 `shared`로 보낸다 | 그대로 통신한다 |
 | 4 | 되돌린다 | 다시 통신한다 |
 
+**결과**: `isolate-attachments`를 켠 세그먼트에 무엇이 남는지 말할 수 있습니다(share로 받은 경로와 static route).
+
 ## 3-1-d. 오레곤 dev VPC를 `dev` 세그먼트에 붙이기 { #a-d }
 
 [2-2-d](lab1.md#lab1-d)에서 오레곤 prod VPC를 붙인 것과 같은 절차입니다. 다른 점은 대상 VPC와 태그 값입니다.
@@ -87,7 +89,7 @@
 2. 값은 오레곤 스택 `cloudwan-workshop-oregon`의 **Outputs**에서 고릅니다. VPC는 `DevVpcId`, 서브넷은 `DevCwanSubnetAId`와 `DevCwanSubnetBId` 두 개입니다. **prod VPC가 아닙니다.**
 3. **Tags**에 두 개를 넣습니다. `Name` = `cwan-ws-att-dev-usw2`, `segment` = `dev`. 오레곤 prod를 붙였을 때의 `segment` 값은 `prod`였습니다. 태그 값이 세그먼트 이름과 대소문자까지 같아야 합니다. 이름에 리전을 넣는 이유는 [2-2-d](lab1.md#lab1-d)와 같습니다 — `dev` 세그먼트에도 서울과 오레곤 연결이 둘 다 들어갑니다.
 
-![오레곤 dev VPC를 붙이는 Create attachment 화면의 Attachment settings 패널. Name에 cwan-ws-att-dev-usw2, Attachment type에 VPC, Edge location에 United States (Oregon)이 들어 있다. 2-2-d에서 prod를 붙일 때와 같은 화면이고 이름과 VPC, 태그 값만 다르다](images/console/extraA-01-oregon-dev-attachment.png){ .shot }
+    ![오레곤 dev VPC를 붙이는 Create attachment 화면의 Attachment settings 패널. Name에 cwan-ws-att-dev-usw2, Attachment type에 VPC, Edge location에 United States (Oregon)이 들어 있다. 2-2-d에서 prod를 붙일 때와 같은 화면이고 이름과 VPC, 태그 값만 다르다](images/console/extraA-01-oregon-dev-attachment.png){ .shot }
 
 4. attachment가 `Available`이 되면 상세 화면에서 **Segment**가 `dev`인지 확인합니다. [2-2-d](lab1.md#lab1-d)의 오레곤 prod attachment와 똑같은 작업이고, 그쪽과 비슷하게 **4분쯤** 걸립니다.
 5. 오레곤 dev 앱 서브넷의 라우트 테이블에 core network 경로를 넣습니다([2-2-e](lab1.md#lab1-e)와 같습니다). 라우트 테이블 ID는 오레곤 스택 **Outputs**의 dev용 항목에서 찾습니다.
@@ -108,7 +110,7 @@
 서울 dev EC2 `cwan-ws-dev-ec2` 에 [2-2-b](lab1.md#lab1-b)와 같은 방법(**EC2 Instance Connect Endpoint**)으로 접속해 실행합니다. 스택이 dev 서브넷에도 접속용 엔드포인트를 만들어 두었습니다.
 
 ```bash
-ping -c 3 10.21.1.10
+ping -c 5 10.21.1.10
 ```
 
 출력은 이렇습니다.
@@ -126,7 +128,7 @@ PING 10.21.1.10 (10.21.1.10) 56(84) bytes of data.
 rtt min/avg/max/mdev = 120.849/122.037/126.761/2.361 ms
 ```
 
-왕복 약 121밀리초로 [2-2-f](lab1.md#lab1-f)의 prod 쪽 리전 간 통신과 같습니다. 같은 백본을 쓰기 때문입니다.
+왕복 약 121밀리초로 [2-2-f](lab1.md#lab1-f)의 prod 쪽 리전 간 통신과 비슷합니다. 같은 백본을 쓰기 때문입니다.
 
 **결과**: `0% packet loss` 로 응답이 옵니다. 두 연결이 같은 `dev` 세그먼트에 있고, 세그먼트의 경로는 리전을 넘어 전파되기 때문입니다. **Network Manager** 에서 `dev` 세그먼트 경로 테이블에 `10.20.1.0/24` 와 `10.21.1.0/24` 가 모두 보입니다.
 
@@ -141,15 +143,15 @@ rtt min/avg/max/mdev = 120.849/122.037/126.761/2.361 ms
 
 3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). [2-4](lab3.md)와 같은 종류의 변경이라 change set 생성과 실행에 각각 **1분 안팎** 걸립니다.
 
-![isolate-attachments를 켠 정책 버전을 실행하는 중의 Policy versions 목록. 새 버전의 Alias가 LATEST이고 Change set state가 파란색 Executing이며, 그 전 버전이 아직 LIVE를 달고 있다. 실행이 끝나야 LIVE가 새 버전으로 넘어온다. 그림에서는 2-4와 승인 과제까지 했기 때문에 버전이 네 개이고 3번이 LIVE, 4번이 Executing이다. 만든 버전 수는 어떤 과제를 했는지에 따라 다릅니다](images/console/extraA-04b-isolate-executing.png){ .shot }
+    ![isolate-attachments를 켠 정책 버전을 실행하는 중의 Policy versions 목록. 새 버전의 Alias가 LATEST이고 Change set state가 파란색 Executing이며, 그 전 버전이 아직 LIVE를 달고 있다. 실행이 끝나야 LIVE가 새 버전으로 넘어온다. 그림에서는 2-4와 승인 과제까지 했기 때문에 버전이 네 개이고 3번이 LIVE, 4번이 Executing이다. 만든 버전 수는 어떤 과제를 했는지에 따라 다르다](images/console/extraA-04b-isolate-executing.png){ .shot }
 
-![isolate-attachments를 켠 정책 버전의 change set 화면. 변경이 두 건뿐이고, 하나는 Type이 Segments configuration에 Action이 Modify, 다른 하나는 Type이 Attachment route propagation에 Action이 Remove다. share를 추가했던 2-4의 일곱 건과 대비된다](images/console/extraA-04-isolate-change-set.png){ .shot }
+    ![isolate-attachments를 켠 정책 버전의 change set 화면. 변경이 두 건뿐이고, 하나는 Type이 Segments configuration에 Action이 Modify, 다른 하나는 Type이 Attachment route propagation에 Action이 Remove다. share를 추가했던 2-4의 일곱 건과 대비된다](images/console/extraA-04-isolate-change-set.png){ .shot }
 
 4. `Execution succeeded`가 된 뒤 서울 dev EC2에서 두 곳으로 보냅니다.
 
     ```bash
-    ping -c 3 -W 1 10.21.1.10
-    ping -c 3 10.30.1.10
+    ping -c 4 10.21.1.10
+    ping -c 4 10.30.1.10
     ```
 
 출력은 이렇습니다.
@@ -163,18 +165,15 @@ $ ping -c 4 10.30.1.10            # shared, 다른 세그먼트에서 share로 �
 rtt min/avg/max/mdev = 1.050/1.801/4.012/1.276 ms
 ```
 
-**같은 세그먼트 안은 막히고, share로 받은 경로는 그대로입니다.** 3-1-c에서 설명한 "남는 경로" 두 가지 중 share 쪽이 이것입니다.
-
 `isolate-attachments` 를 켠 change set은 변경이 **2건** 뿐이었습니다. `SEGMENTS_CONFIGURATION` `MODIFY` 하나와, dev attachment의 `ATTACHMENT_ROUTE_PROPAGATION` `REMOVE` 하나입니다. [2-4-b](lab3.md#lab3-b)의 share 추가가 7건이었던 것과 비교해 보세요.
+
+두 ping을 나란히 보는 것이 이 과제의 핵심입니다. 격리는 같은 세그먼트 안의 연결 사이를 막고, 다른 세그먼트에서 share로 받은 경로는 막지 않습니다. 3-1-c에서 말한 "남는 경로" 두 가지 중 share 쪽이 이것입니다.
 
 **결과(실패가 맞습니다)**
 
 - 오레곤 dev(`10.21.1.10`): `100% packet loss`. 같은 `dev` 세그먼트인데도 연결끼리 통신하지 못합니다.
 - `shared`(`10.30.1.10`): 응답이 옵니다. `shared`가 share로 내려 준 경로는 격리의 영향을 받지 않기 때문입니다.
-
-이 둘을 나란히 보는 것이 이 과제의 핵심입니다. 격리는 같은 세그먼트 안의 연결 사이를 막고, share로 받은 경로는 막지 않습니다.
-
-**결과**: 오레곤 dev로는 실패하고 `shared`로는 성공합니다. **Network Manager**의 `dev` 경로 테이블에서 서울 edge에는 `10.21.1.0/24`가, 오레곤 edge에는 `10.20.1.0/24`가 사라지고 `shared` 대역(`10.30.1.0/24`)은 남습니다.
+- **Network Manager**의 `dev` 경로 테이블: 서울 edge에서 `10.21.1.0/24`가, 오레곤 edge에서 `10.20.1.0/24`가 사라지고 `shared` 대역(`10.30.1.0/24`)은 남습니다.
 
 ## 3-1-g. 되돌리기 { #a-g }
 
@@ -186,7 +185,7 @@ rtt min/avg/max/mdev = 1.050/1.801/4.012/1.276 ms
 3. `Execution succeeded`가 된 뒤 서울 dev EC2에서 다시 확인합니다.
 
     ```bash
-    ping -c 3 10.21.1.10
+    ping -c 4 10.21.1.10
     ```
 
 출력은 이렇습니다.

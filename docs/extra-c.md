@@ -2,6 +2,8 @@
 
 실습에서는 ping으로 통신을 확인했습니다. 여기서는 통신이 **왜** 되는지, 또는 안 되는지를 **Network Manager**의 경로 테이블에서 읽는 법을 익힙니다. 시간이 남거나 워크숍이 끝난 뒤에 혼자 해 보는 과제입니다.
 
+이 페이지의 그림은 [2-4](lab3.md)까지 마친 상태입니다. 거기까지 하지 않았다면 경로 테이블의 줄 수가 그림보다 적습니다. 예를 들어 온프레미스 대역(`172.16.1.0/24`)은 [2-3](lab2.md)에서 VPN을 붙여야 생기고, 그 대역이 `prod` 경로 테이블에 들어오는 것은 [2-4](lab3.md)에서 `share` 를 넣은 뒤입니다.
+
 ## 3-3-a. 세그먼트별 경로 테이블 읽기 { #c-a }
 
 Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경로 테이블은 core network edge(리전)별로 볼 수 있습니다.
@@ -37,7 +39,7 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 
 확인할 질문은 다음과 같습니다.
 
-1. `dev` 경로 테이블에 `prod` 대역(`10.10.1.0/24`)이 있나요? 없다면 이것이 [2-2-b](lab1.md)에서 ping이 실패한 이유입니다.
+1. `dev` 경로 테이블에 `prod` 대역(`10.10.1.0/24`)이 있나요? 없다면 이것이 [2-2-b](lab1.md#lab1-b)에서 ping이 실패한 이유입니다.
 2. `prod`와 `dev` 경로 테이블 양쪽에 `shared` 대역(`10.30.1.0/24`)이 있나요? 있다면 그것이 `share`의 효과입니다.
 3. [2-4](lab3.md)를 마쳤다면 `prod` 경로 테이블에 `onprem` 대역(`172.16.1.0/24`)이 있나요? 있다면 어느 연결에서 온 경로인가요?
 
@@ -50,7 +52,7 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 
 ## 3-3-c. 과제: `prod`에 오레곤 대역이 들어온 과정 { #c-c }
 
-[2-2-d](lab1.md)에서 오레곤 prod VPC 연결을 만들고 `segment=prod` 태그를 붙였습니다. 이 연결의 경로가 `prod` 세그먼트에 들어온 것을 확인합니다.
+[2-2-d](lab1.md#lab1-d)에서 오레곤 prod VPC 연결을 만들고 `segment=prod` 태그를 붙였습니다. 이 연결의 경로가 `prod` 세그먼트에 들어온 것을 확인합니다.
 
 1. 경로 화면에서 세그먼트를 `prod`, edge 위치를 `ap-northeast-2`로 고릅니다.
 2. `10.11.1.0/24`를 찾습니다. 이 경로의 연결이 오레곤 prod VPC 연결인지 확인합니다.
@@ -66,7 +68,12 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 
 Cloud WAN은 CloudWatch에 지표를 내보내고, 연결 상태나 정책 변경 같은 이벤트도 알려 줍니다. Network Manager 대시보드에서도 core network와 연결의 상태, 지표를 볼 수 있습니다.
 
-- 지표와 이벤트는 **CloudWatch** 콘솔과 **Network Manager** 대시보드에서 확인합니다.
-- 어떤 지표와 이벤트가 있는지는 [Cloud WAN 공식 문서](https://docs.aws.amazon.com/network-manager/latest/cloudwan/what-is-cloudwan.html)에서 확인하세요.
+!!! warning "지표는 서울이 아니라 **오레곤**에 올라옵니다"
+    공식 문서는 Cloud WAN 지표를 **US West (Oregon)** 리전에 게시한다고 적습니다. 이 워크숍은 서울에서 진행하므로, 서울 **CloudWatch** 콘솔에서 찾으면 **아무것도 나오지 않습니다.** 리전을 오레곤으로 바꾸고 보세요.
 
-**결과**: Cloud WAN의 지표를 어느 콘솔에서 찾는지 알고 있습니다.
+- 네임스페이스는 **`AWS/Network Manager`** 입니다.
+- core network 지표에는 `BytesIn`, `BytesOut`, `PacketsIn`, `PacketsOut` 과 버려진 패킷을 세는 `PacketDropCountBlackhole`(blackhole 경로에 걸린 것), `PacketDropCountNoRoute`(맞는 경로가 없던 것)가 있습니다. **경로 설계가 잘못되면 뒤의 둘이 올라갑니다.**
+- 지표는 `CoreNetwork` + `EdgeLocation` 이나 `CoreNetwork` + `Attachment` 로 걸러 봅니다. 어느 리전의, 어느 연결의 트래픽인지 나눠 볼 수 있다는 뜻입니다.
+- 전체 목록은 [CloudWatch metrics in AWS Cloud WAN](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-metrics.html)에 있습니다.
+
+**결과**: Cloud WAN 지표를 어느 리전의 어느 네임스페이스에서 찾는지 알고, `PacketDropCountNoRoute` 가 무엇을 뜻하는지 말할 수 있습니다.

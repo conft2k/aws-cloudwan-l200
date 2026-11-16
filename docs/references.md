@@ -1,6 +1,6 @@
 # 4-4. 참고 문서
 
-이 워크숍을 만들면서 확인한 공식 문서입니다. 용어의 뜻은 [1-3. 용어 풀이](glossary.md)에 있습니다.
+이 워크숍의 설명이 근거로 삼은 공식 문서입니다. 용어의 뜻은 [1-3. 용어 풀이](glossary.md)에 있습니다.
 
 ## 4-4-a. 개념 { #ref-concept }
 
@@ -25,7 +25,7 @@
 - [Direct Connect gateway attachments](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-dxattach-about.html) — Transit Gateway 없이 전용선을 붙이는 방법과 그 제약. 정리는 [4-2](direct-connect.md)에 있습니다
 - [Create a Direct Connect gateway attachment](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-dxattachment-add.html) — 콘솔 절차와 **Edge locations**의 **All**·**Specific** 선택
 - [AWS Cloud WAN and AWS Direct Connect (Direct Connect 가이드)](https://docs.aws.amazon.com/directconnect/latest/UserGuide/direct-connect-cloud-wan.html) — Direct Connect 쪽에서 본 같은 기능. 전송 가상 인터페이스(transit VIF)를 쓴다는 것과, 연결 관리는 Cloud WAN 콘솔에서만 한다는 설명
-- [Peering](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-peerings.html) — Transit Gateway peering과 route table attachment. Transit Gateway가 같은 리전에 있어야 하고 ASN이 서로 달라야 합니다. 비교는 [3-2. Transit Gateway와 비교](extra-b.md)에 있습니다
+- [Peering](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-peerings.html) — Transit Gateway peering과 route table attachment. Transit Gateway가 같은 리전에 있어야 하고 ASN이 서로 달라야 합니다. 비교는 [3-2. Transit Gateway와 비교](extra-b.md)에 있고, 기존 Transit Gateway를 둔 채 단계적으로 옮겨 가는 방법([3-2-d](extra-b.md#b-d))도 이 문서에서 출발합니다
 
 ## 4-4-d. 운영 { #ref-ops }
 

@@ -24,7 +24,7 @@
 - 온프레미스를 흉내 내는 VPC(`172.16.1.0/24`): 퍼블릭 서브넷의 VPN 라우터 EC2와 프라이빗 서브넷의 VM EC2
 - 서울 prod·dev·shared VPC를 core network에 붙이는 VPC attachment 3개(`segment` 태그 포함)
 - customer gateway(온프레미스 라우터의 Elastic IP, ASN `65000`)
-- EC2 Instance Connect Endpoint: EC2 4대에 브라우저로 접속할 때 씁니다
+- EC2 Instance Connect Endpoint 3개: prod VPC, dev VPC, 온프레미스를 흉내 내는 VPC의 EC2에 브라우저로 접속할 때 씁니다. shared VPC의 EC2는 ping을 받는 쪽이라 접속하지 않습니다
 
 1. 리전이 **Asia Pacific (Seoul)** 인지 다시 확인합니다.
 2. 템플릿 파일을 내려받습니다: [cloudwan-workshop-seoul.yaml](assets/cloudwan-workshop-seoul.yaml){ download }
@@ -53,7 +53,7 @@
 
 ## 2-1-c. 오레곤 스택 배포하기 { #lab0-c }
 
-오레곤 스택은 오레곤 쪽 prod VPC(`10.11.1.0/24`)와 EC2 1대, EC2 Instance Connect Endpoint를 만듭니다. 오레곤 VPC를 core network에 붙이는 일은 이 스택이 하지 않습니다. 실습 2-2에서 직접 합니다.
+오레곤 스택은 오레곤 쪽 VPC 2개와 각 VPC의 EC2 1대를 만듭니다. 본편 실습에서 쓰는 것은 prod VPC(`10.11.1.0/24`)이고, dev VPC(`10.21.1.0/24`)는 추가 과제 [3-1](extra-a.md)에서 씁니다. EC2 Instance Connect Endpoint는 prod VPC에만 있습니다. 오레곤 VPC를 core network에 붙이는 일은 이 스택이 하지 않습니다. 실습 2-2에서 직접 합니다.
 
 !!! warning "리전을 바꾸는 것을 잊지 마세요"
     오레곤 스택은 **US West (Oregon)** 에서만 배포됩니다. 콘솔 오른쪽 위의 리전 선택 메뉴에서 먼저 **US West (Oregon)** 으로 바꾼 뒤 시작합니다. 서울에 그대로 두면 템플릿이 거부합니다. 서울 스택이 아직 배포 중이어도 상관없으니 바로 이어서 합니다.
@@ -73,13 +73,13 @@
 
 ## 2-1-d. core network가 준비됐는지 보는 법 { #lab0-d }
 
-스택이 **CREATE_COMPLETE**가 되어도 core network를 바로 쓸 수 있는지는 아직 확인하지 않았습니다. 그래서 **Policy versions** 화면의 상태를 준비 완료의 유일한 기준으로 삼습니다. 지금은 보는 법만 익히고, 실제 확인은 이론 강의가 끝난 뒤 실습 2-2 시작 전에 합니다.
+준비가 끝났는지는 스택 상태가 아니라 **Policy versions** 화면에서 봅니다. core network는 스택보다 먼저 준비되므로, 스택이 **CREATE_COMPLETE**가 되기를 기다릴 필요가 없습니다. 지금은 보는 법만 익히고, 실제 확인은 이론 강의가 끝난 뒤 실습 2-2 시작 전에 합니다.
 
 1. **Network Manager** 콘솔 → **Global networks**를 엽니다. Cloud WAN은 리전에 묶이지 않아서 오른쪽 위 리전 선택에 **Global** 이 뜹니다.
 
     ![Network Manager의 Global networks 목록. 스택이 만든 global network 한 개가 ID와 이름 cwan-ws-global, 상태와 함께 한 줄로 보인다. 오른쪽 위에는 Create global network 버튼이 있다](images/console/lab0-cnet-00-global-networks.png){ .shot }
 
-2. `cwan-ws-global`을 엽니다. **global network** 는 Cloud WAN 리소스를 담는 바깥 상자입니다. 그 안에 core network가 들어 있습니다. 스택 배포 직후에는 아직 목록에 없거나 생성 중으로 보일 수 있습니다.
+2. `cwan-ws-global`을 엽니다. **global network** 는 Cloud WAN 리소스를 담는 바깥 상자입니다. 그 안에 core network가 들어 있습니다. 스택을 배포한 직후에는 core network가 아직 목록에 없거나 생성 중으로 보일 수 있습니다.
 3. 왼쪽 메뉴에서 **Policy versions** 를 엽니다.
 
     ![core network의 Policy versions 화면. 버전이 하나뿐이고, Policy version - 1 행의 Alias가 LIVE, LATEST, Change set state가 초록색 Execution succeeded, Description이 Initial version.이다. 이 두 값이 core network를 쓸 준비가 끝났다는 신호다](images/console/lab0-cnet-01-policy-versions.png){ .shot }

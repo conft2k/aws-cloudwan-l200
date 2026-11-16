@@ -11,7 +11,7 @@
 
 | 번호 | 단계 | 내용 |
 |---|---|---|
-| ① | VPN 연결 생성 | Target Gateway Type을 `Not Associated`로 두고 Site-to-Site VPN 연결을 만듭니다. |
+| ① | VPN 연결 생성 | Target gateway type을 `Not associated`로 두고 Site-to-Site VPN 연결을 만듭니다. |
 | ② | VPN attachment 생성 | VPN 연결을 core network에 붙이고 태그 `segment` = `onprem`을 답니다. |
 | ③ | 터널과 BGP 설정 | VPN 라우터에서 스크립트를 실행해 IPsec 터널 2개와 BGP(Border Gateway Protocol)를 설정합니다. |
 | ④ | 온프레미스 → shared | ping이 성공합니다. |
@@ -40,7 +40,7 @@
 
 ![Create VPN connection 화면의 Details 패널. Name tag - optional에 cwan-ws-vpn이 들어 있다. Target gateway type은 Virtual private gateway, Transit gateway, Site-to-Site VPN Concentrator, Not associated 네 가지 중 맨 아래 Not associated가 선택되어 있다. Customer gateway는 Existing이 선택되고 Customer gateway ID에 스택이 만든 cgw-로 시작하는 값이 들어 있다. Routing options는 Dynamic (requires BGP)가 선택되어 있고 Static은 선택되지 않았다. 그 아래 Pre-shared key storage, Tunnel bandwidth, Tunnel inside IP version은 모두 기본값이다](images/console/lab2-vpn-01-create.png){ .shot }
 
-!!! info "Target Gateway Type을 `Not Associated`로 두는 이유"
+!!! info "Target gateway type을 `Not associated`로 두는 이유"
     VPN 연결은 보통 Transit Gateway나 가상 프라이빗 게이트웨이에 연결해 만듭니다. Cloud WAN에 붙일 VPN 연결은 어느 게이트웨이에도 연결하지 않은 상태로 만들고, 다음 단계(2-3-b)에서 core network에 attachment로 붙입니다.
 
 !!! info "정적 라우팅은 쓸 수 없습니다"
@@ -85,6 +85,8 @@ attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 at
 !!! info "순서가 a → b → c인 이유"
     AWS 쪽 VPN 터널 엔드포인트는 attachment를 붙인 뒤에 만들어집니다. 그 전에는 customer gateway 장비(여기서는 VPN 라우터)를 설정할 수 없습니다. ([Cloud WAN Site-to-Site VPN attachment](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-s2s-vpn-attachment.html)) 그래서 VPN 연결을 만들고(a), attachment를 붙이고(b), 그다음에 라우터를 설정합니다(c).
 
+    [2-3-b](#lab2-b)의 attachment가 **Available** 이 된 것을 확인한 뒤에 시작하세요. attachment가 없으면 AWS 쪽에 BGP 상대가 없어서, 터널은 올라와도 BGP 단계에서 멈춥니다.
+
 VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는 스크립트가 들어 있습니다. VPN 연결 ID만 넣고 실행합니다.
 
 1. **EC2** 콘솔 → **Instances**에서 `cwan-ws-onprem-router`를 골라 **Connect**를 누릅니다.
@@ -96,32 +98,34 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
     sudo /opt/onprem/setup-tunnels.sh <VPN 연결 ID>
     ```
 
-스크립트가 세우는 것은 두 층입니다.
+    스크립트가 세우는 것은 두 층입니다.
 
-- **IPsec 터널**: 인터넷 위에 뚫는 암호화된 통로입니다. 트래픽이 실제로 지나가는 길입니다.
-- **BGP**: 그 통로로 "내 쪽에는 이런 대역이 있다"고 서로 알려 주는 약속입니다. 이렇게 알려 주는 것을 **광고(advertise)** 라고 합니다. 길이 뚫려도 서로 어떤 대역이 있는지 모르면 트래픽을 보낼 수 없기 때문에 두 층이 다 필요합니다.
+    - **IPsec 터널**: 인터넷 위에 뚫는 암호화된 통로입니다. 트래픽이 실제로 지나가는 길입니다.
+    - **BGP**: 그 통로로 "내 쪽에는 이런 대역이 있다"고 서로 알려 주는 약속입니다. 이렇게 알려 주는 것을 **광고(advertise)** 라고 합니다. 길이 뚫려도 서로 어떤 대역이 있는지 모르면 트래픽을 보낼 수 없기 때문에 두 층이 다 필요합니다.
 
-스크립트는 `aws ec2 describe-vpn-connections` 로 터널 정보(AWS 쪽 주소 2개, 사전 공유 키, BGP 주소)를 받아 **터널 2개**를 세우고, 그 위에 **BGP 연결 2개**를 올린 다음, 온프레미스 대역 `172.16.1.0/24` 를 AWS 쪽에 광고합니다. 터널이 2개인 것은 AWS Site-to-Site VPN이 늘 두 개를 주기 때문입니다. 하나가 끊겨도 다른 하나로 이어집니다. 스크립트는 다시 실행해도 됩니다.
+    스크립트는 `aws ec2 describe-vpn-connections` 로 터널 정보(AWS 쪽 주소 2개, 사전 공유 키, BGP 주소)를 받아 **터널 2개**를 세우고, 그 위에 **BGP 연결 2개**를 올린 다음, 온프레미스 대역 `172.16.1.0/24` 를 AWS 쪽에 광고합니다. 터널이 2개인 것은 AWS Site-to-Site VPN이 늘 두 개를 주기 때문입니다. 하나가 끊겨도 다른 하나로 이어집니다. 스크립트는 다시 실행해도 됩니다.
 
-스크립트가 끝나는 시점에는 보통 터널과 BGP가 이미 올라와 있습니다. 마지막 몇 줄이 이렇게 나옵니다.
+    스크립트는 터널과 BGP 세션이 올라올 때까지 기다렸다가 끝납니다. 중간에 끊지 말고 프롬프트가 돌아올 때까지 두세요.
 
-```text
-Neighbor        V         AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd
-169.254.203.157 4      64512         4         2        0    0    0 00:00:01            0
-169.254.241.109 4      64512         5         2        0    0    0 00:00:01            1
+    스크립트가 끝나는 시점에는 보통 터널과 BGP가 이미 올라와 있습니다. 마지막 몇 줄이 이렇게 나옵니다.
 
-Total number of neighbors 2
+    ```text
+    Neighbor        V         AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd
+    169.254.203.157 4      64512         4         2        0    0    0 00:00:01            0
+    169.254.241.109 4      64512         5         2        0    0    0 00:00:01            1
 
-IPv4 unicast VRF default:
-B>* 10.30.1.0/24 [20/100] via 169.254.241.109, vti2, weight 1, 00:00:00
+    Total number of neighbors 2
 
-Next:
-  swanctl --list-sas                  the two IPsec tunnels
-  vtysh -c 'show bgp summary'         the two BGP sessions
-  vtysh -c 'show ip route bgp'        the routes Cloud WAN sends you
-```
+    IPv4 unicast VRF default:
+    B>* 10.30.1.0/24 [20/100] via 169.254.241.109, vti2, weight 1, 00:00:00
 
-스크립트가 다음에 확인할 명령까지 알려 줍니다. 실패하면 `FAILED at:` 줄이 나옵니다.
+    Next:
+      swanctl --list-sas                  the two IPsec tunnels
+      vtysh -c 'show bgp summary'         the two BGP sessions
+      vtysh -c 'show ip route bgp'        the routes Cloud WAN sends you
+    ```
+
+    마지막 **Next** 는 스크립트가 알려 주는, 다음에 확인할 명령입니다. 4번에서 이 명령들을 하나씩 실행합니다.
 
 4. 설정이 끝나면 아래 확인 명령을 **VPN 라우터**에서 실행합니다.
 
@@ -139,44 +143,49 @@ Next:
     sudo vtysh -c 'show ip bgp 172.16.1.0/24'
     ```
 
+    출력은 이렇습니다.
+
+    ```text
+    $ sudo swanctl --list-sas
+    aws-tunnel2: #2, ESTABLISHED, IKEv2, b16dcffae62b2e93_i* 8f3a8afcb0412ebf_r
+      aws-tunnel2: #2, reqid 1, INSTALLED, TUNNEL-in-UDP, ESP:AES_CBC-256/HMAC_SHA2_256_128
+    aws-tunnel1: #1, ESTABLISHED, IKEv2, bb499a9dfc03a4fc_i* 2ed50f8d35aed47d_r
+      aws-tunnel1: #1, reqid 2, INSTALLED, TUNNEL-in-UDP, ESP:AES_CBC-256/HMAC_SHA2_256_128
+
+    $ sudo vtysh -c 'show bgp summary'
+    BGP router identifier 169.254.203.158, local AS number 65000 VRF default vrf-id 0
+
+    Neighbor        V         AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd   PfxSnt
+    169.254.203.157 4      64512         6         7        2    0    0 00:00:21            0        2
+    169.254.241.109 4      64512         7         7        2    0    0 00:00:21            1        2
+
+    Total number of neighbors 2
+
+    $ sudo vtysh -c 'show ip route bgp'
+    B>* 10.30.1.0/24 [20/100] via 169.254.241.109, vti2, weight 1, 00:00:20
+
+    $ sudo vtysh -c 'show ip bgp 172.16.1.0/24'
+    BGP routing table entry for 172.16.1.0/24, version 1
+      Advertised to peers:
+      169.254.203.157 169.254.241.109
+    ```
+
+    이웃 주소 `169.254.x.x` 는 **여러분 계정에서는 다른 값**입니다. AWS가 VPN 연결마다 새로 배정합니다.
+
+    출력을 읽는 법입니다.
+
+    - `swanctl --list-sas` 는 터널마다 두 줄입니다. 윗줄의 `ESTABLISHED` 는 양쪽 장비가 서로를 확인하고 터널을 맺었다는 뜻이고, 들여쓴 줄의 `INSTALLED` 는 트래픽을 암호화해 보낼 통로가 실제로 올라갔다는 뜻입니다. 둘 다 있어야 패킷이 지나갑니다.
+    - `show ip route bgp` 의 맨 앞 `B` 는 이 경로를 BGP로 배웠다는 표시이고, `>*` 는 그 경로가 실제 라우팅 테이블에 올라가 쓰이고 있다는 표시입니다. `via 169.254.241.109, vti2` 는 2번 터널로 보낸다는 뜻이고, `vti1` 과 `vti2` 가 터널 1, 2의 인터페이스 이름입니다.
+
+    !!! info "`show bgp summary` 에는 `Established` 라는 글자가 나오지 않습니다"
+        올라온 이웃은 **Up/Down** 열이 시간(`00:00:21`)으로 세어지는 것으로 알 수 있습니다. 아직이면 그 자리에 `Active` 나 `Connect` 가 나옵니다. 맨 오른쪽 **State/PfxRcd** 는 그 이웃에게서 **받은 경로 수**입니다. 위 출력은 터널이 올라온 지 21초밖에 안 된 시점이라 한 줄은 `1`, 다른 줄은 `0` 입니다. 두 값이 달라도 괜찮습니다. 봐야 할 것은 이 숫자가 아니라 다음 명령(`show ip route bgp`)에 `10.30.1.0/24` 가 보이는지입니다.
+
     !!! info "광고가 AWS에 닿았는지는 반대쪽에서 봅니다"
         터널 내부 주소(`169.254.x.x`)는 VPN 연결을 만들 때마다 AWS가 새로 배정하므로, 이웃 주소를 적어 둔 명령은 계정마다 빗나갑니다. 광고가 실제로 닿았는지는 [2-3-d](#lab2-d)에서 Cloud WAN의 `shared` 세그먼트 경로 테이블에 `172.16.1.0/24` 가 `PROPAGATED` 로 들어왔는지로 확인합니다. 그쪽이 주소를 몰라도 되고, 보고 싶은 것(광고가 전파됐는가)에 더 가깝습니다.
 
 5. 콘솔에서도 확인합니다. **VPC** 콘솔 → **Site-to-Site VPN connections** → 2-3-a에서 만든 연결 → **Tunnel details** 탭을 엽니다. 그 안의 **Tunnel state** 표를 봅니다.
 
 ![Site-to-Site VPN 연결의 Tunnel details 탭에 있는 Tunnel state 표. 두 줄이 Tunnel 1과 Tunnel 2이고, 각각 AWS 쪽 Outside IP address와 Inside IPv4 CIDR(169.254.x.x/30)을 가진다. 둘 다 Status가 초록색 Up, Provisioning status가 Available이고 Details 열에 1 BGP ROUTES라고 적혀 있다. Inside IPv4 CIDR의 두 대역이 라우터에서 본 BGP 이웃 주소가 나온 자리다](images/console/lab2-vpn-02-tunnels.png){ .shot }
-
-출력은 이렇습니다.
-
-```text
-$ sudo swanctl --list-sas
-aws-tunnel2: #2, ESTABLISHED, IKEv2, b16dcffae62b2e93_i* 8f3a8afcb0412ebf_r
-  aws-tunnel2: #2, reqid 1, INSTALLED, TUNNEL-in-UDP, ESP:AES_CBC-256/HMAC_SHA2_256_128
-aws-tunnel1: #1, ESTABLISHED, IKEv2, bb499a9dfc03a4fc_i* 2ed50f8d35aed47d_r
-  aws-tunnel1: #1, reqid 2, INSTALLED, TUNNEL-in-UDP, ESP:AES_CBC-256/HMAC_SHA2_256_128
-
-$ sudo vtysh -c 'show bgp summary'
-BGP router identifier 169.254.203.158, local AS number 65000 VRF default vrf-id 0
-
-Neighbor        V         AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd   PfxSnt
-169.254.203.157 4      64512         6         7        2    0    0 00:00:21            0        2
-169.254.241.109 4      64512         7         7        2    0    0 00:00:21            1        2
-
-Total number of neighbors 2
-
-$ sudo vtysh -c 'show ip route bgp'
-B>* 10.30.1.0/24 [20/100] via 169.254.241.109, vti2, weight 1, 00:00:20
-
-$ sudo vtysh -c 'show ip bgp 172.16.1.0/24'
-BGP routing table entry for 172.16.1.0/24, version 1
-  Advertised to peers:
-  169.254.203.157 169.254.241.109
-```
-
-이웃 주소 `169.254.x.x` 는 **여러분 계정에서는 다른 값**입니다. AWS가 VPN 연결마다 새로 배정합니다.
-
-!!! info "`show bgp summary` 에는 `Established` 라는 글자가 나오지 않습니다"
-    올라온 이웃은 **Up/Down** 열이 시간(`00:00:21`)으로 세어지는 것으로 알 수 있습니다. 아직이면 그 자리에 `Active` 나 `Connect` 가 나옵니다. 맨 오른쪽 **State/PfxRcd** 는 그 이웃에게서 **받은 경로 수**입니다. 위 출력은 터널이 올라온 지 21초밖에 안 된 시점이라 한 줄은 `1`, 다른 줄은 `0` 입니다. 두 값이 달라도 괜찮습니다. 봐야 할 것은 이 숫자가 아니라 다음 명령(`show ip route bgp`)에 `10.30.1.0/24` 가 보이는지입니다.
 
 **결과**
 
@@ -192,7 +201,7 @@ BGP routing table entry for 172.16.1.0/24, version 1
 !!! warning "경로가 아직 안 보이면 기다립니다"
     터널과 BGP 세션이 올라와도 경로가 설치되기까지 잠시 걸릴 수 있습니다. **`show ip route bgp` 에 `10.30.1.0/24` 가 나타난 뒤에 다음 소절로 넘어가세요.** 그 전에 ping을 하면 실패합니다. 보통은 스크립트가 끝났을 때 이미 들어와 있습니다. 늦어지면 같은 명령을 몇 번 더 돌려 보세요. 고장이 아니라 수렴을 기다리는 것입니다.
 
-스크립트가 실패하면 화면에 `FAILED at:` 줄과 확인할 명령이 나옵니다. 그 내용을 강사에게 보여 주세요.
+스크립트가 실패하면 화면에 `FAILED at:` 줄과 확인할 명령이 나옵니다. 터널이나 BGP 세션이 둘 중 하나만 올라왔을 때는 `WARNING: only one of the two …` 줄이 나옵니다. 어느 쪽이든 그 내용을 강사에게 보여 주세요.
 
 ## 2-3-d. Cloud WAN 쪽 경로 확인하기 { #lab2-d }
 
@@ -210,7 +219,7 @@ BGP routing table entry for 172.16.1.0/24, version 1
 **결과**
 
 - `onprem` 세그먼트에 경로가 **2개뿐**입니다. `10.30.1.0/24`(shared)와 자기 대역 `172.16.1.0/24` 입니다. `10.10.1.0/24`(prod)는 **없습니다**.
-- `172.16.1.0/24` 의 **Destinations** 는 `attachment-… | vpn | vpn-…` 입니다. VPN attachment를 통해 들어온 경로라는 뜻이고, 괄호 안은 AWS 쪽 터널 주소입니다.
+- `172.16.1.0/24` 의 **Destinations** 는 `attachment-… | vpn | vpn-…` 로 시작하고, VPN 연결 ID 뒤 괄호에 주소가 붙습니다. VPN attachment를 통해 들어온 경로라는 뜻이고, 괄호 안은 AWS 쪽 터널 주소([2-3-c](#lab2-c)의 **Tunnel state** 표에 있는 **Outside IP address**)입니다.
 - `shared` 세그먼트에 `172.16.1.0/24`(온프레미스)가 있습니다. **Route type** 이 `PROPAGATED`, **Route state** 가 `ACTIVE` 이고 **Destinations** 는 VPN attachment입니다. 온프레미스 라우터가 BGP로 광고한 대역이 Cloud WAN까지 전파된 것입니다.
 
 !!! info "이 두 줄이 다음 두 소절의 답입니다"
@@ -276,9 +285,10 @@ PING 10.10.1.10 (10.10.1.10) 56(84) bytes of data.
 
 | 확인한 것 | 결과 |
 |---|---|
-| VPN 연결 생성 (Target Gateway Type = `Not Associated`, BGP) | **Available** |
+| VPN 연결 생성 (Target gateway type = `Not associated`, BGP) | **Available** |
 | VPN attachment에 `segment` = `onprem` 태그 | `onprem` 세그먼트에 배정 |
-| 터널 2개, BGP 이웃 2개 | **UP**, **Established** |
+| IPsec 터널 2개 | 콘솔 **Tunnel state** 가 `Up`, `swanctl --list-sas` 가 `ESTABLISHED` |
+| BGP 이웃 2개 | **Up/Down** 이 시간으로 세어짐 |
 | 온프레미스 → shared (`10.30.1.10`) | 성공 |
 | 온프레미스 → prod (`10.10.1.10`) | 실패 (정책에 공유가 없어서) |
 
