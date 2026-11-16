@@ -52,22 +52,23 @@
 
 1. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 를 엽니다.
 2. **Attachments** → **Create attachment**를 누릅니다.
-3. 아래 값을 넣습니다.
+3. 아래 값을 넣습니다. 적지 않은 항목은 기본값 그대로 둡니다.
 
     | 항목 | 값 |
     |---|---|
-    | Attachment type | **Site-to-Site VPN** |
+    | Name | `cwan-ws-att-onprem-apne2` |
+    | Attachment type | **VPN** |
     | Edge location | `ap-northeast-2` |
-    | VPN attachment | 2-3-a에서 만든 VPN 연결(`vpn-…`) |
+    | VPN ID | 2-3-a에서 만든 VPN 연결(`vpn-…`) |
 
-4. **Tags**에 아래 태그를 추가합니다.
+    !!! info "종류 이름은 **VPN** 입니다"
+        목록에 **VPN**, **VPC**, **Connect**, **Transit gateway route table**, **Direct Connect Gateway** 다섯 가지가 나옵니다. Site-to-Site VPN 연결을 붙이는 것이 **VPN** 입니다. **VPN ID** 칸은 종류를 **VPN** 으로 바꾼 뒤에 나타납니다.
+
+4. **Tags**에 태그 하나를 넣습니다. [2-2-d](lab1.md#lab1-d)와 같습니다.
 
     | Key | Value |
     |---|---|
-    | `Name` | `cwan-ws-att-onprem-apne2` |
     | `segment` | `onprem` |
-
-    이름은 [2-2-d](lab1.md#lab1-d)에서 오레곤 연결에 붙인 것과 같은 규칙입니다. 이름이 없으면 attachment 목록에서 빈 칸으로 보입니다.
 
 5. **Create attachment**를 누릅니다.
 

@@ -128,7 +128,9 @@ if name_in.count():
     page.wait_for_timeout(800)
 
 if TYPE != "VPC":
+    # The type list calls it "VPN", not "Site-to-Site VPN".
     choose(app(), "VPC", TYPE)
+    print("AFTER TYPE controls:", controls(app()))
 choose(app(), "Choose edge location", EDGE)
 
 if SHOTS[0]:
@@ -148,7 +150,8 @@ else:
     if VPN:
         choose(app(), "Select a VPN connection", VPN,
                also=("Choose a VPN connection", "Select a Site-to-Site VPN connection",
-                     "Select a VPN ID"))
+                     "Select a VPN ID", "Select a VPN connection ID",
+                     "Choose a Site-to-Site VPN connection"))
     else:
         print("!! no $CWAN_VPN given")
 

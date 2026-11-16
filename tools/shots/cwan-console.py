@@ -196,6 +196,12 @@ def routes(segment, name, must=None):
     if b.count():
         b.first.click()
         page.wait_for_timeout(WAIT)
+    # Destinations truncates to "attachment-0d39747b96dd62bf6 ..." and the tail
+    # is the point: it says what the route points at. CIDR, Route type and Route
+    # state hold short values, so take the width from them.
+    for col, w in (("CIDR", 150), ("Route type", 170), ("Route state", 150)):
+        resize_column(col, w)
+    resize_column("Destinations", 430)
     f = app()
     print(f"--- routes {segment} ---")
     print(body(f)[:1200].replace("\n", " | "))
