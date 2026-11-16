@@ -50,7 +50,7 @@
 
 ## 2-3-b. Cloud WAN에 VPN 연결 붙이기 { #lab2-b }
 
-1. **Network Manager** 콘솔 → **Core network** → 스택이 만든 core network를 엽니다.
+1. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 를 엽니다.
 2. **Attachments** → **Create attachment**를 누릅니다.
 3. 아래 값을 넣습니다.
 
@@ -140,11 +140,14 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
 앞 소절에서는 **온프레미스 라우터가 받은** 경로를 봤습니다. 이번에는 반대쪽, **Cloud WAN이 받은** 경로를 봅니다. 양쪽이 다 있어야 왕복 통신이 됩니다.
 
-1. **Network Manager** 콘솔 → **Core networks**에서 core network를 열고 **Routes**를 엽니다.
+1. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 에서 **Routes** 탭을 엽니다.
 2. 세그먼트 `onprem`, edge location `ap-northeast-2` 를 골라 조회합니다.
+
+    <!-- shot: lab2-routes-01-onprem-segment -->
+
 3. 같은 방법으로 세그먼트 `shared` 도 조회합니다.
 
-<!-- shot: lab2-routes-01-onprem-segment -->
+    <!-- shot: lab2-routes-02-shared-segment -->
 
 **성공 확인**
 

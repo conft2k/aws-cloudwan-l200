@@ -519,6 +519,28 @@ STATE: PENDING cannot be modified by ACTION: DELETE
 
 **문서에 반영할 것:** 4-3(문제 해결)에 이 증상과 복구 순서를 넣는다. 참가자가 혼자 판단할 수 있어야 한다.
 
+### 14-4. 스크린샷은 순서대로 찍어야 한다 (2026-11-16에 확인)
+
+1차 리허설이 끝난 환경에서 스크린샷을 찍으려다 알게 된 것이다. **실습을 다 마친 계정에서는 찍을 수 없는 화면이 있다.** 참가자가 그 단계에서 보는 상태가 이미 지나가 버렸기 때문이다.
+
+| 화면 | 참가자가 보는 상태 | 리허설 종료 시점의 상태 |
+|---|---|---|
+| 2-2-a **Attachments** | 연결 3개 (서울 prod·dev·shared) | 연결 5개 (오레곤 prod와 VPN까지) |
+| 2-2-d attachment 만드는 폼 | 빈 폼 | 이미 만들어져 있음 |
+| 2-3-f 온프레미스 → prod ping | **실패** | 정책 v2가 `LIVE` 라 **성공** |
+| 2-4-b change set 검토 | 실행 전 | `EXECUTION_SUCCEEDED` |
+| 2-1 CloudFormation 업로드·파라미터·진행 중 | 생성 중 | 이미 `CREATE_COMPLETE` |
+
+**결론: 단계 순서대로 찍어야 하는 화면은 새 배포에서 실습을 따라가며 찍는다.** 끝난 환경에서 찍어도 되는 것은 상태가 변하지 않는 화면뿐이다. core network **Overview**, 세그먼트 경로 테이블, **Policy versions** 목록, VPN **Tunnel details** 가 거기에 해당한다.
+
+마침 템플릿을 깨끗하게 처음부터 배포한 적이 아직 없다. 서울 스택은 1차 배포가 실패한 뒤 **업데이트**로 고친 것이라(`UPDATE_COMPLETE`), 최종 템플릿의 `CREATE` 경로는 검증되지 않았다. 2차 리허설은 스크린샷과 템플릿 검증을 한 번에 해결한다.
+
+### 14-5. 콘솔 캡처에서 고친 것
+
+- **로그인 계정 이메일이 모든 화면에 찍힌다.** 콘솔은 오른쪽 위에 로그인 신원을 표시하는데, IAM Identity Center에서는 그것이 실제 이메일 주소다. 계정 ID 마스킹은 이것을 건드리지 않는다. `tools/console.py` 의 마스킹에 이메일 치환을 넣고, 남아 있으면 촬영을 거부하게 했다.
+- **표의 열 폭은 고정이다.** 콘솔 표는 `table-layout: fixed` 에 모든 열이 168px여서 `cwan-ws-att-prod-apne2` 가 `cwan-ws-att...` 로 잘린다. **열을 숨겨도 소용없다** — 비는 자리는 그대로 비어 있고 남은 열은 168px를 유지한다. 창을 넓히거나 내비게이션을 접는 것도 같은 이유로 효과가 없다. 헤더마다 있는 크기 조절 핸들(`button.awsui_resizer_*`)을 끌어야 한다(`resize_column()`).
+- **core network 화면 구조.** **Attachments** 와 **Policy versions** 는 탭이 아니라 **왼쪽 메뉴** 항목이다. **Segments** 라는 탭은 없다. core network 탭은 Overview, Details, Sharing, Flow logs, Topology graph, Topology tree, Logical, Routing information base, Routes, Events, Monitoring이다. 세그먼트 개수는 **Overview** 탭의 **Inventory** 에서 본다. Network Manager는 리전에 묶이지 않아 리전 선택에 **Global** 이 뜬다. 문서의 조작 순서를 여기에 맞춰 고쳤다.
+
 
 아직 하지 않았다. 측정할 항목은 다음과 같다.
 
@@ -529,3 +551,32 @@ STATE: PENDING cannot be modified by ACTION: DELETE
 - policy version 생성 → change set 생성 시간
 - change set 실행 → `Execution succeeded` 시간, 실제 통신이 되는 시각
 - 스택 삭제 시간
+
+## 15. 2차 리허설 운영 계획 (2026-11-16 20:43 시작)
+
+1차 리허설이 끝난 환경에서는 단계별 화면을 찍을 수 없다는 것이 14-4절의 결론이다. 사용자가 2차 리허설을 선택했다(2026-11-16 20:40). 이 리허설은 두 가지를 한 번에 끝낸다. **최종 템플릿의 `CREATE` 경로 검증**과 **실습 순서대로 찍은 스크린샷**이다.
+
+| 시각 (KST) | 단계 | 통과 조건 |
+|---|---|---|
+| 20:45 | 1차 환경 정리 (`~/.cache/cwan-shots/teardown.sh`) | global network 0개, 두 리전 모두 기본 VPC만 남음 |
+| 21:15 | 서울·오레곤 스택 배포 시작 | 두 스택 `CREATE_IN_PROGRESS`, 2-1 콘솔 화면 캡처 완료 |
+| 21:30 | core network 생성 대기 | 정책 `LIVE`, change set `EXECUTION_SUCCEEDED` (1차 실측 14분 12초) |
+| 21:45 | 실습 2-2 따라가며 캡처 | 오레곤 prod attachment 생성, 경로 추가, 리전 간 ping 성공 |
+| 22:15 | 실습 2-3 따라가며 캡처 | VPN 연결·attachment 생성, 터널 2개 UP, **온프레미스 → prod 실패** 화면 확보 |
+| 22:45 | 실습 2-4 따라가며 캡처 | change set 검토·실행 화면, 실행 후 ping 성공 |
+| 23:15 | 정리 | 10절 순서대로 삭제, 잔재 0 |
+
+**늦으면 멈춘다.** 단계마다 30분을 넘기면 그 단계의 남은 캡처는 백로그로 보내고 다음 단계로 간다. 환경을 켜 둔 채로 끝내지 않는다. edge 2개가 시간당 $0.50이다.
+
+**순서가 중요한 캡처 (이 리허설에서만 얻을 수 있다)**
+
+| 단계 | 찍어야 하는 상태 |
+|---|---|
+| 2-1 | CloudFormation 템플릿 업로드, 파라미터 폼, 확인 체크박스, `CREATE_IN_PROGRESS` |
+| 2-2-a | **Attachments** 에 연결 3개만 (오레곤과 VPN 생기기 전) |
+| 2-2-d | attachment 생성 폼과 태그 입력 |
+| 2-3-a~c | VPN 연결 생성 폼, attachment 생성, 터널 UP |
+| 2-3-f | 온프레미스 → prod ping **실패** (정책 v2 적용 전) |
+| 2-4-b~d | change set 검토, 실행 중, 실행 완료 |
+
+**상태 파일:** `~/.cache/cwan-shots/` 에 단계별 로그를 남긴다. Claude 세션이 끊기면 거기서 이어 간다.

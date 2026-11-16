@@ -22,25 +22,34 @@
 시작하기 전에 확인합니다.
 
 - 실습 2-1에서 서울 스택과 오레곤 스택이 모두 **CREATE_COMPLETE**인가요?
-- core network의 **Policy versions** 탭에서 정책이 `LIVE`이고, Change set state가 `Execution succeeded`인가요? 아직이면 2-2-a만 먼저 하고 기다립니다.
+- core network 왼쪽 메뉴의 **Policy versions** 에서 정책이 `LIVE`이고, Change set state가 `Execution succeeded`인가요? 아직이면 2-2-a만 먼저 하고 기다립니다.
 
 ## 2-2-a. core network 둘러보기 { #lab1-a }
 
 먼저 스택이 만든 core network를 눈으로 봅니다. 여기서는 아무것도 바꾸지 않습니다.
 
-1. 콘솔 오른쪽 위에서 리전이 **Asia Pacific (Seoul)** 인지 확인합니다.
-2. **Network Manager** 콘솔 → **Core networks**에서 스택이 만든 core network를 엽니다.
-3. **Segments** 탭에서 세그먼트를 확인합니다. `prod`, `dev`, `shared`, `onprem` 4개가 보입니다.
-4. **Attachments** 탭에서 서울 연결을 확인합니다. VPC attachment 3개(prod, dev, shared)가 보입니다.
-5. 연결을 하나씩 열어 **Tags**에서 `segment` 태그를 봅니다. 연결 이름은 `cwan-ws-attach-prod`, `cwan-ws-attach-dev`, `cwan-ws-attach-shared` 입니다.
+1. **Network Manager** 콘솔을 엽니다. Cloud WAN은 리전에 묶이지 않아서 오른쪽 위 리전 선택에 **Global** 이 뜹니다. 서울이 아니어도 맞습니다.
+2. **Global networks** 에서 `cwan-ws-global` 을 엽니다.
+3. 왼쪽 메뉴에서 **Core network** 를 누릅니다. **Overview** 탭의 **Inventory** 에 **Edge locations** 가 `2`, **Segments** 가 `4` 로 보입니다.
 
-<!-- shot: lab1-core-01-segments -->
-<!-- shot: lab1-core-02-attachments -->
-<!-- shot: lab1-core-03-attachment-tags -->
+    <!-- shot: lab1-core-01-overview -->
+
+    아래 **Geography** 지도에는 `ap-northeast-2` 와 `us-west-2` 가 선 하나로 이어져 있습니다. 이 선이 AWS 백본입니다. 두 리전을 잇기 위해 여러분이 만들 것은 없습니다.
+
+4. 왼쪽 메뉴에서 **Attachments** 를 누릅니다. 스택이 만든 서울 연결 3개가 보이고, **Segment** 열에 `prod`, `dev`, `shared` 가 각각 적혀 있습니다.
+
+    <!-- shot: lab1-core-02-attachments -->
+
+5. 연결 하나를 열어 **Tags** 에서 `segment` 태그 값을 봅니다. 이름이 `cwan-ws-att-prod-apne2` 인 연결의 태그 값은 `prod` 입니다. **Segment** 열의 값을 정한 것이 이 태그입니다.
+
+    <!-- shot: lab1-core-03-attachment-tags -->
 
 세그먼트는 core network 안의 가상 라우팅 구역입니다. 같은 세그먼트에 있는 연결끼리만 통신하는 것이 기본 동작입니다.
 
-**성공 확인**: 세그먼트 4개와 서울 연결 3개가 보이고, 각 연결의 `segment` 태그 값이 연결 이름(`prod`, `dev`, `shared`)과 같습니다.
+!!! info "`onprem` 세그먼트는 아직 비어 있습니다"
+    **Segments** 는 `4` 인데 **Attachments** 에는 `prod`, `dev`, `shared` 세 가지만 보입니다. 네 번째인 `onprem` 은 정책에 정의만 되어 있고 아직 붙은 연결이 없습니다. [2-3](lab2.md)에서 Site-to-Site VPN 연결을 붙이면 채워집니다.
+
+**성공 확인**: **Inventory** 에 **Edge locations** `2`, **Segments** `4` 가 보이고, **Attachments** 에 서울 연결 3개가 `Available` 로 있으며, 각 연결의 `segment` 태그 값이 **Segment** 열의 값과 같습니다.
 
 ## 2-2-b. 운영에서 개발로 통신해 보기 { #lab1-b }
 
@@ -109,7 +118,7 @@ ping -c 5 10.30.1.10
 
 1. 콘솔 오른쪽 위에서 리전을 **US West (Oregon)** 으로 바꿉니다.
 2. **Network Manager** 콘솔 → **Core networks**에서 같은 core network를 엽니다.
-3. **Attachments** 탭에서 VPC attachment를 만드는 버튼(**Create attachment**)을 누르고, 종류로 **VPC**를 고릅니다.
+3. 왼쪽 메뉴에서 **Attachments** 를 누르고 **Create attachment** 를 누른 뒤, 종류로 **VPC**를 고릅니다.
 4. 아래 값을 넣습니다.
 
     | 항목 | 값 |

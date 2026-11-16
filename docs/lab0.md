@@ -66,22 +66,24 @@
 
 ## 2-1-d. core network가 준비됐는지 보는 법 { #lab0-d }
 
-스택이 **CREATE_COMPLETE**가 되어도 core network를 바로 쓸 수 있는지는 아직 확인하지 않았습니다. 그래서 **Policy versions** 탭의 상태를 준비 완료의 유일한 기준으로 삼습니다. 지금은 보는 법만 익히고, 실제 확인은 이론 강의가 끝난 뒤 실습 2-2 시작 전에 합니다.
+스택이 **CREATE_COMPLETE**가 되어도 core network를 바로 쓸 수 있는지는 아직 확인하지 않았습니다. 그래서 **Policy versions** 화면의 상태를 준비 완료의 유일한 기준으로 삼습니다. 지금은 보는 법만 익히고, 실제 확인은 이론 강의가 끝난 뒤 실습 2-2 시작 전에 합니다.
 
-1. 리전을 **Asia Pacific (Seoul)** 으로 되돌립니다.
-2. **Network Manager** 콘솔 → **Global networks**를 엽니다.
-3. `cwan-ws-global`을 열고 core network를 선택합니다. 스택 배포 직후에는 아직 목록에 없거나 생성 중으로 보일 수 있습니다.
-4. **Policy versions** 탭을 엽니다.
+1. **Network Manager** 콘솔 → **Global networks**를 엽니다. Cloud WAN은 리전에 묶이지 않아서 오른쪽 위 리전 선택에 **Global** 이 뜹니다.
+
+    <!-- shot: lab0-cnet-00-global-networks -->
+
+2. `cwan-ws-global`을 엽니다. 스택 배포 직후에는 아직 목록에 없거나 생성 중으로 보일 수 있습니다.
+3. 왼쪽 메뉴에서 **Policy versions** 를 엽니다.
 
     <!-- shot: lab0-cnet-01-policy-versions -->
 
-5. 정책이 **LIVE** 이고 **Change set state** 가 **Execution succeeded** 이면 준비가 끝난 것입니다.
+4. 정책이 **LIVE** 이고 **Change set state** 가 **Execution succeeded** 이면 준비가 끝난 것입니다.
 
     <!-- shot: lab0-cnet-02-live-succeeded -->
 
 아직 준비되지 않았으면 여기서 기다리지 않습니다. 이론 강의를 들으러 갑니다.
 
-**성공 확인**: **Policy versions** 탭이 어디에 있는지 알고, 어떤 값이 보이면 준비 완료인지 말할 수 있습니다.
+**성공 확인**: **Policy versions** 가 어디에 있는지 알고, 어떤 값이 보이면 준비 완료인지 말할 수 있습니다.
 
 ## 2-1-e. 정리 { #lab0-e }
 
@@ -90,6 +92,6 @@
 | 콘솔 리전과 언어 | **Asia Pacific (Seoul)**, 영어 |
 | 서울 스택 `cloudwan-workshop-seoul` | **CREATE_IN_PROGRESS** 또는 **CREATE_COMPLETE** |
 | 오레곤 스택 `cloudwan-workshop-oregon` | **CREATE_IN_PROGRESS** 또는 **CREATE_COMPLETE** |
-| core network 준비 기준 | **Policy versions** 탭에서 **LIVE**, **Change set state**가 **Execution succeeded** |
+| core network 준비 기준 | **Policy versions** 에서 **LIVE**, **Change set state**가 **Execution succeeded** |
 
 이제 이론 강의를 듣습니다. 강의가 끝나면 [2-2](lab1.md)로 넘어갑니다.

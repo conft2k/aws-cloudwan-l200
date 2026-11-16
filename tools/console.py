@@ -36,6 +36,11 @@ VIEWPORT = _viewport()
 ROOT = Path(__file__).resolve().parent.parent
 SHOTS = ROOT / "docs/images/console"
 FAKE = "111122223333"
+# The console prints the signed-in identity in the top-right of every page, and
+# with IAM Identity Center that is a real email address. It is not the account
+# ID, so the account mask below never touches it, and it ends up in every shot
+# these pages publish. Rewrite any address to this one instead.
+FAKE_EMAIL = os.environ.get("CONSOLE_FAKE_EMAIL", "participant@example.com")
 
 
 def signin_url() -> str:
@@ -196,24 +201,40 @@ def main() -> int:
             digits = re.sub(r"[\s\-\u00a0]", "", all_text())
             if account in digits:
                 raise RuntimeError("account ID still visible on the page; screenshot refused")
+            left = [a for a in re.findall(r"[\w.+-]+@[\w-]+\.[\w.-]+", all_text())
+                    if a != FAKE_EMAIL]
+            if left:
+                raise RuntimeError(f"email still visible on the page {left[:3]}; screenshot refused")
 
         def mask_frame(frame):
-            # account ID in any spacing (plain, dashed, split across spans) -> FAKE
+            # account ID in any spacing (plain, dashed, split across spans) -> FAKE,
+            # and any email address (the signed-in identity) -> FAKE_EMAIL
             frame.evaluate(
-                """([a, f]) => {
+                """([a, f, fe]) => {
                   const re = new RegExp(a.split('').join('[\\s\\-\\u00a0]?'), 'g');
+                  const mail = /[\\w.+-]+@[\\w-]+\\.[\\w.-]+/g;
                   const fd = f.slice(0,4)+'-'+f.slice(4,8)+'-'+f.slice(8);
+                  const sub = (s) => {
+                    re.lastIndex = 0; mail.lastIndex = 0;
+                    s = s.replace(re, m => m.includes('-') ? fd : f);
+                    re.lastIndex = 0; mail.lastIndex = 0;
+                    return s.replace(mail, fe);
+                  };
+                  const hit = (s) => {
+                    re.lastIndex = 0; mail.lastIndex = 0;
+                    const r = re.test(s) || mail.test(s);
+                    re.lastIndex = 0; mail.lastIndex = 0;
+                    return r;
+                  };
                   const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
                   let n; while ((n = w.nextNode())) {
-                    if (re.test(n.nodeValue)) { re.lastIndex = 0; n.nodeValue = n.nodeValue.replace(re, m => m.includes('-') ? fd : f); }
-                    re.lastIndex = 0;
+                    if (hit(n.nodeValue)) n.nodeValue = sub(n.nodeValue);
                   }
                   for (const el of document.querySelectorAll('input, textarea')) {
-                    if (el.value && re.test(el.value)) { re.lastIndex = 0; el.value = el.value.replace(re, f); }
-                    re.lastIndex = 0;
+                    if (el.value && hit(el.value)) el.value = sub(el.value);
                   }
                 }""",
-                [account, FAKE])
+                [account, FAKE, FAKE_EMAIL])
 
         secrets = [x for x in os.environ.get("CONSOLE_SECRETS", "").split(",") if x]
 
@@ -298,6 +319,54 @@ def main() -> int:
             P().wait_for_timeout(3000)
             return True
 
+        def resize_column(header: str, width: int, frame=None):
+            """Widen one column of a console table by dragging its resize handle.
+
+            Console tables are `table-layout: fixed` with every column at 168px,
+            so a long value truncates ("cwan-ws-att...") however wide the window
+            is. Hiding other columns with table_columns() does NOT help: the
+            freed space is left blank and the remaining columns stay at 168px.
+            Each header carries its own handle (button.awsui_resizer_*) on its
+            right edge; drag that.
+
+            Widening past the container makes the table scroll sideways and the
+            last columns fall out of the shot, so hide what the page does not
+            need first, then spend the space this frees on `header`.
+            """
+            f = frame if frame is not None else app()
+            ths = f.locator("table thead th")
+            idx, total = None, ths.count()
+            for i in range(total):
+                try:
+                    t = ths.nth(i).inner_text().strip().split("\n")[0]
+                except Exception:
+                    continue
+                if t == header:
+                    idx = i
+                    break
+            if idx is None:
+                print(f"!! resize_column: no column {header!r}")
+                return False
+            th = ths.nth(idx)
+            grip = th.locator("button[class*='awsui_resizer']")
+            if not grip.count():
+                print(f"!! resize_column: {header!r} has no resize handle")
+                return False
+            bb, cell = grip.first.bounding_box(), th.bounding_box()
+            if not bb or not cell:
+                print(f"!! resize_column: {header!r} is not on screen")
+                return False
+            x, y = bb["x"] + bb["width"] / 2, bb["y"] + bb["height"] / 2
+            P().mouse.move(x, y)
+            P().mouse.down()
+            P().mouse.move(x + (width - cell["width"]), y, steps=12)
+            P().mouse.up()
+            P().wait_for_timeout(1200)
+            got = app().locator("table thead th").nth(idx).bounding_box()
+            print(f"resize_column({header!r}) {round(cell['width'])} ->"
+                  f" {round(got['width']) if got else '?'} (asked {width})")
+            return True
+
         def select_row(name: str, frame=None):
             """Tick a Cloudscape table row by its visible label.
 
@@ -367,7 +436,8 @@ def main() -> int:
         try:
             exec(script, {"page": page, "use": use, "app": app, "goto": goto, "close_tours": close_tours, "shot": shot, "mask": mask,
                           "collapse_nav": collapse_nav, "expand_nav": expand_nav, "select_row": select_row,
-                          "table_columns": table_columns, "REGION": REGION, "re": re})
+                          "table_columns": table_columns, "resize_column": resize_column,
+                          "REGION": REGION, "ROOT": ROOT, "re": re})
         finally:
             STATE.parent.mkdir(parents=True, exist_ok=True)
             ctx.storage_state(path=str(STATE))
