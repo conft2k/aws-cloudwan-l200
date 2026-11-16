@@ -829,7 +829,12 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 global network 0 / core network 0        (리전 무관, us-west-2 에서 조회)
 ```
 
-시작 전에 같은 확인을 다시 한다. `tools/check-empty.sh demo1` 이 두 리전과 Cloud WAN을 한 번에 세어 주고, 하나라도 0이 아니면 0이 아닌 코드로 끝난다. Cloud WAN 리소스가 0이어야 global network 한도(계정당 5개)에 걸리지 않는다. `network-manager` 는 Service Quotas 에 서비스 코드가 없으므로 쿼터 API 로는 조회되지 않는다. 사용량 0을 직접 확인하는 것으로 갈음한다.
+시작 전에 같은 확인을 다시 한다. `tools/check-empty.sh demo1` 이 두 리전과 Cloud WAN을 한 번에 세어 주고, 하나라도 0이 아니면 0이 아닌 코드로 끝난다.
+
+**`demo1` 은 임시 자격 증명(`ASIA…`)이라 만료된다.** 2026-11-16 저녁에 이미 만료됐다. 시작 전에 먼저 `aws sts get-caller-identity --profile demo1` 로 살아 있는지 본다.
+
+!!! warning "실패한 조회는 0이 아니다"
+    처음 만든 `check-empty.sh` 는 오류를 버리고 줄 수를 셌다. **자격 증명이 만료된 계정이 "잔재 0" 으로 나왔다.** core network edge 가 두 리전에 돌고 있어도 같은 답이 나왔을 것이다. 지금은 숫자가 아닌 출력은 전부 실패로 보고하고 0이 아닌 코드로 끝난다. 정리 확인은 **비어 있음을 본 것**이어야 하고, **묻지 못한 것**이어서는 안 된다. Cloud WAN 리소스가 0이어야 global network 한도(계정당 5개)에 걸리지 않는다. `network-manager` 는 Service Quotas 에 서비스 코드가 없으므로 쿼터 API 로는 조회되지 않는다. 사용량 0을 직접 확인하는 것으로 갈음한다.
 
 ### 16-4. 미리 해 둘 것
 

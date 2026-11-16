@@ -545,32 +545,42 @@ def main() -> int:
             button was enabled before and after typing, which is how the stack
             dialog was worked out in the first place.
 
-            Returns the number of confirm buttons found BEFORE clicking, 0
-            meaning it did nothing - the caller decides whether that is a
-            failure. Counting after the click would read 0 on success, because
-            the dialog it looks in has closed by then.
+            Only ever clicks a button inside the dialog. Returns the number of
+            confirm buttons found BEFORE clicking, 0 meaning it did nothing
+            (no dialog, or none of its buttons matched) - the caller decides
+            whether that is a failure. Counting after the click would read 0 on
+            success, because the dialog it looks in has closed by then.
             """
             page.wait_for_timeout(3000)
             f = app()
             dlg = f.get_by_role("dialog")
+            if not dlg.count():
+                page.wait_for_timeout(3000)
+                f = app()
+                dlg = f.get_by_role("dialog")
             print("dialogs:", dlg.count())
-            text = dlg.last.inner_text() if dlg.count() else body(f)[:800]
-            print("dialog text:", " | ".join(t for t in text.split("\n") if t.strip()))
+            if not dlg.count():
+                # Nothing to confirm. Do not reach for anything on the page that
+                # merely says Delete - on a stack page that is the button that
+                # opens this dialog, and pressing it again looks like progress.
+                print("!! no dialog opened; clicking nothing")
+                print("page:", " | ".join(t for t in body(f)[:800].split("\n") if t.strip()))
+                if shot_name:
+                    shot(shot_name)
+                return 0
+            print("dialog text:",
+                  " | ".join(t for t in dlg.last.inner_text().split("\n") if t.strip()))
             if shot_name:
-                shot(shot_name, clip=dlg.last if dlg.count() else None)
+                shot(shot_name, clip=dlg.last)
             box = f.locator('[role=dialog] input[type=text], [role=dialog] input:not([type])')
             print("text inputs in the dialog:", box.count())
             for i in range(box.count()):
                 print("   placeholder:", box.nth(i).get_attribute("placeholder"),
                       "| aria-label:", box.nth(i).get_attribute("aria-label"))
-            # Only widen to the whole page when no dialog opened at all. Inside
-            # a dialog the page's own Delete stack button is a click away, and
-            # pressing that again would reopen what we are trying to confirm.
-            where = '[role=dialog] button' if dlg.count() else 'button'
-            btn = f.locator(where).filter(
+            btn = f.locator('[role=dialog] button').filter(
                 has_text=re.compile(r"^(Delete stack|Delete|Confirm)$"))
             found = btn.count()
-            print("confirm buttons:", found, f"(searched {where!r})")
+            print("confirm buttons in the dialog:", found)
 
             def enabled():
                 return (btn.last.get_attribute("disabled") is None
