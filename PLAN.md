@@ -628,6 +628,18 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 - **IAM 확인란은 반드시 나온다.** **Review and create** 맨 아래 **Capabilities** 에 `The following resource(s) require capabilities: [AWS::IAM::Role]` 과 함께 확인란이 하나 나오고, 선택하지 않으면 `Please acknowledge all checkboxes before proceeding.` 로 막힌다. 2-1-b 6단계의 "보이면 선택합니다" 를 단정형으로 고쳤다.
 - **스택 생성 마법사는 4단계다.** Step 1 Create stack, Step 2 Specify stack details, Step 3 Configure stack options, Step 4 Review and create. 파라미터는 기본값 그대로 두면 된다.
 
+### 15-5. 캡처 뒤에 남는 일: 자리를 이미지로 바꾸기
+
+지금 페이지들의 스크린샷 자리는 `<!-- shot: 이름 -->` 주석이라 **사이트에 아무 그림도 보이지 않는다.** 캡처가 끝나면 주석을 실제 이미지로 바꿔야 한다.
+
+```markdown
+![본문이 가리키는 것을 설명하는 대체 텍스트](images/console/lab1-core-02-attachments.png){ .shot }
+```
+
+- 대체 텍스트는 구성도와 같은 기준으로 쓴다. 그림을 보지 않고도 그 단계에서 무엇을 확인해야 하는지 알 수 있어야 한다.
+- 찍지 못한 자리는 주석을 그대로 둔다. 빈 이미지 링크를 만들지 않는다. `mkdocs build --strict` 가 없는 파일을 잡아 준다.
+- 11-2절의 `{ .shot }` 관례를 따른다.
+
 ### 15-4. 스크린샷 크롭 기준 (사용자 지정, 2026-11-16 21:50)
 
 전체 창이 아니라 **본문이 가리키는 패널만** 남긴다. 콘솔 창은 대부분 내비게이션과 여백이라 정작 읽어야 할 표가 작게 들어간다.

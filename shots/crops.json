@@ -58,5 +58,23 @@
   107,
   1431,
   304
+ ],
+ "images/console/lab1-attach-01-create.png": [
+  8,
+  176,
+  1432,
+  519
+ ],
+ "images/console/lab1-attach-02-subnets.png": [
+  8,
+  475,
+  1432,
+  900
+ ],
+ "images/console/lab1-attach-03-tags.png": [
+  8,
+  548,
+  1432,
+  875
  ]
 }

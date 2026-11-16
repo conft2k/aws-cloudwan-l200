@@ -140,21 +140,26 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
 1. 콘솔 오른쪽 위에서 리전을 **US West (Oregon)** 으로 바꿉니다.
 2. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 를 엽니다. Cloud WAN은 리전에 묶이지 않으므로 이 화면은 서울에서 보던 것과 같습니다. 리전을 바꾼 것은 **VPC와 서브넷 목록**을 오레곤 것으로 보기 위해서입니다.
 3. 왼쪽 메뉴에서 **Attachments** 를 누르고 **Create attachment** 를 누른 뒤, 종류로 **VPC**를 고릅니다.
-4. 아래 값을 넣습니다.
+4. 아래 값을 넣습니다. 적지 않은 항목은 기본값 그대로 둡니다.
 
     | 항목 | 값 |
     |---|---|
-    | Core network | 서울에서 본 core network |
+    | Name | `cwan-ws-att-prod-usw2` |
+    | Attachment type | **VPC** (기본값) |
     | Edge location | `us-west-2` |
-    | VPC | 오레곤 스택 **Outputs**의 `ProdVpcId`에 있는 VPC (`cwan-ws-prod-vpc`) |
+    | VPC | 오레곤 스택 **Outputs**의 `ProdVpcId` (`cwan-ws-prod-vpc`) |
     | Subnets | 오레곤 스택 **Outputs**의 `ProdCwanSubnetAId`, `ProdCwanSubnetBId` 두 개 (`cwan-ws-prod-cwan-az1`, `cwan-ws-prod-cwan-az2`) |
 
-5. **Tags**에 아래 태그를 추가합니다.
+    !!! info "core network를 고르는 칸은 없습니다"
+        이미 core network 안에서 연결을 만들고 있기 때문입니다. **Subnets** 칸은 **VPC** 를 고른 뒤에 나타납니다.
+
+5. **Tags**에 태그 하나를 넣습니다. 빈 줄이 이미 하나 있으니 거기에 넣으면 됩니다.
 
     | Key | Value |
     |---|---|
-    | `Name` | `cwan-ws-att-prod-usw2` |
     | `segment` | `prod` |
+
+    이름은 위 **Name** 칸에 넣었으므로 태그로 또 넣지 않습니다.
 
     !!! tip "이름에 리전을 넣는 이유"
         `prod` 세그먼트에는 서울 연결과 오레곤 연결이 **둘 다** 들어갑니다. 이름에 리전이 없으면 콘솔 목록에서 어느 쪽인지 구분되지 않습니다. 스택이 만든 서울 연결도 `cwan-ws-att-prod-apne2` 로 되어 있습니다. `apne2` 와 `usw2` 는 리전 이름을 줄인 것입니다.

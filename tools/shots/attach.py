@@ -114,52 +114,68 @@ print("CREATE FORM headings:", heads(f))
 print("CREATE FORM controls:", controls(f))
 print("CREATE FORM body:", body(f)[:900].replace("\n", " | "))
 
-# --- core network, edge location, attachment type, VPC -----------------------
-choose(f, "Choose a core network", "core-network-", also=("Select core network",))
-choose(app(), "Choose an edge location", EDGE, also=("Select edge location",))
-choose(app(), "Choose an attachment type", TYPE, also=("Select attachment type",))
-if SHOTS[0]:
-    cshot(SHOTS[0], "Create attachment", "Attachment settings", "Details")
-
+# --- fill the form --------------------------------------------------------
+# What the form really offers (a run on 2026-11-16 printed it): a Name text box
+# with the placeholder "My attachment", an attachment-type button that already
+# reads "VPC", a "Choose edge location" button, a "Select a VPC ID" button, and
+# a tag row of "Enter key" / "Enter value". There is no core network field -
+# you are already inside one. The subnet picker only appears once a VPC is set.
 f = app()
+name_in = f.locator('input[placeholder="My attachment"]')
+print("name box:", name_in.count())
+if name_in.count():
+    name_in.first.fill(ATT_NAME)
+    page.wait_for_timeout(800)
+
+if TYPE != "VPC":
+    choose(app(), "VPC", TYPE)
+choose(app(), "Choose edge location", EDGE)
+
+if SHOTS[0]:
+    cshot(SHOTS[0], "Attachment settings", "Create attachment", "Details")
+
 if TYPE == "VPC":
     if VPC:
-        choose(f, "Choose a VPC", VPC, also=("Select VPC",))
+        choose(app(), "Select a VPC ID", VPC)
     else:
         print("!! no $CWAN_VPC given")
-    f = app()
-    print("AFTER VPC controls:", controls(f))
-    for s in SUBNETS:
-        choose(app(), "Choose subnets", s, also=("Select subnets",))
-elif VPN:
-    choose(f, "Choose a VPN connection", VPN,
-           also=("Select VPN connection", "Choose a Site-to-Site VPN connection"))
-else:
-    print("!! no $CWAN_VPN given")
-if SHOTS[1]:
-    cshot(SHOTS[1], "Subnets", "VPC", "Create attachment")
-
-# --- tags --------------------------------------------------------------------
-f = app()
-add = f.get_by_role("button", name=re.compile(r"^Add (new )?tag$"))
-print("Add tag buttons:", add.count())
-for key, val in (("Name", ATT_NAME), ("segment", SEGMENT)):
-    if not add.count():
-        print("!! no Add tag button")
-        break
-    add.first.click()
-    page.wait_for_timeout(1500)
     g = app()
-    keys = g.locator('input[placeholder="Enter key"], input[aria-label="Key"]')
-    vals = g.locator('input[placeholder="Enter value"], input[aria-label="Value"]')
-    if keys.count() and vals.count():
-        keys.last.fill(key)
-        vals.last.fill(val)
-        page.wait_for_timeout(800)
+    print("AFTER VPC controls:", controls(g))
+    for sub in SUBNETS:
+        choose(app(), "Select subnet IDs", sub,
+               also=("Select subnets", "Choose subnets", "Select a subnet ID"))
+else:
+    if VPN:
+        choose(app(), "Select a VPN connection", VPN,
+               also=("Choose a VPN connection", "Select a Site-to-Site VPN connection",
+                     "Select a VPN ID"))
     else:
-        print(f"!! tag inputs not found for {key}; controls = {controls(g)}")
-    f = app()
+        print("!! no $CWAN_VPN given")
+
+if SHOTS[1]:
+    cshot(SHOTS[1], "VPC attachment", "Subnets", "Create attachment")
+
+# --- tags -------------------------------------------------------------------
+# One empty tag row is already on the form, so fill it rather than adding one.
+# Name is a form field here, not a tag, so only `segment` is needed.
+f = app()
+keys = f.locator('input[placeholder="Enter key"]')
+vals = f.locator('input[placeholder="Enter value"]')
+print("tag rows:", keys.count())
+if not keys.count():
     add = f.get_by_role("button", name=re.compile(r"^Add (new )?tag$"))
+    if add.count():
+        add.first.click()
+        page.wait_for_timeout(1500)
+        f = app()
+        keys = f.locator('input[placeholder="Enter key"]')
+        vals = f.locator('input[placeholder="Enter value"]')
+if keys.count() and vals.count():
+    keys.last.fill("segment")
+    vals.last.fill(SEGMENT)
+    page.wait_for_timeout(800)
+else:
+    print("!! no tag inputs;", controls(app()))
 if SHOTS[2]:
     cshot(SHOTS[2], "Tags", "Create attachment")
 
