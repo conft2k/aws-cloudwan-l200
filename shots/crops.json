@@ -1,242 +1,248 @@
 {
  "images/console/lab0-cfn-01-upload.png": [
-  292,
-  375,
-  1432,
-  801
+  298,
+  381,
+  1426,
+  795
  ],
  "images/console/lab0-cfn-02-parameters.png": [
   8,
   78,
-  1432,
-  900
+  1426,
+  899
  ],
  "images/console/lab0-cfn-03-ack.png": [
-  282,
+  298,
   556,
-  1440,
-  781
+  1380,
+  752
  ],
  "images/console/lab0-cfn-05-upload-oregon.png": [
-  292,
-  375,
-  1432,
-  801
+  298,
+  381,
+  1426,
+  795
  ],
  "images/console/lab0-cfn-04-in-progress-seoul.png": [
-  725,
+  731,
   90,
-  1432,
-  900
+  1426,
+  898
  ],
  "images/console/lab0-cfn-06-in-progress-oregon.png": [
-  725,
-  170,
-  1432,
+  731,
+  176,
+  1426,
   880
  ],
  "images/console/lab0-cnet-00-global-networks.png": [
-  9,
-  107,
-  1431,
-  304
+  14,
+  112,
+  1426,
+  303
  ],
  "images/console/lab1-core-01-overview.png": [
-  309,
-  207,
-  1432,
-  382
+  315,
+  213,
+  1224,
+  376
  ],
  "images/console/lab1-core-02-attachments.png": [
-  310,
-  107,
-  1431,
-  900
+  315,
+  112,
+  1426,
+  897
  ],
  "images/console/lab0-cnet-01-policy-versions.png": [
-  310,
-  107,
-  1431,
-  456
+  315,
+  112,
+  1426,
+  455
  ],
  "images/console/lab1-attach-01-create.png": [
-  8,
-  176,
-  1432,
-  519
+  14,
+  182,
+  948,
+  513
  ],
  "images/console/lab1-attach-02-subnets.png": [
-  8,
-  112,
-  1432,
-  750
+  14,
+  118,
+  1306,
+  744
  ],
  "images/console/lab1-attach-03-tags.png": [
   8,
-  673,
+  679,
   1432,
-  900
+  899
  ],
  "images/console/lab1-route-01-outputs.png": [
   9,
   223,
-  1431,
-  900
+  1426,
+  899
  ],
  "images/console/lab1-route-02-edit.png": [
-  0,
+  6,
   168,
-  1440,
-  593
+  1434,
+  575
  ],
  "images/console/lab1-route-03-saved.png": [
-  1,
+  6,
   453,
-  1439,
-  689
+  1434,
+  688
  ],
  "images/console/lab1-routes-01-segment-table.png": [
-  309,
-  207,
-  1432,
-  686
+  315,
+  213,
+  1426,
+  685
  ],
  "images/console/lab2-vpn-01-create.png": [
-  0,
+  6,
   86,
-  1440,
-  900
+  952,
+  899
  ],
  "images/console/lab2-attach-01-form.png": [
-  8,
-  176,
-  1432,
-  519
+  14,
+  182,
+  948,
+  513
  ],
  "images/console/lab2-routes-01-onprem-segment.png": [
-  309,
-  207,
-  1432,
-  648
+  315,
+  213,
+  1426,
+  647
  ],
  "images/console/lab2-vpn-02-tunnels.png": [
-  1,
+  6,
   630,
-  1439,
-  791
+  1434,
+  786
  ],
  "images/console/lab2-routes-02-shared-segment.png": [
-  309,
-  207,
-  1432,
-  762
+  315,
+  213,
+  1426,
+  761
  ],
  "images/console/lab3-policy-02-versions.png": [
-  310,
-  107,
-  1431,
-  342
+  315,
+  112,
+  1426,
+  341
  ],
  "images/console/lab3-policy-03-changeset.png": [
-  310,
-  107,
-  1431,
-  546
+  315,
+  112,
+  1426,
+  545
  ],
  "images/console/lab3-policy-04-executing.png": [
-  310,
-  169,
-  1431,
-  404
+  315,
+  174,
+  1426,
+  403
  ],
  "images/console/lab3-policy-05-live.png": [
-  310,
-  107,
-  1431,
-  342
+  315,
+  112,
+  1426,
+  341
  ],
  "images/console/lab3-policy-01-edit.png": [
   8,
-  106,
-  1432,
-  900
+  112,
+  1426,
+  899
  ],
  "images/console/lab1-eic-01-connect.png": [
   8,
   90,
-  1432,
-  900
+  1426,
+  899
  ],
  "images/console/extraA-01-oregon-dev-attachment.png": [
-  8,
-  176,
-  1432,
-  519
+  14,
+  182,
+  948,
+  513
  ],
  "images/console/extraA-b1-pending-acceptance.png": [
-  310,
-  107,
-  1440,
+  315,
+  112,
+  1426,
   504
  ],
  "images/console/extraA-04-isolate-change-set.png": [
-  310,
-  107,
-  1431,
-  346
+  315,
+  112,
+  1426,
+  345
  ],
  "images/console/extraA-04b-isolate-executing.png": [
-  310,
-  169,
-  1431,
-  480
+  315,
+  174,
+  1426,
+  479
  ],
  "images/console/extraA-02-oregon-dev-route.png": [
-  309,
-  207,
-  1432,
-  686
+  315,
+  213,
+  1426,
+  685
  ],
  "images/console/lab2-router-01-connect.png": [
   8,
   90,
-  1432,
+  1426,
   892
  ],
  "images/console/lab2-vm-01-connect.png": [
   8,
   90,
-  1432,
-  900
+  1426,
+  899
  ],
  "images/console/extraC-01-route-table-prod-seoul.png": [
-  309,
-  207,
-  1432,
-  724
+  315,
+  213,
+  1426,
+  723
  ],
  "images/console/extraC-02-route-table-dev.png": [
-  309,
-  207,
-  1432,
-  686
+  315,
+  213,
+  1426,
+  685
  ],
  "images/console/extraC-03-prod-oregon-route.png": [
-  309,
-  207,
-  1432,
-  724
+  315,
+  213,
+  1426,
+  723
  ],
  "images/console/extraD-01-delete-attachment.png": [
-  0,
-  0,
-  1440,
-  900
+  417,
+  371,
+  1023,
+  523
  ],
  "images/console/extraD-02-delete-vpn-attachment.png": [
-  0,
-  0,
-  1440,
-  900
+  417,
+  371,
+  1023,
+  523
+ ],
+ "images/console/extraA-b2-accept-attachment.png": [
+  330,
+  128,
+  1430,
+  470
  ]
 }

@@ -48,7 +48,7 @@
 
 ![core network의 Attachments 목록. 방금 만든 cwan-ws-att-dev-usw2 한 줄만 State가 주황색 경고 아이콘과 함께 Pending attachment acceptance이고, 나머지 줄은 모두 초록색 Available이다. Segment 열은 오른쪽에 있어 이 그림에서는 잘려 있다](images/console/extraA-b1-pending-acceptance.png){ .shot }
 
-![승인 대기 중인 연결의 행을 선택하고 Actions 메뉴를 연 모습. 메뉴에 Accept, Reject, Edit, Delete, Manage 1:1 NAT 다섯 항목이 있다. 승인은 Accept, 거절은 Reject다](images/console/extraA-b2-accept-attachment.png){ .shot }
+![승인 대기 중인 연결의 행을 선택하고 Actions 메뉴를 연 모습. 선택된 cwan-ws-att-dev-usw2 줄은 State가 Pending attachment acceptance이고, 메뉴에는 Accept, Reject, Edit, Delete, Manage 1:1 NAT 다섯 항목이 있다. 승인은 Accept, 거절은 Reject이며, Edit과 Delete는 흐리게 비활성되어 있어 승인 대기 상태에서는 고치거나 지울 수 없다는 것을 보여 준다](images/console/extraA-b2-accept-attachment.png){ .shot }
 
 !!! warning "승인하기 전에는 VPC 라우트를 넣을 수 없습니다"
     사전 테스트에서 확인한 것입니다. 승인 대기 중인 연결의 VPC에서 core network로 가는 경로를 만들려고 하면 `InvalidCoreNetworkArn.NotFound` 로 거부됩니다. VPC가 아직 core network에 붙지 않은 것으로 취급되기 때문입니다. **승인을 먼저 하고 경로를 넣으세요.** 승인이 필요 없는 연결은 `Creating` 중에도 경로를 넣을 수 있습니다.
