@@ -606,8 +606,10 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 | 정책 편집 모드 | 2-4-a가 JSON 조각을 넣으라고 한다 | 편집기는 **Choose policy view mode** 에서 **Visual editor** 와 **JSON** 중 하나를 고르게 한다. 기본값은 **Visual editor** 다. JSON으로 바꾸는 단계를 문서에 넣을지, 아니면 **Segment actions** 폼으로 바꿀지 정한다 |
 | IAM 확인란 | 2-1-b 6단계가 "보이면 선택합니다" 로 얼버무린다 | 서울 스택 검토 화면에 실제로 나오는지 보고 단정해 쓴다 |
 | attachment 생성 시간 | "사전 테스트에서 측정합니다" | 오레곤 VPC attachment가 `Available` 이 되기까지 실측 |
+| 리전을 바꿔야 하는가 | 2-2-d 1단계가 "리전을 **US West (Oregon)** 으로 바꿉니다" 로 시작한다 | Network Manager는 리전에 묶이지 않는다. attachment 생성 폼이 **Edge location** 을 고른 뒤 그 리전의 VPC를 보여 주는지, 아니면 콘솔 리전 선택을 따르는지 확인한다. 전자라면 리전을 바꾸라는 단계가 불필요하다 |
 | 터널 수렴 시간 | 같음 | `setup-tunnels.sh` 실행부터 `show ip route bgp` 에 `10.30.1.0/24` 가 뜰 때까지 실측 |
 | change set 실행 시간 | 같음 | 실행부터 `EXECUTION_SUCCEEDED` 까지 실측. 5분을 넘으면 2-4를 강사 시연으로 바꾼다(12절) |
+| BGP 이웃 주소 | 2-3-c의 확인 명령이 `show ip bgp neighbors 169.254.21.1 advertised-routes` 로 **주소를 고정**해 두었다 | 터널 내부 주소(`169.254.x.x/30`)는 **VPN 연결마다 AWS가 새로 배정한다.** 1차 리허설의 값이 그대로 들어간 것으로 보인다. 참가자 계정에서는 다른 주소가 나오므로 이 명령은 빈 결과를 낸다. 주소를 묻지 않는 명령으로 바꾼다 |
 
 ### 15-2. 리허설 계정
 

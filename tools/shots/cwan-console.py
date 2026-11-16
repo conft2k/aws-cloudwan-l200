@@ -59,24 +59,46 @@ def take(f, name, must=None, crop=None):
     clip = None
     if crop:
         names = (crop,) if isinstance(crop, str) else tuple(crop)
-        cards = [card(n) for n in names]
-        clip = cards[0] if len(cards) == 1 and cards[0] is not None else span(*cards)
+        parts = [card(n) for n in names]
+        # A table panel's container often measures as the header strip alone,
+        # which crops the rows away, so always take the table in as well.
+        tbl = f.locator("table")
+        if tbl.count():
+            parts.append(tbl.last)
+        clip = span(*parts)
         if clip is None:
             print(f"!! {name}: no panel for {names}, keeping the whole window")
     shot(name, clip=clip)
     return True
 
 
-def nav(name, must=None, tries=2):
-    """Click a left-navigation link, retrying while the pane is still filling."""
+def nav(name, must=None, tries=3):
+    """Click a left-navigation link, retrying while the pane is still filling.
+
+    A first-time account opens with the service navigation folded, and the
+    folded state is remembered, so the link may not be there at all. Unfold and
+    dismiss the cookie banner before giving up on it.
+    """
     for i in range(tries):
-        app().get_by_role("link", name=name, exact=True).first.click()
+        link = app().get_by_role("link", name=name, exact=True)
+        if not link.count():
+            print(f".. {name}: no such link yet, unfolding the navigation")
+            close_tours()
+            expand_nav()
+            page.wait_for_timeout(2500)
+            link = app().get_by_role("link", name=name, exact=True)
+        if not link.count():
+            page.wait_for_timeout(WAIT)
+            continue
+        link.first.click()
         page.wait_for_timeout(WAIT)
         f = app()
         if not must or must in body(f):
             return f
         print(f".. {name}: {must!r} not there yet, waiting")
         page.wait_for_timeout(WAIT)
+    print(f"!! nav({name!r}) gave up;"
+          f" links = {[x.strip()[:24] for x in app().get_by_role('link').all_inner_texts() if x.strip()][:20]}")
     return app()
 
 
@@ -143,6 +165,9 @@ def open_core_network():
     take(f, "lab0-cnet-00-global-networks", "cwan-ws-global", crop="Global networks")
     f.get_by_role("link", name=re.compile(r"^global-network-")).first.click()
     page.wait_for_timeout(WAIT)
+    close_tours()
+    expand_nav()
+    page.wait_for_timeout(2500)
     return nav("Core network", must="Edge locations")
 
 
@@ -182,10 +207,25 @@ def attachments(expect):
     row = f.locator("table tbody tr").filter(has_text="cwan-ws-att-prod-apne2")
     print("prod-apne2 rows:", row.count())
     if row.count():
-        row.first.locator("td").nth(1).click()
+        # Click the cell that shows the name, not a fixed column index: which
+        # column sits where depends on what table_columns() has hidden.
+        cell = row.first.locator("td").filter(has_text="cwan-ws-att-prod-apne2")
+        (cell.first if cell.count() else row.first.locator("td").nth(1)).click()
         page.wait_for_timeout(WAIT)
-        f = tab(app(), "Tags", must="segment")
-        take(f, "lab1-core-03-attachment-tags", "segment", crop="Tags")
+        # The detail pane opens below the table and takes a moment to appear.
+        tags = None
+        for _ in range(4):
+            g = app()
+            names = [x.strip() for x in g.get_by_role("tab").all_inner_texts() if x.strip()]
+            print("   detail tabs:", names)
+            if "Tags" in names:
+                tags = tab(g, "Tags", must="segment")
+                break
+            page.wait_for_timeout(4000)
+        if tags is not None:
+            take(tags, "lab1-core-03-attachment-tags", "segment", crop="Tags")
+        else:
+            print("!! the attachment detail pane never showed a Tags tab")
     else:
         print("!! no row named cwan-ws-att-prod-apne2")
 

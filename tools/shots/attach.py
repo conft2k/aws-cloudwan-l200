@@ -1,23 +1,39 @@
-"""2-2-d: make the Oregon prod VPC attachment, shooting the form on the way.
+"""Make a core network attachment through the console, shooting the form.
 
-    AWS_PROFILE=demo1 CWAN_VPC=vpc-... CWAN_SUBNETS=subnet-a,subnet-b \
-      uv run --with playwright --with boto3 python tools/console.py \
-      tools/shots/lab1-attach.py
+    # 2-2-d: the Oregon prod VPC
+    AWS_PROFILE=demo1 CWAN_EDGE=us-west-2 CWAN_VPC=vpc-... \
+      CWAN_SUBNETS=subnet-a,subnet-b CWAN_ATT_NAME=cwan-ws-att-prod-usw2 \
+      CWAN_SEGMENT=prod CWAN_SHOTS=lab1-attach-01-create,lab1-attach-02-subnets,lab1-attach-03-tags \
+      uv run --with playwright --with boto3 python tools/console.py tools/shots/attach.py
 
-The form screens only exist while an attachment is being made, and the
-attachment is made once (PLAN.md 14-4), so this both shoots and submits.
+    # 2-3-b: the Site-to-Site VPN
+    CWAN_TYPE="Site-to-Site VPN" CWAN_EDGE=ap-northeast-2 CWAN_VPN=vpn-... \
+      CWAN_ATT_NAME=cwan-ws-att-onprem-apne2 CWAN_SEGMENT=onprem \
+      CWAN_SHOTS=lab2-attach-01-form ...
 
-It prints every control it finds before touching it. The selectors here are
-guesses until a run confirms them; read the log, not the code, to see what the
-form actually offers.
+    # 3-1-d: the Oregon dev VPC
+    CWAN_VPC=... CWAN_SEGMENT=dev CWAN_SHOTS=extraA-01-oregon-dev-attachment ...
+
+Three pages make an attachment, and the form screens only exist while one is
+being made (PLAN.md 14-4), so this both shoots and submits. $CWAN_SHOTS names
+the shots in order - form, subnets, tags - and a name may be left empty to skip
+that one.
+
+It prints every control it finds before touching it. Read the log, not the code,
+to see what the form offers.
 """
 import os
 
+TYPE = os.environ.get("CWAN_TYPE", "VPC")
 VPC = os.environ.get("CWAN_VPC", "")
+VPN = os.environ.get("CWAN_VPN", "")
 SUBNETS = [s for s in os.environ.get("CWAN_SUBNETS", "").split(",") if s]
 EDGE = os.environ.get("CWAN_EDGE", "us-west-2")
 ATT_NAME = os.environ.get("CWAN_ATT_NAME", "cwan-ws-att-prod-usw2")
 SEGMENT = os.environ.get("CWAN_SEGMENT", "prod")
+SHOTS = (os.environ.get("CWAN_SHOTS") or
+         "lab1-attach-01-create,lab1-attach-02-subnets,lab1-attach-03-tags").split(",")
+SHOTS += [""] * (3 - len(SHOTS))
 NETWORKS = ("https://us-west-2.console.aws.amazon.com"
             "/networkmanager/home?region=us-west-2#/networks")
 WAIT = 8000
@@ -101,20 +117,27 @@ print("CREATE FORM body:", body(f)[:900].replace("\n", " | "))
 # --- core network, edge location, attachment type, VPC -----------------------
 choose(f, "Choose a core network", "core-network-", also=("Select core network",))
 choose(app(), "Choose an edge location", EDGE, also=("Select edge location",))
-choose(app(), "Choose an attachment type", "VPC", also=("Select attachment type",))
-cshot("lab1-attach-01-create", "Create attachment", "Attachment settings", "Details")
+choose(app(), "Choose an attachment type", TYPE, also=("Select attachment type",))
+if SHOTS[0]:
+    cshot(SHOTS[0], "Create attachment", "Attachment settings", "Details")
 
 f = app()
-if VPC:
-    choose(f, "Choose a VPC", VPC, also=("Select VPC",))
+if TYPE == "VPC":
+    if VPC:
+        choose(f, "Choose a VPC", VPC, also=("Select VPC",))
+    else:
+        print("!! no $CWAN_VPC given")
+    f = app()
+    print("AFTER VPC controls:", controls(f))
+    for s in SUBNETS:
+        choose(app(), "Choose subnets", s, also=("Select subnets",))
+elif VPN:
+    choose(f, "Choose a VPN connection", VPN,
+           also=("Select VPN connection", "Choose a Site-to-Site VPN connection"))
 else:
-    print("!! no $CWAN_VPC given")
-
-f = app()
-print("AFTER VPC controls:", controls(f))
-for s in SUBNETS:
-    choose(app(), "Choose subnets", s, also=("Select subnets",))
-cshot("lab1-attach-02-subnets", "Subnets", "VPC", "Create attachment")
+    print("!! no $CWAN_VPN given")
+if SHOTS[1]:
+    cshot(SHOTS[1], "Subnets", "VPC", "Create attachment")
 
 # --- tags --------------------------------------------------------------------
 f = app()
@@ -137,7 +160,8 @@ for key, val in (("Name", ATT_NAME), ("segment", SEGMENT)):
         print(f"!! tag inputs not found for {key}; controls = {controls(g)}")
     f = app()
     add = f.get_by_role("button", name=re.compile(r"^Add (new )?tag$"))
-cshot("lab1-attach-03-tags", "Tags", "Create attachment")
+if SHOTS[2]:
+    cshot(SHOTS[2], "Tags", "Create attachment")
 
 print("BEFORE SUBMIT:", body(app())[:700].replace("\n", " | "))
 b = app().get_by_role("button", name="Create attachment", exact=True)

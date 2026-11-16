@@ -128,16 +128,17 @@ def main() -> int:
             nav links at all and every nav() click times out. Call it before
             navigating; collapse_nav() is for the moment of the screenshot only.
             """
-            for sel in ('button[aria-label="Open side navigation"]',
-                        '[aria-label="Open side navigation"]'):
-                try:
-                    b = P().locator(sel)
-                    if b.count() and b.first.is_visible():
-                        b.first.click(timeout=3000)
-                        P().wait_for_timeout(1200)
-                        return True
-                except Exception:
-                    pass
+            for frame in frames():
+                for sel in ('button[aria-label="Open side navigation"]',
+                            '[aria-label="Open side navigation"]'):
+                    try:
+                        b = frame.locator(sel)
+                        if b.count() and b.first.is_visible():
+                            b.first.click(timeout=3000)
+                            P().wait_for_timeout(1500)
+                            return True
+                    except Exception:
+                        pass
             return False
 
         def close_tours():
@@ -278,16 +279,17 @@ def main() -> int:
         def collapse_nav():
             """Fold the service's left navigation away. A console table steals the
             space, so a truncated column ("cwan-ws-a...") becomes readable."""
-            for sel in ('button[aria-label="Close side navigation"]',
-                        '[aria-label="Close side navigation"]'):
-                try:
-                    b = P().locator(sel)
-                    if b.count() and b.first.is_visible():
-                        b.first.click(timeout=3000)
-                        P().wait_for_timeout(1200)
-                        return True
-                except Exception:
-                    pass
+            for frame in frames():
+                for sel in ('button[aria-label="Close side navigation"]',
+                            '[aria-label="Close side navigation"]'):
+                    try:
+                        b = frame.locator(sel)
+                        if b.count() and b.first.is_visible():
+                            b.first.click(timeout=3000)
+                            P().wait_for_timeout(1500)
+                            return True
+                    except Exception:
+                        pass
             return False
 
         def table_columns(hide=(), wrap=None, page_size=None, frame=None):

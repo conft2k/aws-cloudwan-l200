@@ -113,12 +113,12 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
     # Cloud WAN에서 받은 경로 (10.30.1.0/24 한 줄이 보여야 합니다)
     sudo vtysh -c 'show ip route bgp'
 
-    # 우리가 AWS로 광고한 경로 (172.16.1.0/24 한 줄만 보면 됩니다)
-    sudo vtysh -c 'show ip bgp neighbors 169.254.21.1 advertised-routes' | grep 172.16.1.0
+    # 우리가 AWS로 내보내는 대역이 BGP에 올라와 있는지
+    sudo vtysh -c 'show ip bgp 172.16.1.0/24'
     ```
 
-    !!! info "광고 목록에 10.x 대역도 함께 보입니다"
-        `advertised-routes` 를 `grep` 없이 보면 `172.16.1.0/24` 말고 AWS에서 받은 `10.10.1.0/24` 같은 대역도 같이 나옵니다. 경로 필터가 없어서 한쪽 터널에서 배운 것을 다른 터널로 되광고하기 때문입니다. AWS는 AS 경로에 자기 번호가 들어 있는 것을 보고 버리므로 통신에는 문제가 없습니다. 이 실습에서 확인할 것은 **우리가 `172.16.1.0/24` 를 광고하고 있다**는 것 하나입니다.
+    !!! info "광고가 AWS에 닿았는지는 반대쪽에서 봅니다"
+        터널 내부 주소(`169.254.x.x`)는 VPN 연결을 만들 때마다 AWS가 새로 배정하므로, 이웃 주소를 적어 둔 명령은 계정마다 빗나갑니다. 광고가 실제로 닿았는지는 [2-3-d](#lab2-d)에서 Cloud WAN의 `shared` 세그먼트 경로 테이블에 `172.16.1.0/24` 가 `PROPAGATED` 로 들어왔는지로 확인합니다. 그쪽이 주소를 몰라도 되고, 보고 싶은 것(광고가 전파됐는가)에 더 가깝습니다.
 
 5. 콘솔에서도 확인합니다. **VPC** 콘솔 → **Site-to-Site VPN connections** → 2-3-a에서 만든 연결 → **Tunnel details** 탭을 엽니다.
 
@@ -129,7 +129,7 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 - **Tunnel details**의 터널 2개가 모두 **Status**가 **UP**입니다.
 - `show bgp summary`에 이웃 2개가 보이고 상태가 **Established**(표의 마지막 열에 경로 수)입니다.
 - **`show ip route bgp`에 `10.30.1.0/24`(shared)가 보입니다.** 양쪽 터널로 두 줄이 나옵니다.
-- `advertised-routes` 의 `grep` 결과에 `172.16.1.0/24` 가 있습니다.
+- `show ip bgp 172.16.1.0/24` 에 이 대역이 있습니다. AWS까지 전파됐는지는 [2-3-d](#lab2-d)에서 봅니다.
 
 !!! tip "`10.10.1.0/24`(prod)는 보이지 않는 것이 맞습니다"
     `show ip route bgp` 에 shared 대역만 오고 prod 대역은 오지 않습니다. `onprem` 세그먼트가 `shared` 와만 공유되어 있기 때문입니다. **왜 prod로 통신이 안 되는지가 이 한 줄로 설명됩니다.** [2-3-f](#lab2-f)에서 ping으로 다시 확인하고, [2-4](lab3.md)에서 이 경로가 생기는 것을 봅니다.

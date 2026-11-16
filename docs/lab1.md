@@ -77,7 +77,14 @@ ping -c 5 10.20.1.10
 
 **결과(실패가 맞습니다)**: `100% packet loss`가 나옵니다.
 
-<!-- shot: lab1-ping-01-prod-to-dev -->
+```text
+PING 10.20.1.10 (10.20.1.10) 56(84) bytes of data.
+
+--- 10.20.1.10 ping statistics ---
+5 packets transmitted, 0 received, 100% packet loss, time 4177ms
+```
+
+응답 줄이 하나도 없습니다. 중간에 아무 오류 메시지도 나오지 않습니다. **경로가 없어서 패킷이 그냥 버려지기 때문입니다.** 보안 그룹이 막으면 보통 이렇게 조용히 끝나지만, 여기서는 보안 그룹이 아니라 세그먼트가 이유입니다.
 
 보안 그룹은 열려 있습니다. dev EC2의 보안 그룹은 `10.0.0.0/8`에서 오는 ICMP(Internet Control Message Protocol, ping에 쓰는 프로토콜)를 허용하고, prod EC2의 주소 `10.10.1.10`도 이 대역 안에 있습니다. 그런데도 막힌 이유는 보안 그룹이 아니라 **Cloud WAN 세그먼트**입니다. `prod`와 `dev`는 서로 다른 세그먼트이고, 둘 사이에 `share`가 없으면 서로의 경로를 배우지 못합니다. 막으려고 따로 설정한 것이 없다는 점이 이 워크숍의 핵심입니다.
 
@@ -93,9 +100,22 @@ ping -c 5 10.20.1.10
 ping -c 5 10.30.1.10
 ```
 
-<!-- shot: lab1-ping-02-prod-to-shared -->
-
 **결과**: 응답이 옵니다.
+
+```text
+PING 10.30.1.10 (10.30.1.10) 56(84) bytes of data.
+64 bytes from 10.30.1.10: icmp_seq=1 ttl=126 time=3.95 ms
+64 bytes from 10.30.1.10: icmp_seq=2 ttl=126 time=1.09 ms
+64 bytes from 10.30.1.10: icmp_seq=3 ttl=126 time=1.11 ms
+64 bytes from 10.30.1.10: icmp_seq=4 ttl=126 time=1.07 ms
+64 bytes from 10.30.1.10: icmp_seq=5 ttl=126 time=1.07 ms
+
+--- 10.30.1.10 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4005ms
+rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
+```
+
+같은 리전 안이라 왕복이 1밀리초 남짓입니다.
 
 이것은 core network policy의 `share` 때문입니다. 정책의 `segment-actions`에 다음 부분이 들어 있습니다.
 
