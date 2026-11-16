@@ -170,7 +170,10 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
 <!-- shot: lab1-attach-02-subnets -->
 <!-- shot: lab1-attach-03-tags -->
 
-서브넷은 앱 서브넷이 아니라 attachment 전용 서브넷(`/28`) 2개를 고릅니다. Cloud WAN이 이 서브넷에 네트워크 인터페이스를 만들어 VPC와 core network를 잇습니다.
+**Subnet IDs** 는 가용 영역(Availability Zone)마다 한 줄씩 나오고, 콘솔이 각 줄에 서브넷 하나를 미리 채워 줍니다. 값이 `cwan-ws-prod-cwan-az1`, `cwan-ws-prod-cwan-az2` 인지 확인하세요. 앱 서브넷이 아니라 attachment 전용 서브넷(`/28`)입니다. Cloud WAN이 이 서브넷에 네트워크 인터페이스를 만들어 VPC와 core network를 잇습니다.
+
+!!! info "AZ당 서브넷 하나만 고르는데 왜 앱 서브넷도 통신이 되나요"
+    화면의 설명에 답이 있습니다. **AZ당 서브넷 하나만 고를 수 있지만, 그 AZ의 모든 서브넷이 core network로 트래픽을 보낼 수 있습니다.** attachment 전용 서브넷은 Cloud WAN이 인터페이스를 둘 자리일 뿐이고, 같은 AZ의 앱 서브넷은 자기 라우트 테이블에 core network로 가는 경로만 있으면 그 길을 함께 씁니다. 그 경로를 넣는 것이 바로 다음 소절입니다.
 
 **참가자는 세그먼트를 고르지 않습니다.** 만드는 화면에 세그먼트를 직접 고르는 칸은 없습니다. 대신 core network policy의 attachment policy가 세그먼트를 정합니다. 정책에는 이런 규칙이 들어 있습니다.
 
