@@ -54,7 +54,7 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 
 **성공 확인**: VPN 연결의 상태가 **Deleted**가 됩니다. customer gateway는 스택이 만든 것이므로 그대로 둡니다. 서울 스택을 지울 때 함께 지워집니다.
 
-## 3-4-d. 오레곤 스택 지우기 (사전 테스트에서 측정합니다) { #d-d }
+## 3-4-d. 오레곤 스택 지우기 { #d-d }
 
 1. 리전을 오레곤(`us-west-2`)으로 바꿉니다.
 2. **CloudFormation** → `cloudwan-workshop-oregon` → **Delete**를 누릅니다.
@@ -62,15 +62,18 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 
 <!-- shot: extraD-04-delete-oregon-stack -->
 
-**성공 확인**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). 오레곤 prod VPC와 EC2도 함께 지워집니다.
+**성공 확인**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). 오레곤 prod VPC와 EC2도 함께 지워집니다. 사전 테스트에서 **1분 32초** 걸렸습니다.
 
-## 3-4-e. 서울 스택 지우기 (사전 테스트에서 측정합니다) { #d-e }
+## 3-4-e. 서울 스택 지우기 { #d-e }
 
 1. 리전을 서울(`ap-northeast-2`)로 바꿉니다.
 2. **CloudFormation** → `cloudwan-workshop-seoul` → **Delete**를 누릅니다.
 3. 확인 창에서 삭제를 확정합니다.
 
 <!-- shot: extraD-05-delete-seoul-stack -->
+
+!!! warning "이 삭제는 15분쯤 걸립니다"
+    사전 테스트에서 **14분 32초** 걸렸습니다. core network를 지우는 데 시간이 걸리기 때문이고, [2-1-b](lab0.md#lab0-b)에서 core network를 만들 때 걸린 15분과 거의 같습니다. 화면을 닫아도 삭제는 계속됩니다.
 
 **성공 확인**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). core network, global network, 서울의 VPC와 EC2가 함께 지워집니다.
 

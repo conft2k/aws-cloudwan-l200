@@ -599,6 +599,16 @@ STATE: PENDING cannot be modified by ACTION: DELETE
 | 21:54 | `setup-tunnels.sh` 실행. 끝났을 때 이미 IPsec 2개 `ESTABLISHED`, BGP 이웃 2개 연결, `10.30.1.0/24` 수신 |
 | 22:00:50 | 정책 버전 2 생성 |
 | **22:01:28** | **change set `READY_TO_EXECUTE` — 38초** |
+| 22:03~22:05 | change set 실행 — **약 1분** |
+| 22:13~22:14 | 정책 v3(`dev` 승인 요구 켜기) 생성부터 적용까지 **70초** |
+| 22:34~22:37 | 정책 v4(`dev` 격리 켜기) — change set 변경 **2건** |
+| 22:38~22:40 | 정책 v5(되돌리기) |
+| 22:47~22:51 | 오레곤 attachment 2개와 VPN attachment 삭제. VPN attachment는 확인 창 뒤 **22초** 만에 사라짐 |
+| 22:53:20 | 오레곤 스택 삭제 시작 |
+| 22:54:53 | **오레곤 스택 삭제 완료 — 1분 32초** |
+| **23:09:26** | **서울 스택 삭제 완료 — 14분 32초.** core network와 global network가 함께 사라짐. 잔재 0 |
+
+**서울 스택 삭제는 14분 32초로 생성(15분 14초)과 거의 같다.** core network 삭제가 대부분을 차지하기 때문이다. 참가자에게 마지막 삭제가 15분쯤 걸린다고 미리 알려 줘야 한다.
 
 통신 확인은 모두 `tools/ec2run.sh` 로 실제 출력을 받아 문서에 넣었다. 서울 prod→dev `100% packet loss`, prod→shared `0%` 약 1.1ms, prod→오레곤 prod `0%` 약 116ms, 온프레미스→shared `0%` 약 2.7ms, 온프레미스→prod `100%`.
 
@@ -659,7 +669,12 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 | 자리 | 무엇이 막혔나 | 대신 한 일 |
 |---|---|---|
 | `lab1-route-02-edit` | **Edit routes** 에서 **Target** 종류로 **Core Network** 까지는 골랐는데, 그다음 core network를 고르는 드롭다운을 찾지 못했다(`core network choices: 0`). 문서의 2단계 설명은 화면과 맞다 | `aws ec2 create-route --core-network-arn` 으로 경로 2개를 넣었다. 결과 화면(`lab1-route-03-saved`)은 찍었다 |
-| `lab1-core-03-attachment-tags` | 연결 행에 링크가 없고 신규 계정에서는 상세 창이 열리지 않는다. **Actions** 메뉴에 **Edit** 가 있어 거기서 태그를 보는 것으로 보이지만 확인하지 못했다 | 2-2-a 5단계에서 그 지시를 빼고 **Segment** 열로 설명했다 |
+| `extraD-03-delete-vpn` | **Actions** → **Delete VPN connection** 클릭이 탭 패널에 가로막혔다 | `aws ec2 delete-vpn-connection` 으로 지웠다 |
+| `extraD-04-delete-oregon-stack`, `extraD-05-delete-seoul-stack` | CloudFormation 스택 화면의 **Delete** 버튼이 역할+이름으로도, 텍스트로도, **Actions** 메뉴로도 잡히지 않았다. 버튼 목록을 찍어 보면 셸 프레임의 버튼만 나온다 | `aws cloudformation delete-stack` 으로 지웠다 |
+
+**막히는 패턴이 일정하다.** 표의 행 선택과 행 단위 메뉴는 잘 되는데, **툴바의 단일 동작 버튼**(`Delete`, `Connect`, `Submit`)은 역할+이름으로 잡히지 않을 때가 많다. 해결책도 일정했다. Cloudscape가 붙이는 클래스(`button[class*="awsui_primary-button"]`)로 찾거나, 전용 해시 URL로 바로 들어가는 것이다(`#ConnectToInstance:instanceId=` 가 그랬다). 남은 세 장도 같은 방법으로 풀릴 것으로 본다.
+
+`lab1-core-03-attachment-tags` 는 **해결했다.** 행의 선택 버튼으로 고르면(`select_row()`) 상세 창이 열리고 **Tags** 탭이 있다. 이름 셀을 클릭하던 것이 원인이었다. **Name** 열의 글자는 링크가 아니다.
 
 ### 15-5. 캡처 뒤에 남는 일: 자리를 이미지로 바꾸기
 

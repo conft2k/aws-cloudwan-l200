@@ -86,14 +86,17 @@
 
 `share` 한 줄을 넣었을 뿐인데 사전 테스트에서는 변경이 **7건** 나왔습니다. 무엇이 바뀌는지 읽어 보면 이렇습니다.
 
-| 종류 | 개수 | 내용 |
-|---|---|---|
-| `CORE_NETWORK_SEGMENT` `MODIFY` | 4 | 세그먼트 네 개의 정의가 바뀝니다. 공유 관계는 세그먼트 설정의 일부라서 `onprem` 과 `prod` 만이 아니라 네 개가 모두 비교 대상에 들어옵니다 |
-| `ATTACHMENT_ROUTE_PROPAGATION` `ADD` | 3 | 경로가 새로 전파되는 연결입니다. VPN attachment 하나(온프레미스 대역이 `prod` 로 들어감), 그리고 서울 prod와 오레곤 prod attachment 둘(두 대역이 `onprem` 으로 들어감) |
+| **Type** | 개수 | **Action** | 내용 |
+|---|---|---|---|
+| **Core network segment** | 4 | **Modify** | 세그먼트 네 개의 정의가 바뀝니다. 공유 관계는 세그먼트 설정의 일부라서 `onprem` 과 `prod` 만이 아니라 네 개가 모두 비교 대상에 들어옵니다 |
+| **Attachment route propagation** | 3 | **Add** | 경로가 새로 전파되는 연결입니다. VPN attachment 하나(온프레미스 대역이 `prod` 로 들어감), 그리고 서울 prod와 오레곤 prod attachment 둘(두 대역이 `onprem` 으로 들어감) |
 
-**정책 한 줄이 리전 양쪽에 동시에 적용된다**는 것이 여기서 보입니다. 오레곤 prod attachment는 여러분이 따로 건드리지 않았는데 목록에 들어 있습니다.
+**정책 한 줄이 리전 양쪽에 동시에 적용됩니다.** 오레곤 prod attachment는 여러분이 따로 건드리지 않았는데 전파 대상에 들어 있습니다.
 
-**성공 확인**: change set에 `ATTACHMENT_ROUTE_PROPAGATION` `ADD` 가 보이고, 그중에 VPN attachment와 prod attachment들이 들어 있습니다. 세그먼트를 지우거나 만드는 항목은 없습니다.
+!!! info "**Identifier** 열은 비어 있습니다"
+    목록에서는 어느 연결인지 보이지 않고 `-` 로 나옵니다. 구체적인 대상은 **New values** 의 **Details** 를 눌러야 보입니다. 목록에서 읽을 것은 **Type** 과 **Action**, 그리고 개수입니다.
+
+**성공 확인**: 변경 목록에 **Attachment route propagation** / **Add** 가 있고, 세그먼트를 지우거나(**Delete**) 만드는(**Create**) 항목은 없습니다.
 
 ## 2-4-c. change set 실행하기 { #lab3-c }
 

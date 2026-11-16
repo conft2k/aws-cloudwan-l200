@@ -152,10 +152,25 @@ elif KIND == "stack":
     f = app()
     print("headings:", heads(f))
     d = f.get_by_role("button", name="Delete", exact=True)
-    print("Delete button:", d.count())
+    if not d.count():
+        d = f.locator("button").filter(has_text=re.compile(r"^Delete$"))
+    if not d.count():
+        # Some builds hide it behind the stack's own Actions menu.
+        acts = f.get_by_role("button", name="Actions", exact=True)
+        if acts.count():
+            acts.first.click()
+            page.wait_for_timeout(2500)
+            g = app()
+            print("stack menu:", [t.strip() for t in
+                                  g.get_by_role("menuitem").all_inner_texts() if t.strip()])
+            d = g.get_by_role("menuitem", name=re.compile(r"^Delete"))
+    print("Delete control:", d.count())
     if d.count():
         d.last.click()
         confirm_dialog(NAME)
+    else:
+        print("!! buttons:", [t.strip()[:24] for t in
+                              f.locator("button").all_inner_texts() if t.strip()][:24])
 
 else:
     raise SystemExit(f"unknown CWAN_DEL {KIND!r}")
