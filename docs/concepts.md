@@ -74,7 +74,7 @@ core network가 **어디에 생길지**를 정하는 덩어리입니다. 여기�
 | `vpn-ecmp-support` | 아니요 | 여러 VPN 연결에 트래픽을 나눠 보내는 ECMP(Equal-Cost Multi-Path)를 켭니다. 기본값은 `true`입니다 |
 | `dns-support` | 아니요 | 연결된 VPC 사이에서 도메인 이름을 풀 수 있게 합니다. 기본값은 `true`입니다 |
 | `security-group-referencing-support` | 아니요 | 한 VPC의 보안 그룹이 다른 VPC의 보안 그룹을 참조할 수 있게 합니다. 기본값은 `false`입니다 |
-| `inside-cidr-blocks` | 아니요 | Connect attachment가 쓰는 GRE(Generic Routing Encapsulation) 터널의 안쪽 주소 대역입니다 |
+| `inside-cidr-blocks` | 아니요 | **Connect attachment** 에 줄 주소 대역입니다. 이 워크숍에서는 쓰지 않으므로 비워 두었습니다([아래](#inside-cidr)에서 설명합니다) |
 
 실습 정책에서는 `asn-ranges`를 `64512-64520`으로 주고, 서울 edge에 `64512`, 오레곤 edge에 `64513`을 직접 지정했습니다. `asn`을 생략하면 범위 안에서 자동으로 배정됩니다.
 
@@ -84,14 +84,17 @@ core network가 **어디에 생길지**를 정하는 덩어리입니다. 여기�
 !!! info "ASN 범위는 끝 값을 포함하지 않습니다"
     콘솔 설명에 따르면 ASN 범위는 왼쪽은 포함하고 오른쪽은 제외합니다. 예를 들어 `64900-64903`은 `64900`~`64902`입니다. 실습의 `64512-64520`은 `64512`~`64519`를 뜻합니다.
 
-**이 워크숍은 Connect attachment를 쓰지 않으므로 `inside-cidr-blocks` 를 비워 두었습니다.** 읽고 넘어가도 됩니다.
+#### `inside-cidr-blocks` { #inside-cidr }
 
-**Connect attachment** 는 SD-WAN 장비 같은 외부 장비를 Cloud WAN에 잇는 연결 방식이고, **GRE**(Generic Routing Encapsulation)는 이미 있는 연결 위에 패킷을 한 번 더 감싸 보내는 터널 방식입니다. `inside-cidr-blocks` 는 그 GRE 터널의 양 끝에 줄 주소를 떼어 오는 **주소 풀**입니다.
+**이 워크숍은 Connect attachment를 쓰지 않으므로 이 필드를 비워 두었습니다.** 읽고 넘어가도 됩니다.
+
+**Connect attachment** 는 AWS 밖에 있는 네트워크 장비(여러 거점을 소프트웨어로 묶어 주는 SD-WAN 장비 같은 것)를 Cloud WAN에 잇는 연결 방식이고, **GRE**(Generic Routing Encapsulation)는 이미 있는 연결 위에 패킷을 한 번 더 감싸 보내는 터널 방식입니다. `inside-cidr-blocks` 는 그 GRE 터널의 양 끝에 줄 주소를 떼어 오는 **주소 풀**입니다.
 
 !!! info "용어집의 **inside CIDR block** 과 이름만 비슷합니다"
     [용어집](glossary.md)의 `inside CIDR block`(`169.254.x.x/30`)은 **Site-to-Site VPN 터널 하나가 BGP 대화에 쓰는 주소**입니다. 여기 `inside-cidr-blocks` 는 **Connect attachment에 떼어 줄 주소 풀**이고 크기도 훨씬 큽니다. 쓰이는 곳이 다릅니다.
 
-쓰게 될 때를 위해 적어 둡니다. 공식 문서는 "an Inside CIDR block is required for attaching Connect attachments to a Core Network Edge"라고 적습니다. 최소 크기는 IPv4 `/24`, IPv6 `/64`입니다. 큰 범위를 적어 두면 새 edge가 생길 때마다 `/24`와 `/64`를 자동으로 떼어 갑니다. 한 번 edge에 배정된 inside CIDR은 지울 수 없고, 큰 범위에 남은 공간이 없으면 정책 예외(policy exception)가 납니다.
+??? info "Connect attachment를 쓰게 될 때 알아야 할 것 (실습에는 필요 없습니다)"
+    공식 문서는 "an Inside CIDR block is required for attaching Connect attachments to a Core Network Edge"라고 적습니다. 최소 크기는 IPv4 `/24`, IPv6 `/64`입니다. 큰 범위를 적어 두면 새 edge가 생길 때마다 `/24`와 `/64`를 자동으로 떼어 갑니다. 한 번 edge에 배정된 inside CIDR은 지울 수 없고, 큰 범위에 남은 공간이 없으면 정책 예외(policy exception)가 납니다.
 
 리전은 그 리전에 걸린 연결을 모두 지우기 전에는 `edge-locations`에서 뺄 수 없습니다.
 

@@ -25,16 +25,18 @@ AWS Cloud WAN은 이 일을 **core network policy** 하나로 바꿉니다. 리�
 
 여러 리전과 여러 환경을 쓰는 네트워크를 Transit Gateway로 만들면, 리전마다 Transit Gateway를 하나씩 두고 서로 peering으로 잇습니다. 모든 리전이 서로 통신해야 하면 peering 수는 리전 수 n에 대해 **n(n-1)/2개**입니다. 리전이 2개면 1개지만, 5개면 10개입니다. peering을 만든 뒤에도 각 Transit Gateway의 라우팅 테이블에 상대 리전의 대역을 넣어야 하므로, 손으로 관리할 것은 peering 수보다 더 빨리 늘어납니다.
 
-Cloud WAN은 이것을 **core network** 하나로 바꿉니다. core network는 리전들을 잇는 네트워크 그 자체이고, 그 네트워크가 리전마다 내놓는 접속 지점이 **core network edge** 입니다. VPC는 이 edge에 붙습니다. edge 수는 리전 수 n에 대해 **n개**이고, **edge끼리 잇는 일은 Cloud WAN이 알아서 합니다.** 참가자가 하는 일은 정책에 리전 이름과 ASN을 한 줄 더 적는 것뿐입니다.
+Cloud WAN은 이것을 **core network** 하나와 그것을 적어 둔 **core network policy** 하나로 바꿉니다. policy는 JSON 문서입니다. 어느 리전에 edge를 둘지, 세그먼트를 무엇으로 나눌지, 어느 세그먼트끼리 통신할지를 **한 파일에** 적습니다. 이 워크숍에서 참가자가 고치는 것은 결국 이 파일 하나입니다.
 
-ASN(Autonomous System Number)은 BGP에서 네트워크를 서로 구분하는 번호입니다. 여기서는 edge마다 다른 번호를 주면 된다고만 알면 됩니다. 실제 값은 [주소 설계](#addressing)의 ASN 표에 있습니다.
+core network는 그 정책대로 만들어지는, 리전들을 잇는 네트워크 그 자체입니다. 그 네트워크가 리전마다 내놓는 접속 지점이 **core network edge** 입니다. VPC는 이 edge에 붙습니다. edge 수는 리전 수 n에 대해 **n개**이고, **edge끼리 잇는 일은 Cloud WAN이 알아서 합니다.** 참가자가 하는 일은 정책에 리전 이름과 ASN을 한 줄 더 적는 것뿐입니다.
+
+ASN(Autonomous System Number)은 **네트워크마다 붙이는 식별 번호**입니다. 네트워크끼리 경로를 주고받을 때 "이 경로는 어느 네트워크에서 왔는가"를 이 번호로 구분합니다(그 주고받는 약속이 **BGP**이고, [2-3](lab2.md)에서 직접 봅니다). 여기서는 edge마다 다른 번호를 주면 된다고만 알면 됩니다. 실제 값은 [주소 설계](#addressing)의 ASN 표에 있습니다.
 
 | 구분 | Transit Gateway 구성 | Cloud WAN 구성 |
 |---|---|---|
 | 리전 n개를 모두 잇기 | peering `n(n-1)/2`개 | core network edge `n`개 |
 | 리전을 하나 더 열 때 | 기존 리전 수만큼 peering을 더 만들고 양쪽 라우팅 테이블을 고칩니다 | 정책의 `edge-locations`에 한 줄을 더합니다 |
 | 환경 나누기 | 리전마다 라우팅 테이블을 따로 만들고, 연결마다 어느 테이블에 붙일지 지정합니다 | 세그먼트를 만들고, 연결에 태그를 붙입니다 |
-| 통신 범위를 정하는 곳 | 리전마다 흩어진 라우팅 테이블과 전파(propagation) 설정 | core network policy 문서 하나 |
+| 통신 범위를 정하는 곳 | 리전마다 흩어진 라우팅 테이블과, 어느 대역을 어느 테이블에 올릴지 정하는 설정(propagation) | core network policy 문서 하나 |
 | 바꾼 내용을 적용하는 방법 | 리전마다 따로 적용합니다 | policy version을 만들고 change set을 검토한 뒤 한 번에 실행합니다 |
 
 표의 마지막 줄에 나오는 두 가지는 이 워크숍에서 계속 쓰므로 미리 적어 둡니다. **policy version** 은 정책 문서의 새 판입니다. 문서를 고치면 새 번호의 판이 하나 생깁니다. **change set** 은 그 새 판이 지금 상태를 무엇으로 바꾸는지 적은 **변경 목록**입니다. 새 판을 만드는 것만으로는 아무것도 바뀌지 않고, 변경 목록을 실행해야 적용됩니다. [2-4](lab3.md)에서 직접 해 봅니다.
@@ -119,9 +121,9 @@ ASN은 다음과 같이 씁니다. core network edge의 ASN은 만든 뒤에 바
 | core network `asn-ranges` | `64512-64520` |
 | 서울 core network edge | `64512` |
 | 오레곤 core network edge | `64513` |
-| 온프레미스 라우터 = customer gateway | `65000` |
+| 온프레미스 라우터, 그리고 그것을 등록한 customer gateway | `65000` |
 
-**라우터와 customer gateway는 같은 것이 아닙니다.** 라우터는 온프레미스에 있는 실제 장비(이 워크숍에서는 그 역할을 하는 EC2)이고, **customer gateway** 는 그 장비의 공인 IP와 ASN을 AWS에 등록해 둔 리소스입니다. AWS는 customer gateway를 보고 어디로 터널을 걸지 압니다. 둘의 ASN이 `65000` 으로 같은 이유는, 같은 장비를 가리키기 때문입니다.
+**라우터와 customer gateway는 같은 것이 아닙니다.** 라우터는 온프레미스에 있는 실제 장비(이 워크숍에서는 그 역할을 하는 EC2)이고, **customer gateway** 는 그 장비의 공인 IP와 ASN을 AWS에 등록해 둔 리소스입니다. AWS는 customer gateway를 보고 어디로 터널을 걸지 압니다. 표에 한 줄로 적은 것은 **둘이 같은 장비를 가리키기 때문에 ASN도 같은 값** 이어서입니다. 장비와 리소스가 같은 것이라는 뜻은 아닙니다.
 
 ### 누가 무엇을 만드나요
 

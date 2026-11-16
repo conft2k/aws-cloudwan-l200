@@ -129,7 +129,7 @@ Next:
     # IPsec 터널 상태 (aws-tunnel1, aws-tunnel2가 ESTABLISHED이어야 합니다)
     sudo swanctl --list-sas
 
-    # BGP 이웃(= BGP 상대) 상태. 두 줄이 나오면 됩니다
+    # BGP 이웃(= BGP 상대) 상태. 두 줄이 보이고, 각 줄의 Up/Down 이 시간으로 세어지면 올라온 것입니다
     sudo vtysh -c 'show bgp summary'
 
     # Cloud WAN에서 받은 경로 (10.30.1.0/24 한 줄이 보여야 합니다)
