@@ -24,20 +24,21 @@
 
 | 값 | 예 | 찾는 곳 |
 |---|---|---|
-| core network ID | `core-network-0123456789abcdef0` | CloudFormation 스택의 **Outputs** 탭 |
-| global network ID | `global-network-0123456789abcdef0` | CloudFormation 스택의 **Outputs** 탭 |
-| 오레곤 attachment용 서브넷 ID 2개 | `subnet-0123456789abcdef0`, `subnet-0fedcba9876543210` | 오레곤 CloudFormation 스택의 **Outputs** 탭 |
-| VPN 라우터 Elastic IP | `203.0.113.10` | CloudFormation 스택의 **Outputs** 탭 |
-| customer gateway ID | `cgw-0123456789abcdef0` | CloudFormation 스택의 **Outputs** 탭 |
+| core network ID | `core-network-0123456789abcdef0` | **서울** 스택 Outputs의 `CoreNetworkId` |
+| global network ID | `global-network-0123456789abcdef0` | **서울** 스택 Outputs의 `GlobalNetworkId` |
+| 오레곤 attachment용 서브넷 ID 2개 | `subnet-0123456789abcdef0`, `subnet-0fedcba9876543210` | **오레곤** 스택 Outputs의 `ProdCwanSubnetAId` 와 `ProdCwanSubnetBId` |
+| VPN 라우터 Elastic IP | `203.0.113.10` | **서울** 스택 Outputs의 `OnPremRouterPublicIp` |
+| customer gateway ID | `cgw-0123456789abcdef0` | **서울** 스택 Outputs의 `CustomerGatewayId` |
 | VPN 연결 ID | `vpn-0123456789abcdef0` | VPN 연결을 만든 뒤 VPC 콘솔의 **Site-to-Site VPN connections** (스택에는 없습니다. 실습 2-3에서 직접 만듭니다) |
 
 예는 모두 형식을 보여 주는 가짜 값입니다. VPN 연결 ID는 실습 2-3에서 VPN 연결을 만든 뒤에 생기므로 지금은 비워 둡니다.
 
-<!-- TODO(사전 테스트 후): Outputs 키 이름을 실제 템플릿의 이름으로 바꾼다. 서브넷 ID 2개가 스택 출력에 실제로 있는지 확인한다. -->
+!!! tip "Outputs 표는 **Key** 오름차순입니다"
+    오레곤 스택에는 `Dev…` 로 시작하는 키가 여섯 개 있어서 `Prod…` 는 아래로 밀립니다. 표를 내리거나 **Search outputs** 에 찾는 이름을 넣어 거르세요.
 
 ## 1-2-c. 브라우저 준비 { #browser }
 
-- 콘솔 언어를 **English**로 바꾸면 이 안내와 화면이 같습니다. 예제 화면이 영어 기준입니다. 콘솔 오른쪽 위 톱니바퀴 아이콘(**Unified Settings**) → **Language**에서 바꿉니다.
+- 콘솔 언어를 **English**로 바꾸면 이 안내와 화면이 같습니다. 예제 화면이 영어 기준입니다. 콘솔 오른쪽 위 톱니바퀴 아이콘을 누르면 열리는 **Current user settings** 창의 **Language** 에서 바꿉니다([2-1-a](lab0.md#lab0-a)에 그림이 있습니다).
 - **브라우저 탭을 여러 개 쓰세요.** 서울 콘솔, 오레곤 콘솔, **Network Manager**, EC2 접속 화면을 탭 하나씩 열어 두면 리전을 바꾸느라 시간을 쓰지 않습니다. 탭마다 오른쪽 위 리전이 맞는지 보고 시작하세요.
 
 ## 1-2-d. 꼭 지켜 주세요 { #notes-must }
@@ -61,4 +62,4 @@
 - 부분 시간은 올림입니다. 1시간 중 1분만 써도 1시간으로 계산됩니다.
 - 정리가 늦어지면 합계가 늘어납니다. 그 밖에 EC2 인스턴스, Site-to-Site VPN 연결, 데이터 전송 요금이 붙습니다.
 
-<!-- TODO(사전 테스트 후): 실제 청구 내역으로 참가자 1명당 합계를 다시 확인한다. -->
+- 위 합계는 공개된 시간당 요금으로 계산한 값입니다. **실제 청구 내역과 대조하지는 않았습니다**([4-4](references.md) 참조).
