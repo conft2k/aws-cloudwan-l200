@@ -259,7 +259,17 @@ rtt min/avg/max/mdev = 115.539/116.838/121.962/2.561 ms
 
 <!-- shot: lab1-routes-01-segment-table -->
 
-`10.11.1.0/24` 가 `prod` 세그먼트의 서울 edge에 있고, **Destinations** 는 오레곤 attachment, **Route type** 은 `PROPAGATED`, **Route state** 는 `ACTIVE` 입니다. 서울 prod의 `10.10.1.0/24` 도 함께 보입니다. **Segment** 를 `dev` 로 바꾸면 `10.11.1.0/24` 가 보이지 않습니다.
+표에 경로 세 개가 보입니다.
+
+| CIDR | Destinations | 무엇인가 |
+|---|---|---|
+| `10.10.1.0/24` | 서울 prod attachment | 같은 세그먼트, 같은 리전 |
+| `10.11.1.0/24` | `prod \| us-west-2` | **같은 세그먼트, 다른 리전.** 방금 ping이 간 길입니다 |
+| `10.30.1.0/24` | 서울 shared attachment | 세그먼트는 다르지만 정책의 `share` 로 들어온 경로 |
+
+셋 다 **Route type** 이 `PROPAGATED`, **Route state** 가 `ACTIVE` 입니다. 참가자가 직접 넣은 경로는 하나도 없습니다. `10.11.1.0/24` 의 **Destinations** 가 attachment ID가 아니라 `prod | us-west-2` 로 나오는 것에 주목하세요. **다른 리전의 세그먼트를 가리킨다**는 뜻입니다.
+
+**Segment** 를 `dev` 로 바꿔 다시 조회하면 `10.11.1.0/24` 도 `10.10.1.0/24` 도 보이지 않습니다. 세그먼트마다 경로 테이블이 따로입니다.
 
 **성공 확인**: ping이 `0% packet loss`이고, `prod` 세그먼트 경로 테이블에 `10.11.1.0/24`가 보입니다.
 
