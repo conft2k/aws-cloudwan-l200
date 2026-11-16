@@ -58,8 +58,8 @@ def retouch(im: Image.Image, spec: dict) -> Image.Image:
     return out
 
 
-def main() -> None:
-    apply = "--apply" in sys.argv
+def main(argv=None) -> None:
+    apply = "--apply" in (sys.argv if argv is None else argv)
     for rel, spec in sorted(PLAN.items()):
         dst = DOCS / rel
         if not dst.exists():
