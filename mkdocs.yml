@@ -1,0 +1,84 @@
+site_name: AWS Cloud WAN 워크숍
+site_description: 운영·개발·공유 환경과 온프레미스를 AWS Cloud WAN 하나로 글로벌 연결하는 실습(L200)
+site_url: https://ws.nettfc.net/ws-aws-cloudwan-l200/
+repo_url: https://github.com/conft2k/ws-aws-cloudwan-l200
+repo_name: ws-aws-cloudwan-l200
+edit_uri: ""
+copyright: MIT License
+
+theme:
+  name: material
+  language: ko
+  # fonts come from extra_css (Pretendard is not on Google Fonts)
+  font: false
+  logo: assets/icons/cloud-wan.svg
+  favicon: assets/icons/cloud-wan.svg
+  features:
+    - navigation.sections
+    - navigation.footer
+    - navigation.top
+    - content.code.copy
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: 어두운 모드
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: 밝은 모드
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+exclude_docs: |
+  *.draft.svg
+  agents/
+
+validation:
+  anchors: warn
+
+hooks:
+  - hooks/cachebust.py
+
+extra_css:
+  - https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css
+  - https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap
+  - assets/extra.css
+
+nav:
+  - "1. 시작하기 전에":
+      - "1-1. 소개": index.md
+      - "1-2. 사전 준비": prerequisites.md
+      - "1-3. 용어 풀이": glossary.md
+  - "2. 실습":
+      - "2-1. 시작하기": lab0.md
+      - "2-2. 세그먼트와 글로벌 연결": lab1.md
+      - "2-3. 온프레미스 연결": lab2.md
+      - "2-4. 정책으로 통신 범위 바꾸기": lab3.md
+  - "3. 추가 과제":
+      - "3-1. 연결 승인과 격리 옵션": extra-a.md
+      - "3-2. Transit Gateway와 비교": extra-b.md
+      - "3-3. 경로 테이블과 지표 보기": extra-c.md
+      - "3-4. 리소스 정리": extra-d.md
+  - "4. 부록":
+      - "4-1. core network policy 읽는 법": concepts.md
+      - "4-2. Direct Connect로 연결할 때": direct-connect.md
+      - "4-3. 문제 해결": troubleshooting.md
+      - "4-4. 참고 문서": references.md

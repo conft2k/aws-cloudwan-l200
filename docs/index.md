@@ -1,0 +1,148 @@
+# 1-1. 소개
+
+!!! warning "작성 중입니다"
+    이 워크숍은 사전 테스트 전 초안입니다. 콘솔 화면과 소요 시간은 사전 테스트 뒤에 채웁니다.
+
+리전마다 Transit Gateway를 하나씩 두고 peering으로 잇는 방식은 리전이 두세 개일 때는 잘 동작합니다. 하지만 리전이 늘면 이어야 할 peering이 빠르게 늘고, 운영·개발·공유 서비스 같은 환경을 나누려면 리전마다 라우팅 테이블과 연결(attachment)의 연결 관계를 손으로 맞춰야 합니다. 리전 하나를 더 열 때마다 같은 일을 처음부터 다시 하게 됩니다.
+
+AWS Cloud WAN은 이 일을 **core network policy** 하나로 바꿉니다. 리전은 core network edge 하나를 더하는 것으로 늘어나고, 환경은 세그먼트(segment)로 나눕니다. 어디와 통신할 수 있는지는 정책에 적힌 대로 정해지고, 라우팅 테이블을 리전마다 고칠 일이 없습니다.
+
+| 항목 | 내용 |
+|---|---|
+| 대상 | VPC와 Transit Gateway를 써 본 분 |
+| 레벨 | 200 |
+| 시간 | 2시간(이론 1시간, 실습 1시간) |
+| 준비물 | 웹 브라우저. 참가자마다 AWS 계정 1개를 드립니다 |
+| 리전 | 아시아 태평양(서울) `ap-northeast-2`와 미국 서부(오레곤) `us-west-2` 두 곳을 씁니다 |
+
+온프레미스 장비는 따로 드리지 않습니다. 온프레미스 네트워크는 AWS 안에 VPC로 모사하고, Site-to-Site VPN으로 Cloud WAN에 연결합니다.
+
+모르는 용어는 [용어 풀이](glossary.md)를 보세요. 실습을 시작하기 전에 준비할 것은 [1-2. 사전 준비](prerequisites.md)에 있습니다.
+
+## 1-1-a. 왜 Cloud WAN인가요 { #why }
+
+여러 리전과 여러 환경을 쓰는 네트워크를 Transit Gateway로 만들면, 리전마다 Transit Gateway를 하나씩 두고 서로 peering으로 잇습니다. 모든 리전이 서로 통신해야 하면 peering 수는 리전 수 n에 대해 **n(n-1)/2개**입니다. 리전이 2개면 1개지만, 5개면 10개입니다. peering을 만든 뒤에도 각 Transit Gateway의 라우팅 테이블에 상대 리전의 대역을 넣어야 하므로, 손으로 관리할 것은 peering 수보다 더 빨리 늘어납니다.
+
+Cloud WAN은 global network 하나 안에 core network 하나를 두고, 리전마다 **core network edge**를 하나씩 둡니다. edge 수는 리전 수 n에 대해 **n개**입니다. edge끼리는 Cloud WAN이 알아서 잇습니다. 참가자가 하는 일은 정책에 리전 이름과 ASN(Autonomous System Number)을 한 줄 더 적는 것뿐입니다.
+
+| 구분 | Transit Gateway 구성 | Cloud WAN 구성 |
+|---|---|---|
+| 리전 n개를 모두 잇기 | peering `n(n-1)/2`개 | core network edge `n`개 |
+| 리전을 하나 더 열 때 | 기존 리전 수만큼 peering을 더 만들고 양쪽 라우팅 테이블을 고칩니다 | 정책의 `edge-locations`에 한 줄을 더합니다 |
+| 환경 나누기 | 리전마다 라우팅 테이블을 따로 만들고, 연결마다 어느 테이블에 붙일지 지정합니다 | 세그먼트를 만들고, 연결에 태그를 붙입니다 |
+| 통신 범위를 정하는 곳 | 리전마다 흩어진 라우팅 테이블과 전파(propagation) 설정 | core network policy 문서 하나 |
+| 바꾼 내용을 적용하는 방법 | 리전마다 따로 적용합니다 | policy version을 만들고 change set을 검토한 뒤 한 번에 실행합니다 |
+
+세그먼트는 기본적으로 **자기 세그먼트 안에서만** 통신합니다. 운영 환경과 개발 환경을 막으려고 따로 할 일이 없다는 뜻입니다. 반대로 열어 줄 때는 정책의 `segment-actions`에 `share`를 적습니다. 이 워크숍에서는 `prod`, `dev`, `shared`, `onprem` 네 세그먼트로 이 동작을 직접 확인합니다.
+
+## 1-1-b. 워크숍의 목표 { #goal }
+
+이 워크숍은 여러 리전과 여러 환경을 가진 네트워크를 맡은 분이, Cloud WAN의 세그먼트와 정책으로 그 네트워크를 관리할 수 있는지 직접 판단할 수 있도록 만들었습니다.
+
+워크숍을 마치면 다음을 할 수 있습니다.
+
+1. core network, core network edge, 세그먼트, 연결(attachment)이 서로 어떤 관계인지 설명합니다.
+2. core network policy에서 세그먼트가 서로 격리되는 기본 동작과 `share`를 적었을 때의 효과를 설명합니다.
+3. 연결에 태그를 붙이면 그 값에 따라 세그먼트에 배정되는 것을 콘솔에서 확인합니다.
+4. 리전을 하나 더 쓰는 환경에서, 같은 세그먼트에 속한 연결이 리전을 넘어 통신하는 것을 확인합니다.
+5. Site-to-Site VPN으로 온프레미스를 core network에 연결하고 BGP(Border Gateway Protocol) 경로를 확인합니다.
+6. policy version을 만들고 change set을 검토·실행해 통신할 수 있는 범위를 바꿉니다.
+7. 같은 요구사항을 Transit Gateway로 만들 때와 비교해 무엇이 달라지는지 설명합니다.
+
+## 1-1-c. 시나리오 { #scenario }
+
+여러분은 한 고객의 네트워크 담당자입니다. 고객은 다음 네 가지를 요구합니다.
+
+1. 운영 환경과 개발 환경은 서로 통신하면 안 됩니다.
+2. 공유 서비스(로그, 인증, 모니터링)는 운영과 개발 양쪽에서 쓸 수 있어야 합니다.
+3. 온프레미스는 운영과 공유 서비스에는 닿아야 하지만, 개발에는 닿으면 안 됩니다.
+4. 미국(오레곤)에 운영 환경을 하나 더 엽니다. 서울의 운영 환경과 통신해야 합니다.
+
+<!-- alt-pending: architecture -->
+
+<figure markdown="span">
+  ![워크숍 전체 구성도: 가운데에 AWS Cloud WAN의 core network가 있고, 왼쪽 아시아 태평양(서울) 리전에 core network edge(ASN 64512), 오른쪽 미국 서부(오레곤) 리전에 core network edge(ASN 64513)가 있어 두 edge가 core network로 이어진다. 서울 edge에는 VPC 연결 3개가 붙는다. prod VPC 10.10.1.0/24, dev VPC 10.20.1.0/24, shared VPC 10.30.1.0/24이고 각 VPC에는 테스트용 EC2 인스턴스가 1대씩 있다. 서울에는 Cloud WAN에 VPC로 붙지 않는 온프레미스 모사 VPC 172.16.1.0/24도 있다. 이 VPC의 퍼블릭 서브넷에는 Elastic IP를 가진 VPN 라우터 EC2가, 프라이빗 서브넷에는 테스트용 VM EC2 172.16.1.10이 있다. VPN 라우터는 customer gateway(ASN 65000)와 Site-to-Site VPN 터널 2개로 서울 edge의 VPN attachment에 연결된다. 오레곤 edge에는 prod VPC 10.11.1.0/24가 VPC 연결로 붙고 그 안에 EC2 인스턴스가 1대 있다. 서울의 VPC 연결 3개는 CloudFormation이 미리 만들고, 오레곤 VPC 연결과 Site-to-Site VPN 연결 및 VPN attachment는 참가자가 콘솔에서 직접 만든다](images/architecture.png)
+  <figcaption>그림 1. 워크숍 전체 구성</figcaption>
+</figure>
+
+### 세그먼트 설계
+
+네 가지 요구사항을 세그먼트 4개로 옮기면 다음과 같습니다.
+
+| 세그먼트 | 담는 연결 | 기본 동작 |
+|---|---|---|
+| `prod` | 서울 prod VPC, 오레곤 prod VPC | 같은 세그먼트끼리만 통신합니다 |
+| `dev` | 서울 dev VPC | 같은 세그먼트끼리만 통신합니다 |
+| `shared` | 서울 shared VPC | `prod`, `dev`, `onprem`에 share합니다 |
+| `onprem` | Site-to-Site VPN attachment | 처음에는 `shared` 와만 통신합니다. `prod` 는 [2-4](lab3.md)에서 엽니다 |
+
+<figure markdown="span">
+  ![AWS Cloud WAN 세그먼트 관계도. 세그먼트 네 개가 회색 파선 상자로 그려져 있고, 각 상자 안에 그 세그먼트에 붙는 연결이 AWS 아이콘으로 들어 있다. 왼쪽 가운데 onprem 세그먼트에는 Site-to-Site VPN(온프레미스 172.16.1.0/24)이, 가운데 shared 세그먼트에는 서울 shared VPC(10.30.1.0/24)가, 오른쪽 위 prod 세그먼트에는 서울 prod VPC(10.10.1.0/24)와 오레곤 prod VPC(10.11.1.0/24)가, 오른쪽 아래 dev 세그먼트에는 서울 dev VPC(10.20.1.0/24)가 있다. prod 안의 두 VPC는 실선으로 이어져 있고 리전 간 통신 허용이라고 적혀 있다. shared는 onprem, prod, dev 세 세그먼트 모두와 실선으로 이어지고 각 선에 share 화살표와 함께 허용이라고 적혀 있다. 반대로 prod와 dev 사이는 빨간 점선에 차단, 세그먼트 기본 격리라고 적혀 있다. onprem과 dev 사이도 빨간 점선에 차단, 고객 요구사항이라고 적혀 있다. onprem과 prod 사이만 초록 파선으로 실습 2-4에서 share 추가, 허용이라고 적혀 있다. shared는 세 세그먼트 모두에 닿지만 그 세 세그먼트끼리는 서로 닿지 않는 비대칭 구조이며, 이것이 공유 서비스 패턴이다. 그림 아래 범례는 실선이 허용(같은 세그먼트 또는 share), 빨간 점선이 차단(정책에 share 없음), 초록 파선이 실습 2-4에서 share를 추가해 열리는 연결임을 설명한다](images/diagrams/segments.png)
+  <figcaption>그림 2. 세그먼트 사이의 통신 관계</figcaption>
+</figure>
+
+그림 2에서 눈여겨볼 곳은 세 가지입니다.
+
+- `prod`와 `dev`가 통신하지 못하는 것은 **아무 설정도 하지 않았기 때문**입니다. 막으려고 규칙을 넣은 것이 아닙니다. 이 기본 동작은 [2-2](lab1.md)에서 ping으로 먼저 확인합니다.
+- `shared`가 `prod`·`dev`·`onprem`에 share하면, 세 세그먼트는 `shared`에 닿지만 서로는 여전히 닿지 않습니다. 이 비대칭이 공유 서비스 패턴의 핵심입니다.
+- `onprem`은 일부러 share 없이 시작합니다. [2-4](lab3.md)에서 정책에 `share` 한 줄을 넣어 온프레미스와 운영 환경을 엽니다.
+
+`prod` 세그먼트에는 서울과 오레곤의 VPC 연결이 함께 들어갑니다. 같은 세그먼트에 있으면 리전이 달라도 통신합니다. 이것을 위해 참가자가 따로 할 일은 없습니다.
+
+### 주소 설계
+
+참가자마다 계정이 다르므로 주소는 모든 참가자가 똑같이 씁니다. 참가자 번호 같은 값은 없습니다.
+
+| 구분 | 리전 | 대역 | 테스트 호스트 |
+|---|---|---|---|
+| 온프레미스 모사 LAN | 서울 | `172.16.1.0/24` | `172.16.1.10`(온프레미스 VM) |
+| prod VPC | 서울 | `10.10.1.0/24` | `10.10.1.10` |
+| dev VPC | 서울 | `10.20.1.0/24` | `10.20.1.10` |
+| shared VPC | 서울 | `10.30.1.0/24` | `10.30.1.10` |
+| prod VPC | 오레곤 | `10.11.1.0/24` | `10.11.1.10` |
+
+온프레미스 모사 VPC는 Cloud WAN에 VPC 연결로 붙이지 않습니다. 오직 Site-to-Site VPN으로만 연결합니다. 그래야 실제 온프레미스와 같은 경로로 동작하고, BGP로 경로를 주고받는 것도 확인할 수 있습니다.
+
+ASN은 다음과 같이 씁니다. core network edge의 ASN은 만든 뒤에 바꿀 수 없으므로 템플릿에서 리전별로 미리 정해 둡니다.
+
+| 구분 | ASN |
+|---|---|
+| core network `asn-ranges` | `64512-64520` |
+| 서울 core network edge | `64512` |
+| 오레곤 core network edge | `64513` |
+| 온프레미스 라우터(customer gateway) | `65000` |
+
+### 누가 무엇을 만드나요
+
+학습 목표에 직접 닿는 것만 참가자가 직접 만듭니다. 나머지는 CloudFormation 스택 2개가 미리 만듭니다.
+
+| 누가 | 무엇을 | 어디에서 |
+|---|---|---|
+| CloudFormation(서울 스택) | global network, core network(초기 정책과 세그먼트 4개, edge 2개), prod·dev·shared VPC와 EC2, 온프레미스 모사 VPC와 VPN 라우터·VM, 서울 VPC 연결 3개, customer gateway | [2-1](lab0.md) |
+| CloudFormation(오레곤 스택) | 오레곤 prod VPC와 EC2 | [2-1](lab0.md) |
+| 참가자가 콘솔에서 직접 | 오레곤 VPC 연결과 VPC 라우트 | [2-2](lab1.md) |
+| 참가자가 콘솔에서 직접 | Site-to-Site VPN 연결, Cloud WAN VPN attachment, 온프레미스 라우터 터널 설정 | [2-3](lab2.md) |
+| 참가자가 콘솔에서 직접 | policy version 만들기, change set 검토와 실행 | [2-4](lab3.md) |
+
+core network policy를 어떻게 읽는지는 [4-1. core network policy 읽는 법](concepts.md)에 정리했습니다. Transit Gateway로 같은 구성을 만들 때와의 비교는 [3-2. Transit Gateway와 비교](extra-b.md)에 있습니다.
+
+## 1-1-d. 진행 순서 { #schedule }
+
+| 시간 | 구분 | 내용 |
+|---|---|---|
+| -0:10–0:00 | [2-1](lab0.md) | 로그인, 스택 2개 배포 시작(이론 강의 전에 합니다) |
+| 0:00–1:00 | 이론 | Cloud WAN 강의. 강의 중에 core network가 완성됩니다 |
+| 1:00–1:22 | [2-2](lab1.md) | core network 둘러보기, 세그먼트 격리 확인, 오레곤 연결 추가 |
+| 1:22–1:42 | [2-3](lab2.md) | 온프레미스 VPN 연결과 BGP 경로 확인 |
+| 1:42–1:55 | [2-4](lab3.md) | 정책 한 줄로 온프레미스 열기 |
+| 1:55–2:00 | [3-4](extra-d.md) | 참가자가 만든 연결 삭제, 스택 삭제 시작 |
+
+!!! warning "스택 배포는 이론 강의 전에 시작합니다"
+    core network를 처음 만들 때는 **최대 30분**이 걸립니다. 그 동안에는 연결을 만들 수도, 정책을 고칠 수도 없습니다. 그래서 스택 배포를 이론 강의 **전에** 시작해, 강의 1시간 동안 끝나 있게 합니다. 강의가 끝나면 바로 실습을 시작할 수 있습니다.
+
+[3-4. 리소스 정리](extra-d.md)는 시간이 모자라도 꼭 마지막에 합니다. 참가자가 만든 연결을 먼저 지워야 스택이 지워집니다.
+
+추가 과제 [3-1](extra-a.md), [3-2](extra-b.md), [3-3](extra-c.md)은 시간이 남거나 워크숍 뒤에 혼자 더 해 볼 분을 위한 것입니다.
+
+!!! info "시간은 추정값입니다"
+    표의 시간은 아직 추정값입니다. 사전 테스트에서 측정한 뒤에 고칩니다.

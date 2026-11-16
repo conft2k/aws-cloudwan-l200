@@ -1,0 +1,54 @@
+<svg viewBox="0 0 1141.6 724" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans CJK KR', 'Pretendard', Arial, sans-serif">
+<defs></defs>
+<rect width="1141.6" height="724" fill="#FFFFFF"/>
+<rect x="707.4" y="46" width="418.2" height="150" fill="none" stroke="#7D8998" stroke-width="2" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="707.4" y="46" width="24" height="24"/>
+<text x="739.4" y="67" font-size="18" font-weight="700" fill="#7D8998">prod</text>
+<text x="801" y="67" font-size="16" fill="#3B4552">운영 환경</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="765.95" y="86" width="48" height="48"/>
+<text x="789.95" y="154" font-size="18" text-anchor="middle" fill="#232F3E">서울 prod VPC</text>
+<text x="789.95" y="176" font-size="16" text-anchor="middle" fill="#232F3E">10.10.1.0/24</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="1010.05" y="86" width="48" height="48"/>
+<text x="1034.05" y="154" font-size="18" text-anchor="middle" fill="#232F3E">오레곤 prod VPC</text>
+<text x="1034.05" y="176" font-size="16" text-anchor="middle" fill="#232F3E">10.11.1.0/24</text>
+<rect x="413.2" y="268" width="214.2" height="150" fill="none" stroke="#7D8998" stroke-width="2" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="413.2" y="268" width="24" height="24"/>
+<text x="445.2" y="289" font-size="18" font-weight="700" fill="#7D8998">shared</text>
+<text x="526.6" y="289" font-size="16" fill="#3B4552">공유 서비스</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="481.65" y="308" width="48" height="48"/>
+<text x="505.65" y="376" font-size="18" text-anchor="middle" fill="#232F3E">서울 shared VPC</text>
+<text x="505.65" y="398" font-size="16" text-anchor="middle" fill="#232F3E">10.30.1.0/24</text>
+<rect x="20" y="268" width="243.2" height="150" fill="none" stroke="#7D8998" stroke-width="2" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="20" y="268" width="24" height="24"/>
+<text x="52" y="289" font-size="18" font-weight="700" fill="#7D8998">onprem</text>
+<text x="133.4" y="289" font-size="16" fill="#3B4552">온프레미스</text>
+<image href="bundle:service/AWS-Site-to-Site-VPN" x="117.6" y="308" width="48" height="48"/>
+<text x="141.6" y="376" font-size="18" text-anchor="middle" fill="#232F3E">Site-to-Site VPN</text>
+<text x="141.6" y="398" font-size="16" text-anchor="middle" fill="#232F3E">온프레미스 172.16.1.0/24</text>
+<rect x="707.4" y="490" width="168.5" height="150" fill="none" stroke="#7D8998" stroke-width="2" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="707.4" y="490" width="24" height="24"/>
+<text x="739.4" y="511" font-size="18" font-weight="700" fill="#7D8998">dev</text>
+<text x="791.1" y="511" font-size="16" fill="#3B4552">개발 환경</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="761" y="530" width="48" height="48"/>
+<text x="785" y="598" font-size="18" text-anchor="middle" fill="#232F3E">서울 dev VPC</text>
+<text x="785" y="620" font-size="16" text-anchor="middle" fill="#232F3E">10.20.1.0/24</text>
+<line x1="817.95" y1="121" x2="1006.05" y2="121" stroke="#232F3E" stroke-width="1.5"/>
+<text x="912" y="112" font-size="16" text-anchor="middle" fill="#232F3E">리전 간 통신 허용</text>
+<polyline points="267.2,343 409.2,343" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<text x="338.2" y="334" font-size="16" text-anchor="middle" fill="#232F3E">share → 허용</text>
+<polyline points="520.3,264 520.3,121 703.4,121" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<text x="613.85" y="112" font-size="16" text-anchor="middle" fill="#232F3E">share → 허용</text>
+<polyline points="520.3,422 520.3,565 703.4,565" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<text x="613.85" y="556" font-size="16" text-anchor="middle" fill="#232F3E">share → 허용</text>
+<polyline points="141.6,264 141.6,78 703.4,78" fill="none" stroke="#1D8102" stroke-width="1.5" stroke-dasharray="7,5"/>
+<text x="424.5" y="69" font-size="16" text-anchor="middle" fill="#1D8102">실습 2-4에서 share 추가 → 허용</text>
+<polyline points="141.6,422 141.6,608 703.4,608" fill="none" stroke="#D13212" stroke-width="1.5" stroke-dasharray="2,4"/>
+<text x="504.5" y="597" font-size="16" text-anchor="middle" fill="#D13212">차단 (고객 요구사항)</text>
+<polyline points="777.4,200 777.4,486" fill="none" stroke="#D13212" stroke-width="1.5" stroke-dasharray="2,4"/>
+<text x="789.4" y="343" font-size="16" font-weight="700" fill="#D13212">차단</text>
+<text x="789.4" y="363" font-size="16" fill="#3B4552">(세그먼트 기본 격리)</text>
+<rect x="16" y="664" width="1109.6" height="44" fill="#F8F9F9" stroke="#D5DBDB" stroke-width="1"/>
+<text x="28" y="691" font-size="16" font-weight="600" fill="#232F3E">실선 = 허용 (같은 세그먼트 / share)</text>
+<text x="360" y="691" font-size="16" font-weight="600" fill="#D13212">빨간 점선 = 차단 (share 없음)</text>
+<text x="642.4" y="691" font-size="16" font-weight="600" fill="#1D8102">초록 파선 = 실습 2-4에서 share 추가</text>
+</svg>

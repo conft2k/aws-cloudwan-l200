@@ -1,0 +1,166 @@
+<svg viewBox="0 0 1197 1557" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans CJK KR', 'Pretendard', Arial, sans-serif">
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#232F3E"/></marker>
+</defs>
+<rect width="1197" height="1557" fill="#FFFFFF"/>
+<rect x="16" y="16" width="1165" height="1324" fill="none" stroke="#232F3E" stroke-width="2"/>
+<image href="bundle:group/AWS-Cloud-logo_32" x="16" y="16" width="32" height="32"/>
+<text x="58" y="39" font-size="19" font-weight="600" fill="#232F3E">AWS Cloud</text>
+<rect x="32" y="56" width="800" height="1268" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="3,3"/>
+<image href="bundle:group/Region_32" x="32" y="56" width="24" height="24"/>
+<text x="64" y="75" font-size="19" font-weight="600" fill="#00A4A6">아시아 태평양(서울) ap-northeast-2</text>
+<rect x="856" y="56" width="309" height="857" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="3,3"/>
+<image href="bundle:group/Region_32" x="856" y="56" width="24" height="24"/>
+<text x="888" y="75" font-size="19" font-weight="600" fill="#00A4A6">미국 서부(오레곤) us-west-2</text>
+<rect x="40" y="415" width="1117" height="482" fill="none" stroke="#8C4FFF" stroke-width="2" stroke-dasharray="6,4"/>
+<image href="bundle:service/AWS-Cloud-WAN" x="40" y="415" width="24" height="24"/>
+<text x="72" y="434" font-size="19" font-weight="600" fill="#8C4FFF">Core network</text>
+<text x="72" y="452" font-size="16" fill="#232F3E">AWS Cloud WAN</text>
+<rect x="48" y="465" width="1101" height="64" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="58" y="473" width="48" height="48"/>
+<text x="116" y="503" font-size="19" font-weight="600" fill="#232F3E">prod</text>
+<rect x="48" y="539" width="1101" height="64" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="58" y="547" width="48" height="48"/>
+<text x="116" y="577" font-size="19" font-weight="600" fill="#232F3E">dev</text>
+<rect x="48" y="613" width="1101" height="64" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="58" y="621" width="48" height="48"/>
+<text x="116" y="651" font-size="19" font-weight="600" fill="#232F3E">shared</text>
+<rect x="48" y="825" width="1101" height="64" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="58" y="833" width="48" height="48"/>
+<text x="116" y="863" font-size="19" font-weight="600" fill="#232F3E">onprem</text>
+<rect x="100" y="96" width="216" height="201" fill="none" stroke="#8C4FFF" stroke-width="2"/>
+<image href="bundle:group/Virtual-private-cloud-VPC_32" x="100" y="96" width="24" height="24"/>
+<text x="132" y="115" font-size="19" font-weight="600" fill="#8C4FFF">prod VPC</text>
+<text x="132" y="133" font-size="16" fill="#232F3E">10.10.1.0/24</text>
+<rect x="116" y="150" width="184" height="131" fill="none" stroke="#00A4A6" stroke-width="1.5"/>
+<image href="bundle:group/Private-subnet_32" x="116" y="150" width="24" height="24"/>
+<text x="148" y="169" font-size="19" font-weight="600" fill="#00A4A6">프라이빗 서브넷</text>
+<g id="node:prod-ec2">
+<image href="bundle:service/Amazon-EC2" x="184" y="180" width="48" height="48"/>
+<text x="208" y="248" font-size="19" text-anchor="middle" fill="#232F3E">EC2</text>
+<text x="208" y="269" font-size="16" text-anchor="middle" fill="#3B4552">10.10.1.10</text>
+</g>
+<rect x="340" y="96" width="216" height="201" fill="none" stroke="#8C4FFF" stroke-width="2"/>
+<image href="bundle:group/Virtual-private-cloud-VPC_32" x="340" y="96" width="24" height="24"/>
+<text x="372" y="115" font-size="19" font-weight="600" fill="#8C4FFF">dev VPC</text>
+<text x="372" y="133" font-size="16" fill="#232F3E">10.20.1.0/24</text>
+<rect x="356" y="150" width="184" height="131" fill="none" stroke="#00A4A6" stroke-width="1.5"/>
+<image href="bundle:group/Private-subnet_32" x="356" y="150" width="24" height="24"/>
+<text x="388" y="169" font-size="19" font-weight="600" fill="#00A4A6">프라이빗 서브넷</text>
+<g id="node:dev-ec2">
+<image href="bundle:service/Amazon-EC2" x="424" y="180" width="48" height="48"/>
+<text x="448" y="248" font-size="19" text-anchor="middle" fill="#232F3E">EC2</text>
+<text x="448" y="269" font-size="16" text-anchor="middle" fill="#3B4552">10.20.1.10</text>
+</g>
+<rect x="580" y="96" width="216" height="201" fill="none" stroke="#8C4FFF" stroke-width="2"/>
+<image href="bundle:group/Virtual-private-cloud-VPC_32" x="580" y="96" width="24" height="24"/>
+<text x="612" y="115" font-size="19" font-weight="600" fill="#8C4FFF">shared VPC</text>
+<text x="612" y="133" font-size="16" fill="#232F3E">10.30.1.0/24</text>
+<rect x="596" y="150" width="184" height="131" fill="none" stroke="#00A4A6" stroke-width="1.5"/>
+<image href="bundle:group/Private-subnet_32" x="596" y="150" width="24" height="24"/>
+<text x="628" y="169" font-size="19" font-weight="600" fill="#00A4A6">프라이빗 서브넷</text>
+<g id="node:shared-ec2">
+<image href="bundle:service/Amazon-EC2" x="664" y="180" width="48" height="48"/>
+<text x="688" y="248" font-size="19" text-anchor="middle" fill="#232F3E">EC2</text>
+<text x="688" y="269" font-size="16" text-anchor="middle" fill="#3B4552">10.30.1.10</text>
+</g>
+<rect x="872" y="96" width="216" height="201" fill="none" stroke="#8C4FFF" stroke-width="2"/>
+<image href="bundle:group/Virtual-private-cloud-VPC_32" x="872" y="96" width="24" height="24"/>
+<text x="904" y="115" font-size="19" font-weight="600" fill="#8C4FFF">prod VPC</text>
+<text x="904" y="133" font-size="16" fill="#232F3E">10.11.1.0/24</text>
+<rect x="888" y="150" width="184" height="131" fill="none" stroke="#00A4A6" stroke-width="1.5"/>
+<image href="bundle:group/Private-subnet_32" x="888" y="150" width="24" height="24"/>
+<text x="920" y="169" font-size="19" font-weight="600" fill="#00A4A6">프라이빗 서브넷</text>
+<g id="node:or-prod-ec2">
+<image href="bundle:service/Amazon-EC2" x="956" y="180" width="48" height="48"/>
+<text x="980" y="248" font-size="19" text-anchor="middle" fill="#232F3E">EC2</text>
+<text x="980" y="269" font-size="16" text-anchor="middle" fill="#3B4552">10.11.1.10</text>
+</g>
+<rect x="48" y="921" width="272" height="387" fill="none" stroke="#8C4FFF" stroke-width="2"/>
+<image href="bundle:group/Virtual-private-cloud-VPC_32" x="48" y="921" width="24" height="24"/>
+<text x="80" y="940" font-size="19" font-weight="600" fill="#8C4FFF">온프레미스 모사 VPC</text>
+<text x="80" y="958" font-size="16" fill="#232F3E">172.16.1.0/24</text>
+<text x="80" y="976" font-size="16" fill="#3B4552">VPC attachment 없음</text>
+<rect x="64" y="993" width="224" height="152" fill="none" stroke="#7AA116" stroke-width="1.5"/>
+<image href="bundle:group/Public-subnet_32" x="64" y="993" width="24" height="24"/>
+<text x="96" y="1012" font-size="19" font-weight="600" fill="#7AA116">퍼블릭 서브넷</text>
+<g id="node:router">
+<image href="bundle:service/Amazon-EC2" x="152" y="1023" width="48" height="48"/>
+<text x="176" y="1091" font-size="19" text-anchor="middle" fill="#232F3E">VPN 라우터 EC2</text>
+<text x="176" y="1112" font-size="16" text-anchor="middle" fill="#3B4552">strongSwan · FRR</text>
+<text x="176" y="1133" font-size="16" text-anchor="middle" fill="#3B4552">EIP · ASN 65000</text>
+</g>
+<rect x="64" y="1161" width="224" height="131" fill="none" stroke="#00A4A6" stroke-width="1.5"/>
+<image href="bundle:group/Private-subnet_32" x="64" y="1161" width="24" height="24"/>
+<text x="96" y="1180" font-size="19" font-weight="600" fill="#00A4A6">프라이빗 서브넷</text>
+<g id="node:onprem-vm">
+<image href="bundle:resource/Server" x="152" y="1191" width="48" height="48"/>
+<text x="176" y="1259" font-size="19" text-anchor="middle" fill="#232F3E">온프레미스 VM</text>
+<text x="176" y="1280" font-size="16" text-anchor="middle" fill="#3B4552">172.16.1.10</text>
+</g>
+<polyline points="204,1215 264,1215 264,1047 204,1047" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<line x1="208" y1="297" x2="208" y2="709" stroke="#232F3E" stroke-width="1.5"/>
+<line x1="208" y1="709" x2="630" y2="709" stroke="#232F3E" stroke-width="1.5"/>
+<circle cx="208" cy="497" r="5" fill="#7D8998"/>
+<polyline points="448,297 448,403 648,403 648,689" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<circle cx="648" cy="571" r="5" fill="#7D8998"/>
+<line x1="668" y1="297" x2="668" y2="689" stroke="#232F3E" stroke-width="1.5"/>
+<circle cx="668" cy="645" r="5" fill="#7D8998"/>
+<line x1="980" y1="297" x2="980" y2="689" stroke="#232F3E" stroke-width="1.5"/>
+<circle cx="980" cy="497" r="5" fill="#7D8998"/>
+<line x1="686" y1="717" x2="952" y2="717" stroke="#232F3E" stroke-width="1.5"/>
+<text x="755" y="709" font-size="16" text-anchor="middle" fill="#3B4552">AWS 백본</text>
+<line x1="204" y1="1047" x2="296" y2="1047" stroke="#232F3E" stroke-width="1.5"/>
+<polyline points="344,1047 390,1047 390,1352" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<line x1="418" y1="1380" x2="482" y2="1380" stroke="#232F3E" stroke-width="1.5"/>
+<polyline points="510,1352 510,725 630,725" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<circle cx="510" cy="857" r="5" fill="#7D8998"/>
+<g id="node:internet">
+<image href="bundle:resource/Internet" x="366" y="1356" width="48" height="48"/>
+<text x="390" y="1424" font-size="19" text-anchor="middle" fill="#232F3E">인터넷</text>
+</g>
+<g id="node:s2svpn">
+<image href="bundle:service/AWS-Site-to-Site-VPN" x="486" y="1356" width="48" height="48"/>
+<text x="510" y="1424" font-size="19" text-anchor="middle" fill="#232F3E">Site-to-Site VPN</text>
+<text x="510" y="1445" font-size="16" text-anchor="middle" fill="#3B4552">IPsec 터널 2개 · BGP</text>
+</g>
+<g id="node:edge-seoul">
+<image href="bundle:resource/AWS-Cloud-WAN_Core-Network-Edge" x="634" y="693" width="48" height="48"/>
+<text x="658" y="761" font-size="19" text-anchor="middle" fill="#232F3E">Core network edge</text>
+<text x="658" y="782" font-size="16" text-anchor="middle" fill="#3B4552">ASN 64512</text>
+</g>
+<g id="node:edge-oregon">
+<image href="bundle:resource/AWS-Cloud-WAN_Core-Network-Edge" x="956" y="693" width="48" height="48"/>
+<text x="980" y="761" font-size="19" text-anchor="middle" fill="#232F3E">Core network edge</text>
+<text x="980" y="782" font-size="16" text-anchor="middle" fill="#3B4552">ASN 64513</text>
+</g>
+<text x="218" y="319" font-size="16" fill="#3B4552">VPC attachment</text>
+<rect x="218" y="332.5" width="119.6" height="22" fill="#232F3E" rx="3"/>
+<text x="277.8" y="349" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">segment=prod</text>
+<rect x="218" y="364.5" width="137.2" height="22" fill="#E7157B" rx="3"/>
+<text x="286.6" y="381" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">CloudFormation</text>
+<rect x="458" y="332.5" width="110.8" height="22" fill="#232F3E" rx="3"/>
+<text x="513.4" y="349" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">segment=dev</text>
+<rect x="458" y="364.5" width="137.2" height="22" fill="#E7157B" rx="3"/>
+<text x="526.6" y="381" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">CloudFormation</text>
+<rect x="678" y="332.5" width="137.2" height="22" fill="#232F3E" rx="3"/>
+<text x="746.6" y="349" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">segment=shared</text>
+<rect x="678" y="364.5" width="137.2" height="22" fill="#E7157B" rx="3"/>
+<text x="746.6" y="381" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">CloudFormation</text>
+<rect x="990" y="332.5" width="119.6" height="22" fill="#232F3E" rx="3"/>
+<text x="1049.8" y="349" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">segment=prod</text>
+<rect x="990" y="364.5" width="118.8" height="22" fill="#232F3E" rx="3"/>
+<text x="1049.4" y="381" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">콘솔에서 직접</text>
+<text x="520" y="946" font-size="16" fill="#3B4552">VPN attachment</text>
+<rect x="520" y="846.5" width="137.2" height="22" fill="#232F3E" rx="3"/>
+<text x="588.6" y="863" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">segment=onprem</text>
+<rect x="667.2" y="846.5" width="118.8" height="22" fill="#232F3E" rx="3"/>
+<text x="726.6" y="863" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">콘솔에서 직접</text>
+<rect x="296" y="1023" width="48" height="72" fill="#FFFFFF"/>
+<image href="bundle:resource/Amazon-VPC_Internet-Gateway" x="296" y="1023" width="48" height="48"/>
+<text x="320" y="1091" font-size="19" text-anchor="middle" fill="#232F3E">IGW</text>
+<rect x="16" y="1473" width="1165" height="68" fill="#F8F9F9" stroke="#D5DBDB" stroke-width="1"/>
+<circle cx="38" cy="1494" r="5" fill="#7D8998"/>
+<text x="56" y="1500" font-size="16" fill="#232F3E">연결선과 세그먼트 행이 만나는 점 = 그 연결이 배정된 세그먼트 (배정은 연결에 붙인 segment 태그로 결정된다)</text>
+<text x="56" y="1524" font-size="16" fill="#232F3E">AWS 백본 = 두 core network edge 사이의 자동 연결 (참가자가 만들 것 없음)</text>
+</svg>

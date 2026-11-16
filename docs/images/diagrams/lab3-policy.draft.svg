@@ -1,0 +1,109 @@
+<svg viewBox="0 0 1024 1312" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans CJK KR', 'Pretendard', Arial, sans-serif">
+<defs>
+</defs>
+<rect width="1024" height="1312" fill="#FFFFFF"/>
+<text x="16" y="40" font-size="19" font-weight="700" fill="#232F3E">정책 변경 전 — 온프레미스는 shared 에만 닿는다</text>
+<rect x="280" y="56" width="728" height="494" fill="none" stroke="#8C4FFF" stroke-width="2" stroke-dasharray="6,4"/>
+<image href="bundle:service/AWS-Cloud-WAN" x="280" y="56" width="24" height="24"/>
+<text x="312" y="75" font-size="19" font-weight="600" fill="#8C4FFF">Core network</text>
+<image href="bundle:service/AWS-Site-to-Site-VPN" x="86" y="266" width="48" height="48"/>
+<text x="110" y="334" font-size="19" text-anchor="middle" fill="#232F3E">Site-to-Site VPN</text>
+<text x="110" y="355" font-size="16" text-anchor="middle" fill="#3B4552">온프레미스 LAN</text>
+<line x1="138" y1="290" x2="290" y2="290" stroke="#232F3E" stroke-width="1.5"/>
+<text x="210" y="280" font-size="16" text-anchor="middle" fill="#3B4552">segment=onprem</text>
+<rect x="294" y="254" width="170" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="355" y="266" width="48" height="48"/>
+<text x="379" y="334" font-size="19" font-weight="600" text-anchor="middle" fill="#232F3E">onprem</text>
+<rect x="540" y="92" width="369" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="566" y="104" width="48" height="48"/>
+<text x="590" y="172" font-size="19" font-weight="600" text-anchor="middle" fill="#232F3E">prod</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="696" y="104" width="48" height="48"/>
+<text x="720" y="172" font-size="19" text-anchor="middle" fill="#232F3E">prod VPC</text>
+<text x="720" y="193" font-size="16" text-anchor="middle" fill="#3B4552">서울</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="826" y="104" width="48" height="48"/>
+<text x="850" y="172" font-size="19" text-anchor="middle" fill="#232F3E">prod VPC</text>
+<text x="850" y="193" font-size="16" text-anchor="middle" fill="#3B4552">오레곤</text>
+<rect x="540" y="254" width="250" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="566" y="266" width="48" height="48"/>
+<text x="590" y="334" font-size="19" font-weight="600" text-anchor="middle" fill="#232F3E">shared</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="696" y="266" width="48" height="48"/>
+<text x="720" y="334" font-size="19" text-anchor="middle" fill="#232F3E">shared VPC</text>
+<text x="720" y="355" font-size="16" text-anchor="middle" fill="#3B4552">서울</text>
+<rect x="540" y="416" width="250" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="566" y="428" width="48" height="48"/>
+<text x="590" y="496" font-size="19" font-weight="600" text-anchor="middle" fill="#232F3E">dev</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="696" y="428" width="48" height="48"/>
+<text x="720" y="496" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
+<text x="720" y="517" font-size="16" text-anchor="middle" fill="#3B4552">서울</text>
+<polyline points="468,290 536,290" fill="none" stroke="#1D8102" stroke-width="2"/>
+<text x="502" y="280" font-size="16" font-weight="700" text-anchor="middle" fill="#1D8102">통신됨</text>
+<polyline points="379,250 379,128 536,128" fill="none" stroke="#D13212" stroke-width="2" stroke-dasharray="5,4"/>
+<text x="479.5" y="118" font-size="16" font-weight="700" text-anchor="middle" fill="#D13212">차단</text>
+<polyline points="379,376 379,452 536,452" fill="none" stroke="#D13212" stroke-width="2" stroke-dasharray="5,4"/>
+<text x="479.5" y="442" font-size="16" font-weight="700" text-anchor="middle" fill="#D13212">차단</text>
+<polyline points="640,214 640,250" fill="none" stroke="#1D8102" stroke-width="2"/>
+<text x="650" y="238" font-size="16" font-weight="700" text-anchor="start" fill="#1D8102">통신됨</text>
+<polyline points="700,376 700,412" fill="none" stroke="#1D8102" stroke-width="2"/>
+<text x="710" y="400" font-size="16" font-weight="700" text-anchor="start" fill="#1D8102">통신됨</text>
+<polyline points="913,128 938,128 938,452 794,452" fill="none" stroke="#D13212" stroke-width="2" stroke-dasharray="5,4"/>
+<text x="950" y="296" font-size="16" font-weight="700" text-anchor="start" fill="#D13212">차단</text>
+<rect x="16" y="574" width="992" height="180" fill="#F8F9F9" stroke="#D5DBDB" stroke-width="1"/>
+<text x="36" y="606" font-size="19" font-weight="700" fill="#232F3E">실습 2-4 — segment-actions 에 share 한 줄 추가</text>
+<text x="36" y="642" font-size="16" fill="#3B4552">policy version 생성 → change set 검토 → 실행</text>
+<text x="36" y="668" font-size="16" fill="#3B4552">리전별 설정 없이 서울 · 오레곤 prod 양쪽이 함께 열린다</text>
+<text x="36" y="694" font-size="16" fill="#3B4552">dev 격리는 그대로 둔다 (고객 요구사항)</text>
+<rect x="560" y="586" width="319.68" height="156" fill="#FFFFFF" stroke="#D5DBDB" stroke-width="1"/>
+<text x="576" y="616" font-size="16" font-family="'Noto Sans Mono CJK KR', monospace" fill="#232F3E">{</text>
+<text x="576" y="638" font-size="16" font-family="'Noto Sans Mono CJK KR', monospace" fill="#232F3E">  "action": "share",</text>
+<text x="576" y="660" font-size="16" font-family="'Noto Sans Mono CJK KR', monospace" fill="#232F3E">  "mode": "attachment-route",</text>
+<text x="576" y="682" font-size="16" font-family="'Noto Sans Mono CJK KR', monospace" fill="#232F3E">  "segment": "onprem",</text>
+<text x="576" y="704" font-size="16" font-family="'Noto Sans Mono CJK KR', monospace" fill="#232F3E">  "share-with": ["prod"]</text>
+<text x="576" y="726" font-size="16" font-family="'Noto Sans Mono CJK KR', monospace" fill="#232F3E">}</text>
+<text x="16" y="786" font-size="19" font-weight="700" fill="#232F3E">정책 변경 후 — onprem → prod 만 열렸다</text>
+<rect x="280" y="802" width="728" height="494" fill="none" stroke="#8C4FFF" stroke-width="2" stroke-dasharray="6,4"/>
+<image href="bundle:service/AWS-Cloud-WAN" x="280" y="802" width="24" height="24"/>
+<text x="312" y="821" font-size="19" font-weight="600" fill="#8C4FFF">Core network</text>
+<image href="bundle:service/AWS-Site-to-Site-VPN" x="86" y="1012" width="48" height="48"/>
+<text x="110" y="1080" font-size="19" text-anchor="middle" fill="#232F3E">Site-to-Site VPN</text>
+<text x="110" y="1101" font-size="16" text-anchor="middle" fill="#3B4552">온프레미스 LAN</text>
+<line x1="138" y1="1036" x2="290" y2="1036" stroke="#232F3E" stroke-width="1.5"/>
+<text x="210" y="1026" font-size="16" text-anchor="middle" fill="#3B4552">segment=onprem</text>
+<rect x="294" y="1000" width="170" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="355" y="1012" width="48" height="48"/>
+<text x="379" y="1080" font-size="19" font-weight="600" text-anchor="middle" fill="#232F3E">onprem</text>
+<rect x="540" y="838" width="369" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="566" y="850" width="48" height="48"/>
+<text x="590" y="918" font-size="19" font-weight="600" text-anchor="middle" fill="#232F3E">prod</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="696" y="850" width="48" height="48"/>
+<text x="720" y="918" font-size="19" text-anchor="middle" fill="#232F3E">prod VPC</text>
+<text x="720" y="939" font-size="16" text-anchor="middle" fill="#3B4552">서울</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="826" y="850" width="48" height="48"/>
+<text x="850" y="918" font-size="19" text-anchor="middle" fill="#232F3E">prod VPC</text>
+<text x="850" y="939" font-size="16" text-anchor="middle" fill="#3B4552">오레곤</text>
+<rect x="540" y="1000" width="250" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="566" y="1012" width="48" height="48"/>
+<text x="590" y="1080" font-size="19" font-weight="600" text-anchor="middle" fill="#232F3E">shared</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="696" y="1012" width="48" height="48"/>
+<text x="720" y="1080" font-size="19" text-anchor="middle" fill="#232F3E">shared VPC</text>
+<text x="720" y="1101" font-size="16" text-anchor="middle" fill="#3B4552">서울</text>
+<rect x="540" y="1162" width="250" height="118" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,3"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="566" y="1174" width="48" height="48"/>
+<text x="590" y="1242" font-size="19" font-weight="600" text-anchor="middle" fill="#232F3E">dev</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="696" y="1174" width="48" height="48"/>
+<text x="720" y="1242" font-size="19" text-anchor="middle" fill="#232F3E">dev VPC</text>
+<text x="720" y="1263" font-size="16" text-anchor="middle" fill="#3B4552">서울</text>
+<polyline points="468,1036 536,1036" fill="none" stroke="#1D8102" stroke-width="2"/>
+<text x="502" y="1026" font-size="16" font-weight="700" text-anchor="middle" fill="#1D8102">통신됨</text>
+<polyline points="379,996 379,874 536,874" fill="none" stroke="#1D8102" stroke-width="3"/>
+<text x="459.5" y="864" font-size="16" font-weight="700" text-anchor="middle" fill="#1D8102">통신됨</text>
+<rect x="379.7" y="889.5" width="159.6" height="22" fill="#1D8102" rx="3"/>
+<text x="459.5" y="906" font-size="16" font-weight="600" text-anchor="middle" fill="#FFFFFF">정책에서 바뀐 부분</text>
+<polyline points="379,1122 379,1198 536,1198" fill="none" stroke="#D13212" stroke-width="2" stroke-dasharray="5,4"/>
+<text x="479.5" y="1188" font-size="16" font-weight="700" text-anchor="middle" fill="#D13212">차단</text>
+<polyline points="640,960 640,996" fill="none" stroke="#1D8102" stroke-width="2"/>
+<text x="650" y="984" font-size="16" font-weight="700" text-anchor="start" fill="#1D8102">통신됨</text>
+<polyline points="700,1122 700,1158" fill="none" stroke="#1D8102" stroke-width="2"/>
+<text x="710" y="1146" font-size="16" font-weight="700" text-anchor="start" fill="#1D8102">통신됨</text>
+<polyline points="913,874 938,874 938,1198 794,1198" fill="none" stroke="#D13212" stroke-width="2" stroke-dasharray="5,4"/>
+<text x="950" y="1042" font-size="16" font-weight="700" text-anchor="start" fill="#D13212">차단</text>
+</svg>

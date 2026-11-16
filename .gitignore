@@ -1,0 +1,11 @@
+# local-only secrets
+*.secret
+__pycache__/
+*.pyc
+# MkDocs build output
+site/
+.venv/
+# rehearsal raw logs (timings go into PLAN.md)
+rehearsal/
+# uncropped screenshot originals (kept locally)
+shots/raw/
