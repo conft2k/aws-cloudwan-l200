@@ -674,6 +674,8 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 
 **막히는 패턴이 일정하다.** 표의 행 선택과 행 단위 메뉴는 잘 되는데, **툴바의 단일 동작 버튼**(`Delete`, `Connect`, `Submit`)은 역할+이름으로 잡히지 않을 때가 많다. 해결책도 일정했다. Cloudscape가 붙이는 클래스(`button[class*="awsui_primary-button"]`)로 찾거나, 전용 해시 URL로 바로 들어가는 것이다(`#ConnectToInstance:instanceId=` 가 그랬다). 남은 세 장도 같은 방법으로 풀릴 것으로 본다.
 
+**백로그 (2026-11-16 리뷰에서 나온 판단 사안, 고치지 않음).** `tools/shots/extra-delete.py` 의 `confirm_dialog()` 와 `tools/shots/probe-stack-delete.py` 가 확인 창 입력 선택자와 "이름 입력 → 대기 → 버튼 클릭" 순서를 똑같이 갖고 있다. 콘솔 확인 절차가 바뀌면 두 곳을 함께 고쳐야 한다. 지금 합치지 않은 이유는 두 파일이 `tools/console.py` 가 `exec` 으로 돌리는 스크립트라 서로 import 할 수 없고, 공통으로 뺄 부분이 두 줄이라서다. 합친다면 `console.py` 의 exec 전역에 넣는 것이 맞다. 목적도 다르다 — 하나는 캡처용이고 하나는 "이 화면의 버튼 이름이 진짜 무엇인가"를 찍어 보는 진단용이다.
+
 `lab1-core-03-attachment-tags` 는 **해결했다.** 행의 선택 버튼으로 고르면(`select_row()`) 상세 창이 열리고 **Tags** 탭이 있다. 이름 셀을 클릭하던 것이 원인이었다. **Name** 열의 글자는 링크가 아니다.
 
 ### 15-5. 캡처 뒤에 남는 일: 자리를 이미지로 바꾸기
