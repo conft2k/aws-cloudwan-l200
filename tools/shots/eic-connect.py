@@ -30,24 +30,27 @@ def heads(f):
         return []
 
 
-goto(f"/ec2/home?region={REGION}#InstanceDetails:instanceId={INSTANCE}")
+def wait_for(text, tries=10):
+    """The EC2 console paints a skeleton first; a shot taken then is blank."""
+    for _ in range(tries):
+        f = app()
+        if text in body(f):
+            return f
+        page.wait_for_timeout(4000)
+    print(f"!! never saw {text!r}")
+    return app()
+
+
+# Straight to the Connect page. #InstanceDetails never filled in, and from the
+# instance list the toolbar's Connect control is not findable by role and name.
+goto(f"/ec2/home?region={REGION}#ConnectToInstance:instanceId={INSTANCE}")
 page.wait_for_timeout(WAIT)
-f = app()
-print("DETAIL headings:", heads(f))
-
-btn = f.get_by_role("button", name="Connect", exact=True)
-if not btn.count():
-    btn = f.get_by_role("link", name="Connect", exact=True)
-print("Connect buttons:", btn.count())
-if btn.count():
-    btn.last.click()
-    page.wait_for_timeout(WAIT)
-
-f = app()
+f = wait_for(INSTANCE, tries=14)
+print("CONNECT PAGE headings:", heads(f))
 tabs = [x.strip() for x in f.get_by_role("tab").all_inner_texts() if x.strip()]
 print("CONNECT TABS:", tabs)
 print("headings:", heads(f))
-print("body:", body(f)[:800].replace("\n", " | "))
+print("body:", body(f)[:1400].replace("\n", " | "))
 
 # Whichever of these the console calls it, land on the browser-terminal tab.
 for want in ("EC2 Instance Connect", "In web browser", "Instance Connect"):
@@ -59,7 +62,7 @@ for want in ("EC2 Instance Connect", "In web browser", "Instance Connect"):
         break
 
 f = app()
-for h in ("Connect to instance", "EC2 Instance Connect", "Instance ID"):
+for h in ("Connect to Linux instance", "Connect to instance", "Settings"):
     c = panel(h, frame=f)
     if c is not None:
         shot(NAME, clip=c)

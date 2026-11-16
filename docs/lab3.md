@@ -13,12 +13,20 @@
 
 현재 정책을 바탕으로 새 policy version을 만듭니다. `segment-actions`에 share 하나를 더 넣습니다.
 
-1. **Network Manager** 콘솔에서 이 워크숍의 core network를 엽니다.
-2. **Policy versions**로 이동해 현재 정책을 편집하고, 새 policy version을 만듭니다.
+1. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 를 엽니다.
+2. 왼쪽 메뉴에서 **Policy versions** 를 엽니다.
 
     !!! warning "왼쪽 메뉴의 **Policies**가 아닙니다"
         왼쪽 메뉴에도 **Policies**라는 항목이 있지만 그것은 VPC IP Address Manager 쪽이라 전혀 다른 화면입니다. core network 안의 **Policy versions**로 가세요.
-3. `segment-actions` 배열에 다음 항목을 추가합니다.
+
+3. **Alias** 가 **LIVE** 인 버전을 고르고 **Edit** 를 누릅니다. **Create policy** 화면이 열립니다.
+4. **Choose policy view mode** 에서 **JSON** 을 고릅니다.
+
+    !!! warning "기본값은 **Visual editor** 입니다"
+        그대로 두면 폼으로 한 칸씩 채우는 화면이 나옵니다. 아래 JSON 조각을 붙여 넣으려면 **JSON** 으로 바꿔야 합니다. 바꾸면 현재 정책 전체가 줄 번호가 달린 편집기에 그대로 들어 있습니다.
+
+5. **Details** 의 **Description** 에 나중에 알아볼 수 있는 설명을 적습니다. 예: `Lab 2-4: share onprem with prod`. 정책 버전 목록에서 이 설명으로 버전을 구분합니다.
+6. **JSON** 편집기에서 `segment-actions` 배열에 다음 항목을 추가합니다.
 
     ```json
     {
@@ -49,6 +57,8 @@
 ```
 
 `share-with`에 `dev`는 넣지 않습니다. 고객 요구사항은 온프레미스가 개발 환경에 닿지 않는 것입니다.
+
+7. **Create policy** 를 누릅니다. 새 버전이 만들어지고, Cloud WAN이 현재 **LIVE** 버전과 비교해 change set을 만들기 시작합니다.
 
 <!-- shot: lab3-policy-01-edit -->
 

@@ -59,7 +59,10 @@
 EC2에는 인터넷 주소가 없습니다. 그래서 스택이 만든 EC2 Instance Connect Endpoint로 브라우저에서 접속합니다.
 
 1. **EC2** 콘솔 → **Instances**에서 서울 리전의 `cwan-ws-prod-ec2`를 고르고 **Connect**를 누릅니다.
-2. **In web browser** 탭에서 **EC2 Instance Connect Endpoint**를 고릅니다. 엔드포인트와 사용자 이름은 자동으로 채워집니다.
+2. **Connect to Linux instance** 화면이 열립니다. **In web browser** 탭의 **Choose how to connect** 에서 **Private subnet access** 쪽의 **EC2 Instance Connect Endpoint** 를 고릅니다.
+
+    !!! warning "바로 위의 **EC2 Instance Connect** 가 아닙니다"
+        이름이 비슷한 선택지가 둘 있습니다. **Public subnet access** 묶음의 **EC2 Instance Connect** 는 인스턴스에 퍼블릭 IP가 있을 때 쓰는 것이라 이 실습의 EC2에는 통하지 않습니다. 고를 것은 **Private subnet access** 묶음의 **EC2 Instance Connect Endpoint** 입니다.
 3. **Connect**를 누르면 터미널이 열립니다.
 
 <!-- shot: lab1-eic-01-connect -->

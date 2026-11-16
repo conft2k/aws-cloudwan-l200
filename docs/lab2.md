@@ -88,7 +88,7 @@ attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 at
 VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는 스크립트가 들어 있습니다. VPN 연결 ID만 넣고 실행합니다.
 
 1. **EC2** 콘솔 → **Instances**에서 `cwan-ws-onprem-router`를 골라 **Connect**를 누릅니다.
-2. **EC2 Instance Connect** 탭에서 **Connection Type**을 **Connect using EC2 Instance Connect Endpoint**로 두고 **Connect**를 누릅니다.
+2. **Connect to Linux instance** 화면의 **In web browser** 탭에서 **Connect**를 누릅니다. [2-2-b](lab1.md#lab1-b)와 같은 화면입니다.
 
 <!-- shot: lab2-router-01-connect -->
 
