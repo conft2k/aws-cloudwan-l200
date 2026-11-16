@@ -1,1 +1,26 @@
-{}
+{
+ "images/console/lab0-cfn-01-upload.png": [
+  292,
+  375,
+  1432,
+  801
+ ],
+ "images/console/lab0-cfn-02-parameters.png": [
+  8,
+  78,
+  1432,
+  900
+ ],
+ "images/console/lab0-cfn-03-ack.png": [
+  282,
+  556,
+  1440,
+  781
+ ],
+ "images/console/lab0-cfn-05-upload-oregon.png": [
+  292,
+  375,
+  1432,
+  801
+ ]
+}

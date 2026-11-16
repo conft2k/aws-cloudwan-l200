@@ -64,7 +64,10 @@
 
     | Key | Value |
     |---|---|
+    | `Name` | `cwan-ws-att-onprem-apne2` |
     | `segment` | `onprem` |
+
+    이름은 [2-2-d](lab1.md#lab1-d)에서 오레곤 연결에 붙인 것과 같은 규칙입니다. 이름이 없으면 attachment 목록에서 빈 칸으로 보입니다.
 
 5. **Create attachment**를 누릅니다.
 

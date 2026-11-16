@@ -141,16 +141,30 @@ def main() -> int:
             return False
 
         def close_tours():
-            # the cookie consent banner covers the bottom of the window
+            # The cookie consent banner covers the bottom of the window, which is
+            # where wizards put Next and Create. A fresh account always gets it,
+            # and its button is "Accept" in some builds, "Accept all cookies" in
+            # others, so try the ids first and then the text inside the dialog.
             for sel in ('button[aria-label="Accept all cookies"]',
-                        "#awsccc-cb-btn-accept"):
+                        "#awsccc-cb-btn-accept",
+                        '[data-id="awsccc-cb-btn-accept"]',
+                        '#awsccc-sb-ux-c button[data-id*="accept"]'):
                 try:
                     b = P().locator(sel)
                     if b.count() and b.first.is_visible():
                         b.first.click(timeout=3000)
-                        P().wait_for_timeout(500)
+                        P().wait_for_timeout(800)
                 except Exception:
                     pass
+            try:
+                box = P().locator('#awsccc-sb-ux-c, [data-id="awsccc-sb-ux-c"]')
+                if box.count() and box.first.is_visible():
+                    acc = box.first.get_by_role("button", name=re.compile(r"^Accept"))
+                    if acc.count():
+                        acc.first.click(timeout=3000)
+                        P().wait_for_timeout(800)
+            except Exception:
+                pass
             # first-visit console tours ("Service menu" etc.) and info banners
             for _ in range(6):
                 t = P().locator('[data-testid^="awsc-nav-services-tooltip"] button, [data-testid*="tooltip-confirm"]')
@@ -213,17 +227,23 @@ def main() -> int:
                 """([a, f, fe]) => {
                   const re = new RegExp(a.split('').join('[\\s\\-\\u00a0]?'), 'g');
                   const mail = /[\\w.+-]+@[\\w-]+\\.[\\w.-]+/g;
+                  // the bucket CloudFormation makes for uploaded templates is
+                  // named from the account; the upload screen prints its URL
+                  const bucket = /cf-templates-[a-z0-9]+-/g;
                   const fd = f.slice(0,4)+'-'+f.slice(4,8)+'-'+f.slice(8);
+                  const reset = () => { re.lastIndex = 0; mail.lastIndex = 0; bucket.lastIndex = 0; };
                   const sub = (s) => {
-                    re.lastIndex = 0; mail.lastIndex = 0;
+                    reset();
                     s = s.replace(re, m => m.includes('-') ? fd : f);
-                    re.lastIndex = 0; mail.lastIndex = 0;
-                    return s.replace(mail, fe);
+                    reset();
+                    s = s.replace(mail, fe);
+                    reset();
+                    return s.replace(bucket, 'cf-templates-example-');
                   };
                   const hit = (s) => {
-                    re.lastIndex = 0; mail.lastIndex = 0;
-                    const r = re.test(s) || mail.test(s);
-                    re.lastIndex = 0; mail.lastIndex = 0;
+                    reset();
+                    const r = re.test(s) || mail.test(s) || bucket.test(s);
+                    reset();
                     return r;
                   };
                   const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -338,10 +358,19 @@ def main() -> int:
             box = h.first.locator(
                 "xpath=ancestor::div[contains(@class,'awsui_variant-default')"
                 " or contains(@class,'awsui_variant-container')][1]")
-            if not box.count():
-                print(f"!! card: {heading!r} has no container ancestor")
-                return None
-            return box.first
+            if box.count():
+                return box.first
+            # Wizard steps (CloudFormation's "Specify stack details",
+            # "Capabilities") are not Container components, so they have no
+            # variant class. Climb to the first ancestor wide enough to be the
+            # section rather than the heading's own wrapper.
+            wide = h.first.locator("xpath=ancestor::div[contains(@class,'awsui_')]")
+            for i in range(wide.count()):
+                bb = wide.nth(wide.count() - 1 - i).bounding_box()
+                if bb and bb["width"] >= 400 and bb["height"] >= 80:
+                    return wide.nth(wide.count() - 1 - i)
+            print(f"!! card: {heading!r} has no container ancestor")
+            return None
 
         def span(*locators, margin: int = 16):
             """A clip box covering several panels, for shot(clip=...).

@@ -34,11 +34,15 @@
 
     <!-- shot: lab0-cfn-02-parameters -->
 
-6. 다음 화면에서 **Next**를 누르고, 마지막 검토 화면 맨 아래에 IAM 리소스를 만드는 것을 인정하는 확인란이 보이면 선택합니다. 이 스택은 EC2에 붙일 IAM 역할(role)과 인스턴스 프로파일을 만듭니다.
+6. **Configure stack options** 화면에서도 **Next**를 누릅니다. 마지막 **Review and create** 화면 맨 아래 **Capabilities** 에 다음이 나옵니다.
+
+    > The following resource(s) require capabilities: [AWS::IAM::Role]
+
+    **I acknowledge that AWS CloudFormation might create IAM resources.** 확인란을 선택합니다. 이 스택이 EC2에 붙일 IAM 역할(role)과 인스턴스 프로파일을 만들기 때문입니다. 선택하지 않으면 **Please acknowledge all checkboxes before proceeding.** 이 뜨고 넘어가지 않습니다.
 
     <!-- shot: lab0-cfn-03-ack -->
 
-7. **Submit**을 누릅니다.
+7. **Create stack** 를 누릅니다.
 
 **성공 확인**: 스택 상태가 **CREATE_IN_PROGRESS**입니다. 배포에 걸리는 시간은 사전 테스트에서 측정합니다.
 
@@ -58,7 +62,7 @@
     <!-- shot: lab0-cfn-05-upload-oregon -->
 
 4. **Stack name**에 `cloudwan-workshop-oregon`을 넣습니다. **Parameters**는 그대로 두고 **Next**를 누릅니다.
-5. 다음 화면에서 **Next**를 누르고, 마지막 화면에서 **Submit**을 누릅니다. 이 스택에는 IAM 리소스가 없어서 IAM 확인란은 나오지 않을 수 있습니다.
+5. **Next** 를 두 번 더 눌러 **Review and create** 까지 간 다음 맨 아래 버튼을 누릅니다. 이 스택은 IAM 리소스를 만들지 않으므로 서울 스택에서 봤던 **Capabilities** 확인란은 **나오지 않습니다**. 바로 넘어갑니다.
 
 **성공 확인**: 오레곤 리전에서 스택 상태가 **CREATE_IN_PROGRESS**입니다.
 

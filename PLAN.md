@@ -580,3 +580,37 @@ STATE: PENDING cannot be modified by ACTION: DELETE
 | 2-4-b~d | change set 검토, 실행 중, 실행 완료 |
 
 **상태 파일:** `~/.cache/cwan-shots/` 에 단계별 로그를 남긴다. Claude 세션이 끊기면 거기서 이어 간다.
+
+### 15-1. 2차 리허설에서 답을 내야 하는 미확인 항목
+
+| 항목 | 지금 문서 | 확인할 것 |
+|---|---|---|
+| 정책 편집 모드 | 2-4-a가 JSON 조각을 넣으라고 한다 | 편집기는 **Choose policy view mode** 에서 **Visual editor** 와 **JSON** 중 하나를 고르게 한다. 기본값은 **Visual editor** 다. JSON으로 바꾸는 단계를 문서에 넣을지, 아니면 **Segment actions** 폼으로 바꿀지 정한다 |
+| IAM 확인란 | 2-1-b 6단계가 "보이면 선택합니다" 로 얼버무린다 | 서울 스택 검토 화면에 실제로 나오는지 보고 단정해 쓴다 |
+| attachment 생성 시간 | "사전 테스트에서 측정합니다" | 오레곤 VPC attachment가 `Available` 이 되기까지 실측 |
+| 터널 수렴 시간 | 같음 | `setup-tunnels.sh` 실행부터 `show ip route bgp` 에 `10.30.1.0/24` 가 뜰 때까지 실측 |
+| change set 실행 시간 | 같음 | 실행부터 `EXECUTION_SUCCEEDED` 까지 실측. 5분을 넘으면 2-4를 강사 시연으로 바꾼다(12절) |
+
+### 15-2. 리허설 계정
+
+`demo1`(`884747280022`)을 쓴다. 사용자 지정(2026-11-16 21:10). 완전 초기화 상태를 확인했다. 서울·오레곤 모두 기본 VPC 1개뿐이고 global network, 스택, EC2, EIP, VPN이 없다. VPC 한도는 리전당 5개라 서울은 스택 4개를 더하면 정확히 5/5가 된다. 기본 서브넷은 두 리전 모두 4개 AZ에 있어 AZ 선택 차단은 생기지 않는다.
+
+`cwan`(`912748707045`)의 1차 환경은 10절 순서대로 지웠다.
+
+### 15-3. 콘솔 자동화에서 드러난 것 (2026-11-16 22:00 전후)
+
+처음 쓰는 계정에서만 나타나는 것들이다. `cwan` 세션에는 이미 상태가 저장되어 있어 1차 리허설에서는 보이지 않았다.
+
+- **쿠키 동의 배너가 마법사 버튼을 가린다.** 신규 계정의 첫 방문에 뜨고, 창 아래쪽을 덮어 **Next** 와 **Create stack** 을 가린다. 참가자도 똑같이 겪는다. 배너의 버튼 이름은 빌드에 따라 **Accept** 또는 **Accept all cookies** 다.
+- **마지막 버튼은 Submit이 아니라 Create stack 이다.** 문서가 **Submit** 으로 적고 있었다. 고쳤다.
+- **IAM 확인란은 반드시 나온다.** **Review and create** 맨 아래 **Capabilities** 에 `The following resource(s) require capabilities: [AWS::IAM::Role]` 과 함께 확인란이 하나 나오고, 선택하지 않으면 `Please acknowledge all checkboxes before proceeding.` 로 막힌다. 2-1-b 6단계의 "보이면 선택합니다" 를 단정형으로 고쳤다.
+- **스택 생성 마법사는 4단계다.** Step 1 Create stack, Step 2 Specify stack details, Step 3 Configure stack options, Step 4 Review and create. 파라미터는 기본값 그대로 두면 된다.
+
+### 15-4. 스크린샷 크롭 기준 (사용자 지정, 2026-11-16 21:50)
+
+전체 창이 아니라 **본문이 가리키는 패널만** 남긴다. 콘솔 창은 대부분 내비게이션과 여백이라 정작 읽어야 할 표가 작게 들어간다.
+
+- `card("<패널 제목>")` 이 그 제목을 담은 Cloudscape 컨테이너를 찾아 crop 영역으로 돌려준다.
+- 한 단계가 두 패널을 함께 읽어야 하면 `span()` 으로 묶는다. 경로 화면이 그렇다. **Route Filter** 없이 **Routes** 표만 남기면 어느 세그먼트의 표인지가 사라진다.
+- 패널을 못 찾으면 전체 창을 남기고 로그에 적는다. 조용히 빈 그림을 만들지 않는다.
+- crop 영역은 `shots/crops.json` 에 기록되어 `shots/crop.py` 가 원본에서 같은 영역을 다시 잘라낼 수 있다.

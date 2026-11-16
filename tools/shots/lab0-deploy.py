@@ -13,6 +13,7 @@ CREATE_IN_PROGRESS) only exist while a stack is being created, and a stack that
 already exists cannot show them again - see PLAN.md 14-4.
 """
 import os
+import re
 
 WHICH = os.environ.get("CWAN_STACK", "seoul")
 SEOUL = WHICH == "seoul"
@@ -41,6 +42,36 @@ def heads(f):
         return [h.strip() for h in f.get_by_role("heading").all_inner_texts() if h.strip()][:14]
     except Exception:
         return []
+
+
+def wait_app(must, tries=8):
+    """The console frame that actually holds `must`.
+
+    app() picks the frame with the most text, and on a slow wizard step it can
+    still be the console shell - which is how a run ended up looking for the
+    form's Submit button among cookie-banner buttons.
+    """
+    for _ in range(tries):
+        f = app()
+        if must in body(f):
+            return f
+        page.wait_for_timeout(3000)
+    print(f"!! wait_app: never saw {must!r}")
+    return app()
+
+
+def primary(f, *names):
+    """Click the wizard's primary button, by exact name so the breadcrumb link
+    of the same name ("Create stack") is not what gets clicked."""
+    for n in names:
+        b = f.get_by_role("button", name=n, exact=True)
+        if b.count():
+            b.last.click()
+            print(f"   clicked {n!r}")
+            return n
+    print(f"!! primary: none of {names};"
+          f" buttons = {[x.strip()[:26] for x in f.locator('button').all_inner_texts() if x.strip()][:20]}")
+    return None
 
 
 def cshot(name, *headings):
@@ -124,32 +155,46 @@ page.wait_for_timeout(WAIT)
 click(app(), "Next")   # configure stack options -> review
 
 # --- review: the IAM acknowledgement ----------------------------------------
-f = app()
+f = wait_app("acknowledge")
 txt = body(f)
 # 2-1-b step 6 hedges with "if you see the checkbox". Settle that here: print
 # whether the review page really asks for the IAM acknowledgement, and write the
 # answer into the page instead of the hedge.
 print("REVIEW PAGE has ack text:", "acknowledge" in txt.lower())
-ack = f.locator('input[type=checkbox]')
-checked = 0
-for i in range(ack.count()):
+# Tick only the acknowledgement. Scope it to the Capabilities panel: ticking
+# every checkbox on the page would also flip stack options that are checkboxes,
+# and Cloudscape puts the wording in a <span>, not in the <label> text, so
+# matching on "I acknowledge" finds nothing.
+# Only ever tick inside the Capabilities panel. Falling back to the whole page
+# ticked four unrelated stack-option checkboxes on the Oregon review screen,
+# which has no Capabilities panel at all because that template makes no IAM
+# resources.
+cap = card("Capabilities", f)
+if cap is None:
+    print("no Capabilities panel - this template needs no acknowledgement")
+boxes = cap.locator('input[type=checkbox]') if cap is not None else None
+print("acknowledgement boxes in Capabilities:", boxes.count() if boxes else 0)
+for i in range(boxes.count() if boxes else 0):
     try:
-        if not ack.nth(i).is_checked():
-            ack.nth(i).evaluate("e => e.click()")
-            checked += 1
+        if not boxes.nth(i).is_checked():
+            boxes.nth(i).evaluate("e => e.click()")   # the input is hidden
+            page.wait_for_timeout(600)
     except Exception as e:
-        print("   ack click failed:", str(e)[:60])
-print("acknowledgement boxes ticked:", checked)
+        print("   ack click failed:", str(e).splitlines()[0][:70])
+if boxes:
+    print("checked now:", [boxes.nth(i).is_checked() for i in range(boxes.count())])
 page.wait_for_timeout(1500)
 f = app()
 if SEOUL:
     cshot("lab0-cfn-03-ack", "Capabilities and transforms", "Capabilities", "Review")
 
 # --- submit -----------------------------------------------------------------
-if not click(app(), "Submit", wait=12000):
-    click(app(), "Create stack", exact=False, wait=12000)
-
-page.wait_for_timeout(10000)
+f = wait_app("acknowledge")
+primary(f, "Create stack", "Submit")
+page.wait_for_timeout(15000)
 f = app()
 print("AFTER SUBMIT:", body(f)[:400].replace("\n", " | "))
-cshot(SHOT_RUNNING, "Overview", "Events", STACK)
+f = wait_app(STACK)
+print("STACK PAGE headings:", heads(f))
+print("STACK PAGE body:", body(f)[:400].replace("\n", " | "))
+cshot(SHOT_RUNNING, "Overview", "Stack info", "Events", "Resources")
