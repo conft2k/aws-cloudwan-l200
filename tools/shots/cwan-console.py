@@ -206,28 +206,48 @@ def attachments(expect):
     f = app()
     row = f.locator("table tbody tr").filter(has_text="cwan-ws-att-prod-apne2")
     print("prod-apne2 rows:", row.count())
-    if row.count():
-        # Click the cell that shows the name, not a fixed column index: which
-        # column sits where depends on what table_columns() has hidden.
-        cell = row.first.locator("td").filter(has_text="cwan-ws-att-prod-apne2")
-        (cell.first if cell.count() else row.first.locator("td").nth(1)).click()
-        page.wait_for_timeout(WAIT)
-        # The detail pane opens below the table and takes a moment to appear.
-        tags = None
-        for _ in range(4):
-            g = app()
-            names = [x.strip() for x in g.get_by_role("tab").all_inner_texts() if x.strip()]
-            print("   detail tabs:", names)
-            if "Tags" in names:
-                tags = tab(g, "Tags", must="segment")
-                break
-            page.wait_for_timeout(4000)
-        if tags is not None:
-            take(tags, "lab1-core-03-attachment-tags", "segment", crop="Tags")
-        else:
-            print("!! the attachment detail pane never showed a Tags tab")
-    else:
+    try:
+      if row.count():
+          # Click the cell that shows the name, not a fixed column index: which
+          # column sits where depends on what table_columns() has hidden.
+          cell = row.first.locator("td").filter(has_text="cwan-ws-att-prod-apne2")
+          (cell.first if cell.count() else row.first.locator("td").nth(1)).click()
+          page.wait_for_timeout(WAIT)
+          # The detail pane opens below the table and takes a moment to appear.
+          tags = None
+          for _ in range(4):
+              g = app()
+              names = [x.strip() for x in g.get_by_role("tab").all_inner_texts() if x.strip()]
+              print("   detail tabs:", names)
+              if "Tags" in names:
+                  tags = tab(g, "Tags", must="segment")
+                  break
+              page.wait_for_timeout(4000)
+          if tags is not None:
+              take(tags, "lab1-core-03-attachment-tags", "segment", crop="Tags")
+          else:
+              # Not fatal. The segment tag is also visible as the table's Segment
+              # column, which 2-2-a reads anyway, so losing this one shot does not
+              # stop the stage.
+              print("!! the attachment detail pane never showed a Tags tab")
+              # Is the split panel simply closed? On the account used for the
+              # first rehearsal it was already open, so clicking a row showed
+              # the tabs; a first-time account may need the handle opened, and
+              # then 2-2-a step 5 has to say so.
+              g = app()
+              print("   panel-ish controls:", g.evaluate("""() => [...document.querySelectorAll(
+                    'button, [role=button]')]
+                  .map(e => ({t: (e.innerText||'').trim().slice(0,30),
+                              l: e.getAttribute('aria-label'),
+                              x: e.getAttribute('aria-expanded')}))
+                  .filter(o => /panel|split|detail|expand/i.test((o.l||'') + ' ' + o.t))
+                  .slice(0, 12)"""))
+              print("   row actions:", [x.strip() for x in
+                    g.get_by_role("button").all_inner_texts() if x.strip()][:14])
+      else:
         print("!! no row named cwan-ws-att-prod-apne2")
+    except Exception as e:
+        print("!! tags shot gave up:", str(e).splitlines()[0][:90])
 
     # At 168px Name truncates to "cwan-ws-att...", and the Region in that name
     # is the whole point of the page. Hiding columns alone does not fix it (the

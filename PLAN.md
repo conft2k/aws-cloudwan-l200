@@ -592,6 +592,8 @@ STATE: PENDING cannot be modified by ACTION: DELETE
 | 21:03:38 | 서울·오레곤 스택 생성 시작 (CLI, 템플릿은 S3 경유) |
 | 21:10 | 오레곤 스택 `CREATE_COMPLETE` — **약 7분** |
 | **21:19:17** | **core network `AVAILABLE`, 정책 1 `LIVE`/`EXECUTION_SUCCEEDED` — 15분 14초** |
+| 21:22~21:25 | 서울 VPC attachment 3개 `CREATING` → `PENDING_NETWORK_UPDATE` → `AVAILABLE`. 관측 시작부터 2분 48초 |
+| 21:24 | 서울 스택 `CREATE_COMPLETE` (시작부터 약 21분) |
 
 core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 공식 문서 상한(30분)의 절반 근처**이고, 이론 강의 1시간 안에 끝난다는 진행표 전제가 두 번 확인됐다.
 

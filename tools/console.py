@@ -98,7 +98,9 @@ def main() -> int:
             ctx_args["storage_state"] = str(STATE)
         ctx = browser.new_context(**ctx_args)
         page = ctx.new_page()
-        page.set_default_timeout(45000)
+        # A failed selector should cost seconds, not the 30-45s default: a
+        # console run makes dozens of guesses and the waits dominate it.
+        page.set_default_timeout(15000)
 
         cur = {"page": page}
 
