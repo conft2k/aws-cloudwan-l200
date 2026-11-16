@@ -51,7 +51,7 @@
   315,
   112,
   1426,
-  897
+  865
  ],
  "images/console/lab0-cnet-01-policy-versions.png": [
   315,
@@ -244,5 +244,17 @@
   128,
   1430,
   470
+ ],
+ "images/console/lab1-attach-04-available.png": [
+  0,
+  0,
+  1121,
+  388
+ ],
+ "images/console/lab2-attach-02-available.png": [
+  0,
+  0,
+  1130,
+  397
  ]
 }

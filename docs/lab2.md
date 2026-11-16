@@ -76,7 +76,9 @@
 
 attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 attachment를 배정합니다. 그래서 이 태그 하나로 VPN이 `onprem` 세그먼트에 들어갑니다.
 
-**성공 확인**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. 상태가 바뀌기까지 걸리는 시간은 사전 테스트에서 측정합니다.
+![core network의 Attachments 목록. 맨 윗줄에 cwan-ws-att-onprem-apne2가 생겨 모두 다섯 줄이다. 이 줄만 Resource type이 VPN이고 나머지 네 줄은 VPC다. 새 줄은 Edge location이 ap-northeast-2, State가 초록색 Available, Segment가 onprem이다. 아래 네 줄은 2-2-d까지 만든 연결로 cwan-ws-att-prod-apne2가 prod, cwan-ws-att-prod-usw2가 us-west-2의 prod, cwan-ws-att-dev-apne2가 dev, cwan-ws-att-shared-apne2가 shared다](images/console/lab2-attach-02-available.png){ .shot }
+
+**성공 확인**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. 사전 테스트에서 `Available` 이 되기까지 **3분 30초** 걸렸습니다.
 
 ## 2-3-c. 온프레미스 라우터에 터널 설정하기 { #lab2-c }
 

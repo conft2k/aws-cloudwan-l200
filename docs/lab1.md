@@ -38,7 +38,7 @@
 
 4. 왼쪽 메뉴에서 **Attachments** 를 누릅니다. 스택이 만든 서울 연결 3개가 보이고, **Segment** 열에 `prod`, `dev`, `shared` 가 각각 적혀 있습니다.
 
-    ![core network의 Attachments 목록. 연결이 세 개뿐이고 모두 스택이 만든 서울 연결이다. 각 줄은 Name이 cwan-ws-att-prod-apne2, cwan-ws-att-dev-apne2, cwan-ws-att-shared-apne2이고, Edge location이 모두 ap-northeast-2, Resource type이 VPC, State가 초록색 Available, Segment가 각각 prod, dev, shared다](images/console/lab1-core-02-attachments.png){ .shot }
+    ![core network의 Attachments 목록. 연결이 세 개뿐이고 모두 스택이 만든 서울 연결이다. 각 줄은 Name이 cwan-ws-att-prod-apne2, cwan-ws-att-dev-apne2, cwan-ws-att-shared-apne2이고, Edge location이 모두 ap-northeast-2, Resource type이 VPC, State가 초록색 Available, Segment가 각각 prod, dev, shared다. 첫 줄 cwan-ws-att-prod-apne2는 왼쪽 선택 버튼이 눌려 파란색으로 강조되어 있고, 표 아래에 그 연결의 상세 창이 열려 있다. 상세 창에는 Details, Routing policy label, 1:1 NAT, Flow logs, Tags 탭이 있고 Tags 탭이 선택되어 있다. Tags (5) 표에는 aws:cloudformation:logical-id이 ProdAttachment, aws:cloudformation:stack-name이 cloudwan-workshop-seoul, Name이 cwan-ws-att-prod-apne2인 줄을 포함해 네 줄이 보이고, 다섯 번째인 segment 태그는 화면 아래로 밀려 보이지 않는다](images/console/lab1-core-02-attachments.png){ .shot }
 
 5. `cwan-ws-att-prod-apne2` 행의 왼쪽 **선택 버튼**을 누릅니다. 표 아래에 상세 창이 열립니다. **Tags** 탭에서 `segment` = `prod` 태그를 확인합니다.
 
@@ -200,6 +200,8 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
 `tag-exists` 조건은 `segment` 태그가 있는지 봅니다. 있으면 그 태그의 값(`prod`)과 이름이 같은 세그먼트에 연결을 배정합니다. 그래서 태그 값을 `prod`로 넣었는지가 중요합니다. 대소문자도 같아야 합니다.
 
 attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행의 **Segment** 열이 `prod` 인지 확인합니다. [2-2-a](#lab1-a)에서 서울 연결 세 개를 봤던 그 목록이고, 이제 `cwan-ws-att-prod-usw2` 가 **Edge location** `us-west-2` 로 한 줄 늘어 있습니다.
+
+![core network의 Attachments 목록. 2-2-a에서 본 서울 연결 세 개에 cwan-ws-att-prod-usw2 한 줄이 늘어 모두 네 줄이다. 새로 생긴 줄은 Edge location이 us-west-2이고 Resource type이 VPC, State가 초록색 Available, Segment가 prod다. 나머지 세 줄은 Edge location이 ap-northeast-2이고 Segment가 각각 prod, dev, shared다. 이 그림에서는 Edge location과 Resource type 열이 좁아 값이 줄임표로 잘려 있다](images/console/lab1-attach-04-available.png){ .shot }
 
 **성공 확인**: attachment 상태가 `Available`이고 **Segment**가 `prod`입니다. 직접 고르지 않았는데 `prod`에 들어갔습니다.
 

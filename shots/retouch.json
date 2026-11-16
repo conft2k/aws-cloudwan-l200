@@ -1,0 +1,73 @@
+{
+ "images/console/lab1-core-02-attachments.png": {
+  "size": [
+   1111,
+   753
+  ],
+  "why": "2-2-a shows the three attachments the stack made. Shot at 13:50, during teardown, so the list also held the onprem VPN and the us-west-2 VPC in Deleting - both from later steps.",
+  "drop_rows": [
+   [
+    148,
+    186
+   ],
+   [
+    224,
+    262
+   ]
+  ],
+  "erase": [
+   [
+    145,
+    20,
+    183,
+    60
+   ]
+  ]
+ },
+ "images/console/lab1-attach-04-available.png": {
+  "size": [
+   1121,
+   388
+  ],
+  "why": "2-2-d has the three Seoul attachments plus the Oregon prod one the participant just made. Shot after 3-1 and 2-3, so the list also held the dev us-west-2 attachment and the onprem VPN.",
+  "drop_rows": [
+   [
+    153,
+    191
+   ],
+   [
+    229,
+    267
+   ]
+  ],
+  "erase": [
+   [
+    149,
+    28,
+    181,
+    59
+   ]
+  ]
+ },
+ "images/console/lab2-attach-02-available.png": {
+  "size": [
+   1130,
+   397
+  ],
+  "why": "2-3-b adds the onprem VPN to the four attachments of 2-2-d. Shot after 3-1, so the list also held the dev us-west-2 attachment.",
+  "drop_rows": [
+   [
+    229,
+    267
+   ]
+  ],
+  "erase": [
+   [
+    149,
+    28,
+    181,
+    59
+   ]
+  ]
+ }
+}

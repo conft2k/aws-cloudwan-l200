@@ -97,8 +97,14 @@ def main() -> None:
     apply = "--apply" in sys.argv
     crops_file = HERE / "crops.json"
     crops = json.loads(crops_file.read_text())
+    # Retouched shots have rows cut out of them by boxes measured against the
+    # crop they have now, so moving their crop box would cut the wrong rows.
+    retouched = set(json.loads((HERE / "retouch.json").read_text()))
     changed = {}
     for rel, box in sorted(crops.items()):
+        if rel in retouched:
+            print(f"{rel}: retouched, left alone")
+            continue
         src = HERE / "raw" / Path(rel).relative_to("images")
         if not src.exists():
             print(f"{rel}: no raw file, skipped")
