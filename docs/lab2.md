@@ -141,18 +141,18 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 앞 소절에서는 **온프레미스 라우터가 받은** 경로를 봤습니다. 이번에는 반대쪽, **Cloud WAN이 받은** 경로를 봅니다. 양쪽이 다 있어야 왕복 통신이 됩니다.
 
 1. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 에서 **Routes** 탭을 엽니다.
-2. 세그먼트 `onprem`, edge location `ap-northeast-2` 를 골라 조회합니다.
+2. **Route Filter** 에서 **Segment** 를 `onprem`, **Edge location** 을 `ap-northeast-2` 로 고르고 **Search routes** 를 누릅니다.
 
     <!-- shot: lab2-routes-01-onprem-segment -->
 
-3. 같은 방법으로 세그먼트 `shared` 도 조회합니다.
+3. 같은 방법으로 **Segment** 를 `shared` 로 바꿔 다시 조회합니다.
 
     <!-- shot: lab2-routes-02-shared-segment -->
 
 **성공 확인**
 
 - `onprem` 세그먼트에 `10.30.1.0/24`(shared)가 있습니다. `10.10.1.0/24`(prod)는 **없습니다**.
-- `shared` 세그먼트에 `172.16.1.0/24`(온프레미스)가 있습니다. **Type**이 `PROPAGATED` 입니다. 온프레미스 라우터가 BGP로 광고한 대역이 Cloud WAN까지 전파된 것입니다.
+- `shared` 세그먼트에 `172.16.1.0/24`(온프레미스)가 있습니다. **Route type** 이 `PROPAGATED`, **Route state** 가 `ACTIVE` 이고 **Destinations** 는 VPN attachment입니다. 온프레미스 라우터가 BGP로 광고한 대역이 Cloud WAN까지 전파된 것입니다.
 
 !!! info "이 두 줄이 다음 두 소절의 답입니다"
     `shared` 쪽에 온프레미스 대역이 있으니 [2-3-e](#lab2-e)의 통신이 됩니다. `onprem` 쪽에 prod 대역이 없으니 [2-3-f](#lab2-f)의 통신은 안 됩니다. ping을 하기 전에 결과를 경로로 먼저 알 수 있습니다.

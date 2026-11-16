@@ -40,11 +40,14 @@
 
     <!-- shot: lab1-core-02-attachments -->
 
-5. 연결 하나를 열어 **Tags** 에서 `segment` 태그 값을 봅니다. 이름이 `cwan-ws-att-prod-apne2` 인 연결의 태그 값은 `prod` 입니다. **Segment** 열의 값을 정한 것이 이 태그입니다.
+5. 표에서 `cwan-ws-att-prod-apne2` 행을 누릅니다. 표 아래에 상세 창이 열립니다. **Tags** 탭에서 `segment` 태그 값이 `prod` 인 것을 확인합니다. **Segment** 열의 값을 정한 것이 이 태그입니다.
 
     <!-- shot: lab1-core-03-attachment-tags -->
 
 세그먼트는 core network 안의 가상 라우팅 구역입니다. 같은 세그먼트에 있는 연결끼리만 통신하는 것이 기본 동작입니다.
+
+!!! tip "표의 열이 그림과 달라 보이면"
+    연결 목록은 기본으로 **Attachment ID**, **Resource ID** 같은 열까지 보여 주어서 **Name** 이 `cwan-ws-att...` 로 잘립니다. 표 오른쪽 위 톱니바퀴(**Preferences**)에서 필요 없는 열을 끄거나, 열 경계를 끌어 **Name** 을 넓히면 이 그림처럼 보입니다.
 
 !!! info "`onprem` 세그먼트는 아직 비어 있습니다"
     **Segments** 는 `4` 인데 **Attachments** 에는 `prod`, `dev`, `shared` 세 가지만 보입니다. 네 번째인 `onprem` 은 정책에 정의만 되어 있고 아직 붙은 연결이 없습니다. [2-3](lab2.md)에서 Site-to-Site VPN 연결을 붙이면 채워집니다.
@@ -211,13 +214,13 @@ ping -c 5 10.11.1.10
 이제 경로가 실제로 전파됐는지 봅니다.
 
 1. 리전이 **Asia Pacific (Seoul)** 인지 확인합니다.
-2. **Network Manager** 콘솔 → **Core networks**에서 core network를 열고 **Routes**(세그먼트 경로 테이블)를 엽니다.
-3. 세그먼트 `prod`, edge `ap-northeast-2`를 고릅니다.
-4. 목적지 `10.11.1.0/24`가 보이는지 확인합니다.
+2. **Network Manager** 콘솔 → **Global networks** → `cwan-ws-global` → 왼쪽 메뉴 **Core network** 에서 **Routes** 탭을 엽니다.
+3. **Route Filter** 에서 **Segment** 를 `prod`, **Edge location** 을 `ap-northeast-2` 로 고르고 **Search routes** 를 누릅니다.
+4. **CIDR** 에 `10.11.1.0/24` 가 보이는지 확인합니다.
 
 <!-- shot: lab1-routes-01-segment-table -->
 
-`10.11.1.0/24`가 오레곤 attachment를 가리키는 경로로 `prod` 세그먼트의 서울 edge에 있습니다. 서울 prod의 `10.10.1.0/24`도 함께 보입니다. `dev`를 고르면 `10.11.1.0/24`가 보이지 않습니다.
+`10.11.1.0/24` 가 `prod` 세그먼트의 서울 edge에 있고, **Destinations** 는 오레곤 attachment, **Route type** 은 `PROPAGATED`, **Route state** 는 `ACTIVE` 입니다. 서울 prod의 `10.10.1.0/24` 도 함께 보입니다. **Segment** 를 `dev` 로 바꾸면 `10.11.1.0/24` 가 보이지 않습니다.
 
 **성공 확인**: ping이 `0% packet loss`이고, `prod` 세그먼트 경로 테이블에 `10.11.1.0/24`가 보입니다.
 

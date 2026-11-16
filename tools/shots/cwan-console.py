@@ -1,7 +1,15 @@
-"""Cloud WAN console screenshots for labs 2-2, 2-3 and 2-4.
+"""Cloud WAN console screenshots, one lab stage per run.
 
-    AWS_PROFILE=cwan uv run --with playwright --with boto3 \
+    AWS_PROFILE=cwan CWAN_STAGE=core uv run --with playwright --with boto3 \
         python tools/console.py tools/shots/cwan-console.py
+
+$CWAN_STAGE picks the stage, because each one needs the environment in the
+state a participant is in at that point (PLAN.md 14-4):
+
+* core         - 2-1-d and 2-2-a: before anything is attached by hand
+* routes-prod  - 2-2-f: after the Oregon prod attachment exists
+* routes-onprem- 2-3-d: after the VPN attachment is up, before the 2-4 policy
+* policy       - 2-4: the policy version list and the editor
 
 Two things this console forces:
 
@@ -9,14 +17,16 @@ Two things this console forces:
   network id in memory, so entering "#/networks/<arn>/corenetwork/attachments"
   renders an empty body or "Failed to fetch attachments within this core
   network".
-* Trim the table columns. With all of them on, Name and Attachment ID
-  truncate to "cwan-ws-a..." and the page cannot show which VPC an attachment
-  belongs to. Do not fold the left navigation instead - the later steps click
-  its links.
+* Widen the column you care about. Tables are fixed-layout at 168px a column,
+  so Name truncates to "cwan-ws-att..." and the page cannot show which Region
+  an attachment belongs to. Hiding other columns does not help - the freed
+  space stays blank - and neither does folding the navigation or widening the
+  window. Drag the header's resize handle (resize_column).
 
-Read-only by intent: it opens the policy editor and the change set view and
-leaves without creating a policy version or executing a change set.
+Read-only by intent: it opens the policy editor to shoot the form and leaves
+without creating a policy version or executing a change set.
 """
+import os
 import re
 
 NETWORKS = ("https://us-west-2.console.aws.amazon.com"
@@ -106,36 +116,33 @@ def pick(f, label, option, also=()):
     return True
 
 
-# --- global network list ---------------------------------------------------
-goto(NETWORKS)
-page.wait_for_timeout(WAIT)
-f = app()
-take(f, "lab0-cnet-00-global-networks", "cwan-ws-global")
+STAGE = os.environ.get("CWAN_STAGE", "core")
+NOISE = ["Account ID", "Network function groups", "NAT gateway support",
+         "NAT system route support", "Resource ID",
+         "Attachment policy rule number"]
 
-f.get_by_role("link", name=re.compile(r"^global-network-")).first.click()
-page.wait_for_timeout(WAIT)
 
-# --- core network overview and segments ------------------------------------
-f = nav("Core network", must="Edge locations")
-take(f, "lab1-core-01-overview", "Edge locations")
+def open_core_network():
+    """Network Manager -> Global networks -> the workshop one -> Core network."""
+    goto(NETWORKS)
+    page.wait_for_timeout(WAIT)
+    f = app()
+    take(f, "lab0-cnet-00-global-networks", "cwan-ws-global")
+    f.get_by_role("link", name=re.compile(r"^global-network-")).first.click()
+    page.wait_for_timeout(WAIT)
+    return nav("Core network", must="Edge locations")
 
-# The Logical tab is skipped on purpose. It draws the segment-to-attachment
-# map as a graph whose labels render rotated and truncated ("cwan-ws-att...")
-# and whose lower half falls outside a 900px window, so it reads worse than the
-# attachments table for showing which attachment sits in which segment.
 
-# --- segment route tables ---------------------------------------------------
-# Three pages read this table. 2-2 reads prod, and 2-3-d reads onprem (shared
-# is there, prod is not) and shared (the on-premises prefix arrived as
-# PROPAGATED), which is what explains the ping results before anyone pings.
 def routes(segment, name, must=None):
-    # Re-read the frame between the two dropdowns. Choosing a segment re-renders
-    # the filter, and a frame handle taken before that finds no buttons at all,
-    # which is why the first run reported "Select edge location not found".
+    """Fill the Routes tab filter and shoot the table.
+
+    Re-read the frame between the two dropdowns: choosing a segment re-renders
+    the filter row, and a handle taken before that finds no buttons at all.
+    """
     if not pick(app(), "Select segment", segment,
                 also=("prod", "dev", "shared", "onprem")):
         return False
-    page.wait_for_timeout(3000)  # choosing a segment re-renders the filter row
+    page.wait_for_timeout(3000)
     if not pick(app(), "Select edge location", "ap-northeast-2",
                 also=("ap-northeast-2", "us-west-2")):
         return False
@@ -150,77 +157,73 @@ def routes(segment, name, must=None):
     return take(f, name, must)
 
 
-f = tab(f, "Routes")
-print("ROUTE TABS:", [x.inner_text().strip() for x in f.get_by_role("tab").all()])
-routes("prod", "lab1-routes-01-segment-table", "10.10.1.0/24")
-routes("onprem", "lab2-routes-01-onprem-segment", "10.30.1.0/24")
-routes("shared", "lab2-routes-02-shared-segment", "172.16.1.0/24")
-
-# --- attachments -----------------------------------------------------------
-NOISE = ["Account ID", "Network function groups", "NAT gateway support",
-         "NAT system route support", "Resource ID",
-         "Attachment policy rule number"]
-
-f = nav("Attachments", must="cwan-ws-att")
-table_columns(hide=NOISE)
-
-# 2-2-a step 5 opens one attachment and reads its segment tag. Do this before
-# hiding Attachment ID below: that column holds the only link into the detail
-# page, so hiding it first leaves nothing to click.
-f = app()
-row = f.locator("table tbody tr").filter(has_text="cwan-ws-att-prod-apne2")
-print("prod-apne2 rows:", row.count())
-opened = False
-if row.count():
-    # Only the Attachment ID cell links into the detail page. It is an <a> in
-    # some console builds and a <button> in others, so try both rather than
-    # waiting 45s on one guess.
-    for how in (lambda r: r.get_by_role("link").first,
-                lambda r: r.locator("a").first,
-                lambda r: r.get_by_role("button", name=re.compile(r"^attachment-")).first):
-        try:
-            how(row.first).click(timeout=8000)
-            opened = True
-            break
-        except Exception as e:
-            print("   row link attempt failed:", str(e).splitlines()[0][:80])
-if opened:
-    page.wait_for_timeout(WAIT)
-    f = tab(app(), "Tags", must="segment")
-    take(f, "lab1-core-03-attachment-tags", "segment")
+def attachments(expect):
+    """2-2-a: the attachment list, and one attachment's segment tag."""
     f = nav("Attachments", must="cwan-ws-att")
-else:
-    print("!! could not open the cwan-ws-att-prod-apne2 detail page")
+    table_columns(hide=NOISE)
+
+    # The rows hold no links. Selecting one opens a detail pane *below* the
+    # table with its own Details / Routing policy label / 1:1 NAT / Flow logs /
+    # Tags tabs, and the URL never changes. So click the row, then its Tags tab.
+    f = app()
+    row = f.locator("table tbody tr").filter(has_text="cwan-ws-att-prod-apne2")
+    print("prod-apne2 rows:", row.count())
     if row.count():
-        print("   row links:", row.first.evaluate(
-            """r => [...r.querySelectorAll('a, button')].map(e => ({
-                 tag: e.tagName, href: e.getAttribute('href'),
-                 text: (e.innerText || '').trim().slice(0, 40),
-                 hidden: e.offsetParent === null,
-               }))"""))
-    f = app()
+        row.first.locator("td").nth(1).click()
+        page.wait_for_timeout(WAIT)
+        f = tab(app(), "Tags", must="segment")
+        take(f, "lab1-core-03-attachment-tags", "segment")
+    else:
+        print("!! no row named cwan-ws-att-prod-apne2")
 
-# The Region in the attachment name is the whole point of this page, and at
-# 168px Name truncates to "cwan-ws-att...". Hiding columns alone does not fix
-# it (the freed space stays blank), so hide what 2-2-a does not read and spend
-# that space on Name. The navigation stays open: participants see it too.
-table_columns(hide=NOISE + ["Attachment ID"])
-resize_column("Name", 330)
-f = app()
-take(f, "lab1-core-02-attachments", "cwan-ws-att-prod-usw2")
+    # At 168px Name truncates to "cwan-ws-att...", and the Region in that name
+    # is the whole point of the page. Hiding columns alone does not fix it (the
+    # freed space stays blank), so hide what 2-2-a does not read and spend that
+    # space on Name. The navigation stays open: participants see it too.
+    f = nav("Attachments", must="cwan-ws-att")
+    table_columns(hide=NOISE + ["Attachment ID"])
+    resize_column("Name", 330)
+    take(app(), "lab1-core-02-attachments", expect)
 
-# --- policy versions and the FORM editor -----------------------------------
-f = nav("Policy versions", must="Policy version - 1")
-take(f, "lab3-policy-01-versions", "Policy version - 1")
 
-if select_row("Policy version - 2", f):
-    e = f.get_by_role("button", name="Edit", exact=True)
-    print("Edit enabled:", bool(e.count()) and e.first.is_enabled())
-    e.first.click()
-    page.wait_for_timeout(14000)
-    f = app()
-    print("--- editor ---")
-    print("URL:", page.url)
-    print("tabs:", [x.inner_text().strip() for x in f.get_by_role("tab").all()])
-    print(body(f)[:2500])
-    take(f, "lab3-policy-02-edit")
+def policy_versions(shot_name):
+    f = nav("Policy versions", must="Policy version - 1")
+    take(f, shot_name, "Policy version - 1")
+    return f
+
+
+print(f"=== stage {STAGE} ===")
+
+if STAGE == "core":
+    f = open_core_network()
+    take(f, "lab1-core-01-overview", "Edge locations")
+    attachments("cwan-ws-att-shared-apne2")
+    policy_versions("lab0-cnet-01-policy-versions")
+
+elif STAGE == "routes-prod":
+    f = open_core_network()
+    f = tab(f, "Routes")
+    routes("prod", "lab1-routes-01-segment-table", "10.11.1.0/24")
+
+elif STAGE == "routes-onprem":
+    f = open_core_network()
+    f = tab(f, "Routes")
+    routes("onprem", "lab2-routes-01-onprem-segment", "10.30.1.0/24")
+    routes("shared", "lab2-routes-02-shared-segment", "172.16.1.0/24")
+
+elif STAGE == "policy":
+    f = open_core_network()
+    f = policy_versions("lab3-policy-02-versions")
+    if select_row("Policy version - 1", f):
+        e = f.get_by_role("button", name="Edit", exact=True)
+        print("Edit enabled:", bool(e.count()) and e.first.is_enabled())
+        e.first.click()
+        page.wait_for_timeout(14000)
+        f = app()
+        print("--- editor ---")
+        print("tabs:", [x.inner_text().strip() for x in f.get_by_role("tab").all()])
+        print(body(f)[:2000])
+        take(f, "lab3-policy-01-edit")
+
+else:
+    raise SystemExit(f"unknown CWAN_STAGE {STAGE!r}")
