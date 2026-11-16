@@ -8,14 +8,13 @@
     - 각 단계의 실제 소요 시간(core network 최초 생성, 연결이 **Available**이 되기까지, policy version 생성부터 change set 생성까지, change set 실행부터 통신이 되기까지, 스택 삭제)
     - CloudFormation이 `PolicyDocument`를 넣어 core network를 **처음 만들 때** change set이 자동으로 실행되어 `LIVE`까지 가는지. 공식 문서는 정책을 **갱신**할 때의 동작만 적습니다
     - 스택이 `CREATE_COMPLETE`가 된 시점과 core network를 실제로 쓸 수 있는 시점이 같은지
-    - 서울 리전 스택에서 global network와 core network를 만들 수 있는지(Cloud WAN의 홈 리전은 `us-west-2`입니다)
     - Direct Connect gateway attachment의 시간당 요금. 숫자는 지어내지 않고 [요금 페이지](https://aws.amazon.com/cloud-wan/pricing/)로 넘겼습니다([4-2-g](direct-connect.md#dx-pricing))
 
     진행표의 시간은 모두 **추정값**입니다.
 
 ## 4-4-a. 개념 { #ref-concept }
 
-- [What is AWS Cloud WAN?](https://docs.aws.amazon.com/network-manager/latest/cloudwan/what-is-cloudwan.html) — Cloud WAN의 구성 요소(global network, core network, core network edge, 세그먼트, 연결)와 홈 리전이 `us-west-2`라는 사실
+- [What is AWS Cloud WAN?](https://docs.aws.amazon.com/network-manager/latest/cloudwan/what-is-cloudwan.html) — Cloud WAN의 구성 요소(global network, core network, core network edge, 세그먼트, 연결)와 지원 리전. 홈 리전이 `us-west-2`라는 것은 Network Manager API와 콘솔의 홈 리전을 뜻하며, core network edge는 지원 리전 어디에나 둘 수 있습니다
 - [Getting started with AWS Cloud WAN](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-getting-started.html) — core network를 처음 만드는 순서. **core network 최초 생성이 최대 30분 걸리고 그 동안 연결 생성과 정책 편집이 막힌다**는 설명이 여기 있습니다. 워크숍이 스택 배포를 이론 강의 전에 시작하는 이유입니다
 
 ## 4-4-b. 정책 { #ref-policy }

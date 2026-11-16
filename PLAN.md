@@ -24,6 +24,7 @@
 | DX 랩 Pod | 쓰지 않는다 | 위와 같음. Direct Connect 연결은 deck과 부록 문서로만 다룬다 |
 | 실시일 | 미정 | 리허설 2회(1차 검증 → 수정 → 2차 확인)를 기준으로 완성도를 최대로 올린다 |
 | 계정 | 참가자 1명당 1개 | global network가 계정당 5개 한도라 공유할 수 없다 |
+| 계정 상태 전제 | **테스트·실습 계정은 항상 아무것도 없는 기본 상태로 배정된다**(사용자 확인, 2026-11-16) | 기본 VPC 1개 외에는 VPC·Cloud WAN 리소스·EC2 Instance Connect Endpoint가 없다. 그래서 VPC 한도(5개), global network 한도(5개), 이전 워크숍 잔재를 강사가 계정마다 확인할 필요가 없다. 한도 계산은 "기본 VPC 1개 + 스택이 만드는 것"만 보면 된다 |
 | 이론 deck | **손대지 않는다** | 기존 `deck-aws-cloudwan` 을 그대로 쓴다. deck에 실습 안내 슬라이드가 없으므로 강의 전 10분 운영을 사이트와 강사 안내로 푼다 |
 | 사이트의 "작성 중" 배너 | 유지한다 | 콘솔 절차가 검증 전이라 그대로 따라 하면 막히는 단계가 있다. 2차 배포 때 지운다 |
 | `dev` 세그먼트 VPC 추가 | **오레곤에 dev VPC를 둔다**(2026-11-16 변경) | 서울에 하나 더 두는 안은 버렸다. 오레곤에 두면 `dev` 세그먼트가 두 리전에 걸쳐 "세그먼트는 전역"이 한 번 더 드러나고, 추가 과제 3-1의 `isolate-attachments` 효과를 서울 dev ↔ 오레곤 dev 통신이 끊기는 것으로 **실제로 볼 수 있다**. 본편 시간을 늘리지 않으려고 VPC는 스택이 만들고 attachment는 3-1에서 참가자가 만든다. 비용은 참가자당 약 $0.07 늘어난다 |
@@ -229,7 +230,7 @@ deck에는 실습 안내 슬라이드가 없다. 이 10분은 강사가 구두�
 | `AWS::NetworkManager::SiteToSiteVpnAttachment` | `CoreNetworkId`, `VpnConnectionArn` 필수 | [CFN 참조](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-networkmanager-sitetositevpnattachment.html) |
 | attachment policy의 `tag-exists` 조건 | 공식 정책 예시에 있다. 쓸 수 있다 | [3단계 환경 예시](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-policy-examples-three-stage.html) |
 | 세그먼트 이름 대소문자 | 공식 예시가 `sharedServices`와 `sharedservices`를 섞어 쓴다. **모두 소문자로 통일한다** | 같은 예시 |
-| Cloud WAN 홈 리전 | `us-west-2` 고정 | [Cloud WAN 소개](https://docs.aws.amazon.com/network-manager/latest/cloudwan/what-is-cloudwan.html) |
+| Cloud WAN 홈 리전 | `us-west-2` 고정. **이것은 Network Manager API·콘솔의 홈 리전일 뿐, edge를 둘 수 있는 리전과는 다르다.** 서울은 Cloud WAN GA 리전이므로 edge를 두는 데 문제가 없고(사용자 확인, 2026-11-16), 서울 엔드포인트로 global network 생성도 된다(2026-11-16 `cwan` 계정에서 실제 호출로 확인) | [Cloud WAN 소개](https://docs.aws.amazon.com/network-manager/latest/cloudwan/what-is-cloudwan.html) |
 
 ### 8-4. 설계를 바꾼 것: VPN 연결은 참가자가 만든다
 
@@ -290,8 +291,8 @@ SPAL은 EPEL9 파생이고 **AWS Enterprise Support 대상이 아니다.** 보�
 
 - `PolicyDocument`를 넣은 CoreNetwork **최초 생성**이 change set 자동 실행까지 가서 `LIVE`가 되는지. 문서는 갱신할 때의 동작만 적는다.
 - 스택이 `CREATE_COMPLETE`가 된 시점과 core network가 실제로 쓸 수 있는 시점(policy `LIVE`, change set `Execution succeeded`)이 일치하는지.
-- 서울 리전 스택에서 global network와 core network를 만들 수 있는지(Cloud WAN 홈 리전은 `us-west-2`다). 안 되면 **두 스택의 역할을 바꿔** 오레곤 스택이 core network를 만들게 한다.
 - 각 단계의 실제 소요 시간(13절).
+- **AZ 선택을 `Fn::GetAZs` 로 되돌린다**(2026-11-16 사용자 지적). 리뷰어가 "기본 서브넷이 한 AZ에만 남은 계정에서 AZ 선택이 실패한다"고 지적해 `${AWS::Region}a`·`c` 로 하드코딩했으나, 그 상황이 실재하지 않는 것을 확인했다. `cwan` 계정 실측(2026-11-16): 서울·오레곤 모두 AZ 4개가 `available` 이고 `opt-in-not-required` 이며, 서울은 기본 서브넷이 4개 AZ 전부에 있다. 하드코딩은 오히려 위험하다. README의 "다른 리전에서 진행할 때"를 따를 때 `${AWS::Region}a` 가 그 리전에 있다는 보장이 없고(AZ가 2개뿐인 리전도 있다), 특정 AZ의 용량 부족을 피할 수도 없다. 표준대로 `!Select [0, !GetAZs ""]` 와 `!Select [1, !GetAZs ""]` 를 쓴다. 재리뷰가 끝난 뒤 반영한다.
 - **서울 템플릿에 아직 반영하지 않은 수정 2건**(Codex 리뷰가 끝나는 대로 함께 반영한다). ⑴ dev VPC에 EC2 Instance Connect Endpoint 추가(위 8-1 참조). ⑵ HTTP 응답 형식과 서비스 이름을 오레곤 템플릿과 통일. 지금은 서울이 `you reached <host> (<ip>) / I saw you as <ip>:<port>` 와 `cwanws-whoami`, 오레곤이 `<host> saw <ip>:<port>` 와 `cwan-echo` 로 갈려 있어 참가자가 `curl` 결과를 리전끼리 비교할 때 혼란스럽다.
 - 정책 JSON 전체가 API에 받아들여지는지. `tag-exists` 는 2026-11-16 조사에서 **유효한 것으로 확인**했다(Terraform AWS provider의 조건 type 허용 목록에 있고, AWS 공식 예시 3곳 — 3단계 환경, service insertion, 분산 WAN — 이 쓴다). 태그 키 필드 이름도 `key` 가 맞고 `operator` 와 `value` 는 넣지 않는다. 공식 JSON 레퍼런스의 `type` 목록에서만 빠져 있어 문서 누락으로 본다. 그대로 쓰되 배포가 거부되면 `tag-name` 으로 바꾼다.
 - **정책을 배포 전에 검증할 수단은 없다.** core network 없이 정책 JSON만 검증하는 API가 없고, CloudFormation이 `PolicyDocument` 를 언제 검증하는지도 문서에 없다. 최악의 경우 30분을 쓰고 실패한다. 리허설 1차의 첫 관문을 서울 스택 배포로 두고, 실패하면 스택 이벤트에서 정책 오류인지부터 본다.
@@ -402,7 +403,8 @@ SPAL은 EPEL9 파생이고 **AWS Enterprise Support 대상이 아니다.** 보�
 | VPN 터널이 올라오지 않는다 | 라우터 설정을 복사·붙여넣기 한 줄로 제공한다. 터널 상태 확인 단계를 따로 둔다 |
 | 계정당 global network 5개 한도 | 임시 계정을 재사용할 때 이전 워크숍의 global network가 남아 있는지 사전에 확인한다 |
 | 비용 | 참가자 1명당 약 $1.3~2.7 (edge 2개 $0.50/시간, attachment $0.065~0.09/시간). 정리가 늦으면 늘어난다 |
-| 오레곤 리전 EC2·VPC 한도 | 임시 계정에서 오레곤을 처음 쓸 수 있다. 사전에 확인한다 |
+| 서울 VPC 여유가 0 | 리전당 VPC 한도 5개에 기본 VPC 1개가 있으므로 서울 스택의 4개를 더하면 정확히 5개가 된다. **참가자 계정은 문제없다**(아래 2-1절 전제 참조). 다만 **리허설에서는 1차 스택이 완전히 지워진 뒤에 2차를 배포해야 한다.** `DELETE_FAILED` 로 VPC가 남으면 2차가 막힌다. 2026-11-16 `cwan` 계정 실측: 서울 1/5, 오레곤 1/5 |
+| 오레곤 리전 EC2 한도 | 임시 계정에서 오레곤을 처음 쓸 수 있다. 사전에 확인한다 |
 
 ## 13. 진행 타임라인 (KST)
 
