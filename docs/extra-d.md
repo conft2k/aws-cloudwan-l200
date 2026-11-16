@@ -50,27 +50,27 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 2. [2-3-a](lab2.md)에서 만든 VPN 연결을 고르고 **Actions** → **Delete VPN connection**을 누릅니다.
 3. 확인 창에서 삭제를 확정합니다.
 
-<!-- shot: extraD-03-delete-vpn -->
-
 **성공 확인**: VPN 연결의 상태가 **Deleted**가 됩니다. customer gateway는 스택이 만든 것이므로 그대로 둡니다. 서울 스택을 지울 때 함께 지워집니다.
 
 ## 3-4-d. 오레곤 스택 지우기 { #d-d }
 
 1. 리전을 오레곤(`us-west-2`)으로 바꿉니다.
-2. **CloudFormation** → `cloudwan-workshop-oregon` → **Delete**를 누릅니다.
-3. 확인 창에서 삭제를 확정합니다.
+2. **CloudFormation** → `cloudwan-workshop-oregon` 을 열고 **Delete stack** 을 누릅니다.
+3. **Delete stack?** 창이 열립니다. **스택 이름을 그대로 입력해야** 삭제 버튼이 눌립니다. 입력 칸에 `cloudwan-workshop-oregon` 을 적고 **Delete stack** 을 누릅니다.
 
-<!-- shot: extraD-04-delete-oregon-stack -->
+    !!! warning "이름을 입력하기 전에는 버튼이 회색입니다"
+        사전 테스트에서 확인했습니다. 창에 `Type "cloudwan-workshop-oregon" to confirm deletion of the stack.` 이라고 적혀 있고, 그 칸을 채우기 전에는 **Delete stack** 버튼이 **비활성**입니다. 이름을 정확히 입력하면 활성화됩니다. [3-4-a](#d-a)·[3-4-b](#d-b)의 attachment 삭제 창은 **Delete** 만 누르면 됐지만, **스택 삭제 창은 입력을 요구합니다.** 창에는 `Delete stack <이름> permanently? This action cannot be undone.` 과 `Deleting this stack will delete all stack resources.` 도 함께 적혀 있습니다.
+
+    !!! info "**Express mode** 는 켜지 마세요"
+        같은 창에 **Express mode - new** 라는 선택지가 있고 `Delete this stack faster.` 라고 적혀 있습니다. 리소스가 안정될 때까지 기다리지 않고 정리한다는 뜻입니다. **이 워크숍에서는 시험해 보지 않았습니다.** 기본값(꺼짐) 그대로 두세요.
 
 **성공 확인**: 스택이 목록에서 사라집니다(`DELETE_COMPLETE`). 오레곤 prod VPC와 EC2도 함께 지워집니다. 사전 테스트에서 **1분 32초** 걸렸습니다.
 
 ## 3-4-e. 서울 스택 지우기 { #d-e }
 
 1. 리전을 서울(`ap-northeast-2`)로 바꿉니다.
-2. **CloudFormation** → `cloudwan-workshop-seoul` → **Delete**를 누릅니다.
-3. 확인 창에서 삭제를 확정합니다.
-
-<!-- shot: extraD-05-delete-seoul-stack -->
+2. **CloudFormation** → `cloudwan-workshop-seoul` 을 열고 **Delete stack** 을 누릅니다.
+3. 창의 입력 칸에 `cloudwan-workshop-seoul` 을 적고 **Delete stack** 을 누릅니다. [3-4-d](#d-d)와 같은 창이며, 이름을 입력하기 전에는 버튼이 눌리지 않습니다.
 
 !!! warning "이 삭제는 15분쯤 걸립니다"
     사전 테스트에서 **14분 32초** 걸렸습니다. core network를 지우는 데 시간이 걸리기 때문이고, [2-1-b](lab0.md#lab0-b)에서 core network를 만들 때 걸린 15분과 거의 같습니다. 화면을 닫아도 삭제는 계속됩니다.

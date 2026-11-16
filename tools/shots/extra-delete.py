@@ -64,8 +64,15 @@ def nav(name, must=None, tries=3):
     return app()
 
 
-def confirm_dialog(shot_name):
-    """Shoot the confirmation and then go through with it."""
+def confirm_dialog(shot_name, type_name=None):
+    """Shoot the confirmation and then go through with it.
+
+    Two shapes of dialog turn up. An attachment's wants nothing typed and its
+    button says Delete. A stack's says `Type "<stack name>" to confirm deletion
+    of the stack.`, keeps its button disabled until that exact name is in the
+    box, and labels the button Delete stack, not Delete. Pass `type_name` for
+    the second kind.
+    """
     page.wait_for_timeout(2500)
     f = app()
     dlg = f.get_by_role("dialog")
@@ -75,12 +82,15 @@ def confirm_dialog(shot_name):
         shot(shot_name, clip=dlg.last)
     else:
         shot(shot_name)
-    # Some delete dialogs want the word typed before the button enables.
-    box = f.locator('input[placeholder="delete"], input[placeholder="Delete"]')
-    if box.count():
-        box.first.fill("delete")
-        page.wait_for_timeout(800)
-    btn = f.get_by_role("button", name=re.compile(r"^(Delete|Confirm)$"))
+    # A stack dialog keeps its button disabled until the name is in the box.
+    box = f.locator('[role=dialog] input[type=text], [role=dialog] input:not([type])')
+    if box.count() and type_name:
+        box.first.fill(type_name)
+        page.wait_for_timeout(1200)
+    elif box.count():
+        print("!! dialog has an input and no type_name was given; placeholder:",
+              box.first.get_attribute("placeholder"))
+    btn = f.locator("button").filter(has_text=re.compile(r"^(Delete stack|Delete|Confirm)$"))
     print("confirm buttons:", btn.count())
     if btn.count():
         btn.last.click()
@@ -151,9 +161,11 @@ elif KIND == "stack":
         page.wait_for_timeout(WAIT)
     f = app()
     print("headings:", heads(f))
-    d = f.get_by_role("button", name="Delete", exact=True)
+    # The button on the stack page says "Delete stack". Matching "Delete" by
+    # role+name or exact text finds nothing, which is what stalled the rehearsal.
+    d = f.locator("button", has_text=re.compile(r"^Delete stack$"))
     if not d.count():
-        d = f.locator("button").filter(has_text=re.compile(r"^Delete$"))
+        d = f.locator("button", has_text=re.compile(r"Delete"))
     if not d.count():
         # Some builds hide it behind the stack's own Actions menu.
         acts = f.get_by_role("button", name="Actions", exact=True)
@@ -166,8 +178,8 @@ elif KIND == "stack":
             d = g.get_by_role("menuitem", name=re.compile(r"^Delete"))
     print("Delete control:", d.count())
     if d.count():
-        d.last.click()
-        confirm_dialog(NAME)
+        d.first.click()
+        confirm_dialog(NAME, type_name=stack)
     else:
         print("!! buttons:", [t.strip()[:24] for t in
                               f.locator("button").all_inner_texts() if t.strip()][:24])

@@ -670,7 +670,7 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 |---|---|---|
 | `lab1-route-02-edit` | **Edit routes** 에서 **Target** 종류로 **Core Network** 까지는 골랐는데, 그다음 core network를 고르는 드롭다운을 찾지 못했다(`core network choices: 0`). 문서의 2단계 설명은 화면과 맞다 | `aws ec2 create-route --core-network-arn` 으로 경로 2개를 넣었다. 결과 화면(`lab1-route-03-saved`)은 찍었다 |
 | `extraD-03-delete-vpn` | **Actions** → **Delete VPN connection** 클릭이 탭 패널에 가로막혔다 | `aws ec2 delete-vpn-connection` 으로 지웠다 |
-| `extraD-04-delete-oregon-stack`, `extraD-05-delete-seoul-stack` | CloudFormation 스택 화면의 **Delete** 버튼이 역할+이름으로도, 텍스트로도, **Actions** 메뉴로도 잡히지 않았다. 버튼 목록을 찍어 보면 셸 프레임의 버튼만 나온다 | `aws cloudformation delete-stack` 으로 지웠다 |
+| `extraD-04-delete-oregon-stack`, `extraD-05-delete-seoul-stack` | **풀렸다 (2026-11-16).** 버튼 이름이 **Delete** 가 아니라 **Delete stack** 이다. `Delete` 로 역할+이름·정확한 텍스트를 찾으니 0개가 나온 것이다. 실제 클래스는 `e2e-test-delete-stack-button awsui_button_…` 이고 `awsui_primary-button` 이 아니라 `variant-normal` 이라 15-6이 예상한 클래스 매칭으로도 안 잡혔다 | `aws cloudformation delete-stack` 으로 지웠고, 나중에 빈 스택으로 화면을 확인했다 |
 
 **막히는 패턴이 일정하다.** 표의 행 선택과 행 단위 메뉴는 잘 되는데, **툴바의 단일 동작 버튼**(`Delete`, `Connect`, `Submit`)은 역할+이름으로 잡히지 않을 때가 많다. 해결책도 일정했다. Cloudscape가 붙이는 클래스(`button[class*="awsui_primary-button"]`)로 찾거나, 전용 해시 URL로 바로 들어가는 것이다(`#ConnectToInstance:instanceId=` 가 그랬다). 남은 세 장도 같은 방법으로 풀릴 것으로 본다.
 
@@ -749,3 +749,20 @@ core network 생성은 1차 14분 12초, 2차 15분 14초다. **두 번 모두 �
 - `extraA-04b-isolate-executing` 는 **어느 페이지도 참조하지 않고 있었다.** 3-1-f 3단계(실행 중)에 그대로 맞는 그림이라 본문에 넣었다.
 
 **남은 교훈:** 크롭·보정·대체 텍스트는 한 묶음이다. 그림을 자르거나 행을 들어낼 때마다 그 그림의 대체 텍스트를 다시 읽는다. 이번에 고친 10건 중 3건이 대체 텍스트만의 문제였고, 그중 하나는 바로 앞 작업(여백 크롭)이 만든 것이다.
+
+### 15-10. 스택 삭제 확인 창 (2026-11-16, 빈 스택으로 확인)
+
+3-4-d·3-4-e는 리허설에서 CLI로 지워서 화면을 못 봤다(15-6). 사용자 승인을 받아 **요금 0원짜리 빈 스택**(SSM 파라미터 하나, `cwan-ws-probe-delete`)을 `demo1` 에 만들고 콘솔에서 끝까지 지워 보며 확인했다. 확인 뒤 스택과 파라미터 모두 사라진 것을 확인했고 `demo1` 에 남은 스택은 없다.
+
+| 물음 | 답 |
+|---|---|
+| 스택 화면의 버튼 이름 | **Delete stack** 이다. 문서가 적고 있던 **Delete** 가 아니다 |
+| 확인 창 제목 | `Delete stack?` |
+| 본문 | `Delete stack <이름> permanently? This action cannot be undone.` / `Deleting this stack will delete all stack resources. Resources will be deleted according to their DeletionPolicy.` |
+| **입력을 요구하는가** | **그렇다.** `Type "<스택 이름>" to confirm deletion of the stack.` 이라고 적혀 있고, 그 칸이 비어 있는 동안 **Delete stack** 버튼은 비활성이다. 이름을 넣으면 활성화된다(실측: 입력 전 `False` → 입력 후 `True`) |
+| 창의 버튼 | **Cancel** 과 **Delete stack** |
+| 그 밖에 | **Express mode - new** 선택지가 있다. `Delete this stack faster. Resource cleanup runs without waiting for each resource to finish stabilizing.` **워크숍 스택으로는 시험하지 않았다.** 기본값(꺼짐)으로 두라고 문서에 적었다 |
+
+**이것이 왜 중요한가.** 워크숍의 **마지막 단계**에서 참가자가 회색 버튼 앞에 멈춰 선다. 3-4-a·3-4-b의 attachment 삭제 창은 **Delete** 만 누르면 되므로, 같은 요령일 것이라 생각하고 입력 칸을 지나칠 가능성이 높다. 게다가 서울 스택 삭제는 14분 32초가 걸려서 참가자가 이미 조바심을 내는 자리다.
+
+**자동화에도 같은 교훈.** 15-6은 "툴바 단일 동작 버튼은 `awsui_primary-button` 클래스로 찾으면 된다"고 추정했는데 **그 추정이 틀렸다.** 이 버튼의 클래스는 `e2e-test-delete-stack-button awsui_button_… awsui_variant-normal_…` 이다. 원인은 클래스가 아니라 **이름이 달랐던 것**이다. 찾는 이름이 틀렸을 때는 선택자 기법을 바꾸기 전에 **그 화면의 버튼 이름을 먼저 전부 찍어 보는 것**이 빠르다. `tools/shots/probe-stack-delete.py` 가 그 일을 한다.
