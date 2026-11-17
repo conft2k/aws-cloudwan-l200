@@ -31,7 +31,7 @@
 | 스택이 지워지지 않는다 | CloudFormation 스택 **Events** | 참가자가 만든 연결이 남아 있으면 core network가 지워지지 않습니다. [3-4](extra-d.md) 의 순서대로 연결을 먼저 지웁니다 |
 | 스택 생성이 실패하고 **ROLLBACK_FAILED** 로 멈춘다 | CloudFormation 스택 **Events** | core network가 아직 만들어지는 중(`PENDING`)이라 롤백이 지우지 못한 것입니다. 아래 [4-3-b](#rollback-failed) 를 보세요 |
 | 오레곤 스택을 서울에서 만들려 하니 거부된다 | 콘솔 오른쪽 위 리전 | 오레곤 템플릿은 `us-west-2` 에서만 배포됩니다. 리전을 **US West (Oregon)** 으로 바꿉니다 |
-| 콘솔 화면이 한국어로 나온다 | 콘솔 언어 설정 | 이 워크숍의 예제 화면은 영어 기준입니다. 언어를 **English** 로 바꾸면 따라 하기 쉽습니다([1-2-c](prerequisites.md#browser)) |
+| 콘솔 화면이 한국어로 나온다 | 콘솔 언어 설정 | 이 워크숍의 예제 화면은 영어 기준입니다. 언어를 **English** 로 바꾸면 따라 하기 쉽습니다([1-2-b](prerequisites.md#browser)) |
 
 ## 4-3-b. 스택이 ROLLBACK_FAILED 로 멈췄을 때 { #rollback-failed }
 
