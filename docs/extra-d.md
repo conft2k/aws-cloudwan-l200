@@ -116,4 +116,6 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 
     이름에 `DON_NOT_DELETE` 가 들어 있지만 **지우는 것이 맞습니다.** 그 이름은 로그가 켜져 있는 동안 실수로 지우지 말라는 뜻으로 콘솔이 붙인 것입니다(`DO_NOT`이 아니라 `DON_NOT`인 것도 AWS 쪽 오타 그대로입니다).
 
+    버튼이 만든 것이 하나 더 있습니다 — CloudWatch Logs의 리소스 정책 `DON_NOT_DELETE_networkmanager_TrustEventsToStoreLogEvents` 입니다. **요금이 없고 다른 것에 영향을 주지 않아 그대로 두어도 됩니다.** 지우려면 CloudWatch Logs의 리소스 정책에서 지웁니다.
+
 **결과**: 위 체크 목록이 모두 확인되었습니다.

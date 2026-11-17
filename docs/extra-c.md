@@ -110,7 +110,7 @@ core network에는 **Events** 탭이 있습니다. 연결이 붙고 빠지거나
 !!! info "켠 뒤의 이벤트만 쌓입니다"
     이미 지나간 일은 나오지 않습니다. 그래서 [2-4](lab3.md)에서 실행한 change set은 여기에 없습니다. **앞으로 일어나는 것**을 보려면 [3-4. 리소스 정리](extra-d.md)에서 연결을 지울 때 이 탭을 다시 열어 보세요. 연결이 빠지면서 경로가 걷히는 이벤트가 올라옵니다.
 
-**버튼 하나가 무엇을 만드나요.** 이 워크숍에서 **스택 밖에** 만들어지는 유일한 자원입니다. 전부 **오레곤**에 생깁니다. Cloud WAN이 이벤트를 그 리전에 발행하기 때문입니다([3-3-d](#c-d)의 지표와 같은 이유입니다).
+**버튼 하나가 무엇을 만드나요.** 참가자가 만드는 것 중 유일하게 **Cloud WAN 밖**(EventBridge와 CloudWatch Logs)에 생기는 자원입니다. 전부 **오레곤**에 생깁니다. Cloud WAN이 이벤트를 그 리전에 발행하기 때문입니다([3-3-d](#c-d)의 지표와 같은 이유입니다).
 
 | 무엇 | 이름 |
 |---|---|
@@ -119,6 +119,6 @@ core network에는 **Events** 탭이 있습니다. 연결이 붙고 빠지거나
 | CloudWatch Logs 리소스 정책 (EventBridge에 쓰기 권한을 줌) | `DON_NOT_DELETE_networkmanager_TrustEventsToStoreLogEvents` |
 
 !!! warning "이 과제를 했다면 정리할 것이 늘어납니다"
-    세 자원은 CloudFormation 스택이 만든 것이 아니라서 **스택을 지워도 남습니다.** 로그 그룹에는 CloudWatch Logs 요금이 붙습니다(위 안내 상자가 `Additional charges apply from CloudWatch Logs.` 라고 알려 주는 것이 이것입니다). [3-4-f](extra-d.md#d-f)에서 지웁니다.
+    세 자원은 CloudFormation 스택이 만든 것이 아니라서 **스택을 지워도 남습니다.** 로그 그룹에는 CloudWatch Logs 요금이 붙습니다(위 안내 상자가 `Additional charges apply from CloudWatch Logs.` 라고 알려 주는 것이 이것입니다). **규칙과 로그 그룹**을 [3-4-f](extra-d.md#d-f)에서 지웁니다. 리소스 정책은 요금이 없고 다른 것에 영향을 주지 않아 그대로 두어도 됩니다.
 
 **결과**: **Events** 탭에 안내 상자 대신 표가 보입니다. 켠 직후에는 비어 있고, 이후에 일어나는 일부터 쌓입니다.

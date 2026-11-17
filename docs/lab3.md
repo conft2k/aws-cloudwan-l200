@@ -90,7 +90,7 @@
 !!! info "한 줄이면 됩니다. `share` 는 양방향입니다"
     `onprem` 쪽에만 적었는데 `prod` → `onprem` 방향은 따로 적지 않아도 되는지 궁금할 수 있습니다. **적지 않습니다.** `share` 는 두 세그먼트가 서로에게 경로를 광고하게 만듭니다(공식 문서의 표현은 "create mutual advertisements"입니다). 반대 방향을 위한 항목은 없습니다.
 
-    [2-4-d](#lab3-d)에서 양쪽 경로 테이블을 보면 확인됩니다. `prod` 에 온프레미스 대역 `172.16.1.0/24` 가 들어오고, `onprem` 에 운영 대역 `10.10.1.0/24` 가 들어옵니다. **한 줄이 양쪽을 다 만든 것입니다.**
+    눈으로 보고 싶으면 core network의 **Routes** 탭에서 **Segment** 를 `prod` 와 `onprem` 으로 각각 조회해 보세요([2-2-f](lab1.md#lab1-f)에서 쓴 화면이고, 읽는 법은 [3-3-a](extra-c.md#c-a)에 있습니다). `prod` 에 온프레미스 대역 `172.16.1.0/24` 가 들어오고, `onprem` 에 운영 대역 `10.10.1.0/24` 가 들어옵니다. **한 줄이 양쪽을 다 만든 것입니다.**
 
     **Visual editor** 의 **Sharing** 표에서도 이 공유는 `onprem` 한 줄로만 보입니다(**Shared with segments** 열에 `prod`). 한쪽 방향처럼 보이지만 그 한 줄이 양방향입니다. 더 자세한 것은 [4-1-d. segment-actions](concepts.md#actions)에 있습니다.
 

@@ -87,10 +87,10 @@ attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 at
   <figcaption>그림 2-3-4. core network의 Attachments 목록</figcaption>
 </figure>
 
-**결과**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. `Available` 이 되기까지 **5분 안팎** 걸립니다. 상태는 `Creating` → `Pending network update` → `Available` 순으로 바뀝니다.
-
 !!! warning "`Pending network update` 는 아직 끝난 것이 아닙니다"
     이 글자가 보이면 core network가 이 연결을 반영하는 중입니다. **여기서 [2-3-c](#lab2-c)로 넘어가면 터널이 올라오지 않습니다.** 그런데 실패 화면은 보안 그룹과 customer gateway 주소를 의심하라고 알려 주기 때문에, 멀쩡한 곳을 뒤지게 됩니다. **`Available` 글자를 눈으로 본 뒤에** 넘어가세요.
+
+**결과**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. `Available` 이 되기까지 **5분 안팎** 걸립니다. 상태는 `Creating` → `Pending network update` → `Available` 순으로 바뀝니다.
 
 ## 2-3-c. 온프레미스 라우터에 터널 설정하기 { #lab2-c }
 
