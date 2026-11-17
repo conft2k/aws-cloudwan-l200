@@ -1,4 +1,4 @@
-# 2-1. 시작하기 (10분)
+# 2-1. 시작하기
 
 이 페이지는 **이론 강의를 듣기 전에** 합니다. Cloud WAN의 core network는 처음 만들 때 최대 30분이 걸립니다([공식 문서](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-getting-started.html)). 그동안에는 attachment(연결)와 policy version(정책 버전)을 만들 수 없습니다. 그래서 스택 2개를 먼저 배포해 두고, 이론 강의를 듣는 동안 core network가 백그라운드로 완성되게 합니다. 배포가 끝나기를 기다리지 않습니다.
 
