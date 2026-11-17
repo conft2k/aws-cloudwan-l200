@@ -56,20 +56,29 @@ goto(NETWORKS)
 page.wait_for_timeout(WAIT)
 cookies()
 close_tours()
-app().get_by_role("link", name=re.compile(r"^global-network-")).first.click()
+
+# The Global networks table has a column of core network ids. That link is the
+# way into the core network; the global network's own page has only Overview,
+# Details and the two topology tabs.
+f = app()
+core = f.get_by_role("link", name=re.compile(r"^core-network-"))
+print("core network 링크:", core.count())
+if not core.count():
+    raise SystemExit("!! Global networks 목록에서 core network 링크를 찾지 못했다")
+core.first.click()
 page.wait_for_timeout(WAIT)
 close_tours()
-expand_nav()
-page.wait_for_timeout(2500)
 
-f = app()
-core = f.get_by_role("link", name="Core network", exact=True)
-print("Core network 링크:", core.count())
-if core.count():
-    core.first.click()
-    page.wait_for_timeout(WAIT)
-
-f = app()
+# The core network page loads its tabs late - wait for them instead of guessing.
+for attempt in range(8):
+    f = app()
+    tabs = [t.strip() for t in f.get_by_role("tab").all_inner_texts() if t.strip()]
+    if tabs:
+        break
+    print(f"   탭을 기다리는 중 {attempt + 1}/8  URL={page.url[:90]}")
+    page.wait_for_timeout(5000)
+print("core network 탭:", tabs)
+print("본문 앞부분:", " | ".join(t for t in body(f)[:300].split("\n") if t.strip()))
 tab = f.get_by_role("tab", name="Events", exact=True)
 if not tab.count():
     tab = f.get_by_role("link", name="Events", exact=True)
@@ -81,7 +90,20 @@ page.wait_for_timeout(WAIT)
 
 f = app()
 report("Events 탭 (켜기 전)", f)
-shot("extraC-04-events-off")
+# The off state is a callout with no heading, so card() cannot find it. Clip to
+# the alert box itself; print which locator matched so the next run knows.
+off = None
+for how, loc in (("role=alert", lambda: f.get_by_role("alert")),
+                 ("text ancestor", lambda: f.get_by_text("Unable to show events")
+                  .locator("xpath=ancestor::div[.//button][1]")),
+                 ("awsui alert", lambda: f.locator('div[class*="awsui_root"][class*="alert"]'))):
+    l = loc()
+    n = l.count()
+    print(f"   꺼진 상태 상자 {how}: {n}")
+    if n and off is None:
+        off = l.first
+        print(f"   -> {how!r} 로 자른다")
+shot("extraC-04-events-off", clip=off)
 
 btn = f.get_by_role("button", name=re.compile(r"Onboard"))
 print("Onboard 버튼:", btn.count(),
@@ -90,11 +112,11 @@ if not btn.count():
     raise SystemExit("!! Onboard 버튼이 없다. 이미 켜져 있는지 확인하라")
 
 btn.first.click()
-page.wait_for_timeout(5000)
+page.wait_for_timeout(9000)
 g = app()
-print("대화상자:", g.get_by_role("dialog").count())
+print("대화상자:", g.get_by_role("dialog").count(), "(없으면 확인 창 없이 바로 적용된 것)")
 report("Onboard 를 누른 뒤", g)
-shot("extraC-05-events-onboard")
+shot("extraC-05-events-on", clip=card("Events", frame=g))
 
 # Whatever the next control is called, print it before touching anything.
 for name in ("Onboard", "Enable", "Confirm", "Submit", "Save", "Continue"):

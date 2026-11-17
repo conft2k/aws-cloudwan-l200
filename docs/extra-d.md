@@ -108,4 +108,12 @@ attachment가 `Deleting` 인 동안 VPN 연결의 상태는 `Modifying` 으로 �
 - [ ] **Network Manager**에 `cwan-ws-global`(global network)과 core network가 없습니다
 - [ ] 서울과 오레곤의 EC2 콘솔에 실습 EC2가 없습니다
 
+!!! warning "[3-3-e](extra-c.md#c-e)에서 이벤트 로그를 켰다면 두 가지가 더 남아 있습니다"
+    그 버튼이 만든 것은 **스택이 만든 것이 아니라서 스택을 지워도 남습니다.** 둘 다 **오레곤**에 있습니다. 로그 그룹은 CloudWatch Logs 요금이 붙으니 지웁니다.
+
+    - [ ] **EventBridge** 의 규칙 `DON_NOT_DELETE_networkmanager_rule` 을 지웁니다
+    - [ ] **CloudWatch** → **Logs** → **Log groups** 의 `/aws/events/networkmanagerloggroup` 을 지웁니다
+
+    이름에 `DON_NOT_DELETE` 가 들어 있지만 **지우는 것이 맞습니다.** 그 이름은 로그가 켜져 있는 동안 실수로 지우지 말라는 뜻으로 콘솔이 붙인 것입니다(`DO_NOT`이 아니라 `DON_NOT`인 것도 AWS 쪽 오타 그대로입니다).
+
 **결과**: 위 체크 목록이 모두 확인되었습니다.

@@ -304,26 +304,3 @@ Cloud WAN에서 정책을 바꾸는 것은 파일을 저장하는 일이 아니�
 마지막 줄을 기억해 두면 좋습니다. 설명을 고치거나 승인 요구 여부만 바꾸는 변경은 네트워크에 작업을 일으키지 않습니다. 반대로 세그먼트를 하나 추가하는 것은 모든 리전의 edge를 건드립니다.
 
 출처: [Deploying a policy version](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-policy-version-deploy.html), [Creating a policy version](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-create-policy-version.html), [Regional scope of policy changes](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-policy-regional-scope.html)
-
-## 4-1-g. 알아 둘 한도 { #quotas }
-
-정책을 설계할 때 먼저 보는 숫자들입니다.
-
-| 항목 | 기본값 | 조정 |
-|---|---|---|
-| 계정당 global network | 5 | 가능 |
-| global network당 core network | 1 | **불가** |
-| 리전당 core network edge | 1 | **불가** |
-| core network당 세그먼트 | 40 | 문서에 "Contact your SA or TAM"으로 적혀 있습니다. SA는 솔루션 아키텍트(Solutions Architect), TAM은 기술 계정 관리자(Technical Account Manager)로, AWS 쪽 담당자입니다 |
-| core network당 연결(attachment) | 5,000 | 가능 |
-| VPC당 core network 연결 | 5 | **불가** |
-| core network당 경로 | 10,000 | 문서에 "Contact your SA or TAM"으로 적혀 있습니다 |
-
-읽을 때 주의할 점을 덧붙입니다.
-
-- **global network당 core network는 1개**이고 조정할 수 없습니다. core network를 둘 쓰려면 global network를 둘 만들어야 합니다. 계정당 global network는 5개까지입니다.
-- **리전당 edge는 1개**입니다. 한 리전에 core network edge를 둘 둘 수 없습니다. Transit Gateway를 리전에 여러 개 두던 방식과 다른 점입니다.
-- **core network당 경로 10,000개**는 모든 세그먼트의 경로를 합한 숫자입니다. 정적 경로, 공유로 받은 경로, 동적으로 배운 경로를 모두 셉니다. BGP로 받았지만 설치되지 않은 경로는 세지 않습니다.
-- 그 밖에 정책 문서 크기 1 MB(조정 불가), core network당 정책 버전 10,000개, 연결당 Connect peer 4개(조정 불가), core network당 Direct Connect 연결 40개(조정 가능), VPN을 통해 core network에 광고하는 경로 1,000개가 있습니다.
-
-출처: [Cloud WAN quotas](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-quotas.html)

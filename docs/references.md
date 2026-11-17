@@ -35,5 +35,43 @@
 
 ## 4-4-e. 요금과 한도 { #ref-cost }
 
-- [AWS Cloud WAN quotas](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-quotas.html) — 계정당 global network 5개, global network당 core network 1개(조정 불가), 리전당 edge 1개(조정 불가), VPC당 core network 연결 5개(조정 불가) 등. 주요 숫자는 [4-1-g](concepts.md#quotas)에 옮겨 두었습니다
-- [AWS Cloud WAN 요금](https://aws.amazon.com/cloud-wan/pricing/) — core network edge 시간 요금, 연결 시간 요금, 데이터 전송 요금. 실습 비용을 가늠하거나 정리를 서둘러야 하는 이유를 확인할 때 보세요([3-4. 리소스 정리](extra-d.md))
+### 무엇에 요금이 붙나 { #ref-pricing }
+
+**시간 요금이 핵심입니다.** 만들어 둔 것은 쓰지 않아도 시간당 요금이 붙고, **부분 시간은 올림**입니다. [3-4. 리소스 정리](extra-d.md)를 서둘러야 하는 이유가 이것입니다.
+
+| 요금이 붙는 것 | 단위 | 이 워크숍에서는 |
+|---|---|---|
+| core network edge | **리전당 시간당 $0.50** | 서울과 오레곤 **2개**. 가장 큰 항목입니다 |
+| 연결(attachment) | 연결당 **시간당 $0.065~0.09** | VPC 연결 4~5개와 VPN 연결 1개. 리전과 종류에 따라 다르고 오레곤이 더 쌉니다 |
+| 데이터 전송 | GB당 | ping과 HTTP 요청 몇 번뿐이라 사실상 0입니다 |
+| Site-to-Site VPN 연결 | 연결당 시간당 | [2-3-a](lab2.md#lab2-a)에서 만드는 VPN 연결 1개. Cloud WAN이 아니라 VPN 쪽 요금입니다 |
+| EC2 인스턴스 | 인스턴스당 시간당 | 스택이 만드는 테스트용 EC2 |
+| CloudWatch Logs | 수집·저장량 | [3-3-e](extra-c.md#c-e)의 이벤트 로그를 켰을 때만 붙습니다 |
+
+금액은 공개된 목록 가격이고 바뀔 수 있습니다. 기준은 늘 공식 요금 페이지입니다.
+
+- [AWS Cloud WAN 요금](https://aws.amazon.com/cloud-wan/pricing/) — core network edge 시간 요금, 연결 시간 요금, 데이터 전송 요금
+- [Site-to-Site VPN 요금](https://aws.amazon.com/vpn/pricing/) — VPN 연결 시간 요금
+
+### 한도 { #ref-quotas }
+
+정책을 설계할 때 먼저 보는 숫자들입니다. **조정 불가**인 넷(global network당 core network 1개, 리전당 edge 1개, VPC당 연결 5개, 정책 문서 1 MB)이 설계를 가장 많이 가릅니다.
+
+| 항목 | 기본값 | 조정 |
+|---|---|---|
+| 계정당 global network | 5 | 가능 |
+| global network당 core network | 1 | **불가** |
+| 리전당 core network edge | 1 | **불가** |
+| core network당 세그먼트 | 40 | 문서에 "Contact your SA or TAM"으로 적혀 있습니다. SA는 솔루션 아키텍트(Solutions Architect), TAM은 기술 계정 관리자(Technical Account Manager)로, AWS 쪽 담당자입니다 |
+| core network당 연결(attachment) | 5,000 | 가능 |
+| VPC당 core network 연결 | 5 | **불가** |
+| core network당 경로 | 10,000 | 문서에 "Contact your SA or TAM"으로 적혀 있습니다 |
+
+읽을 때 주의할 점을 덧붙입니다.
+
+- **global network당 core network는 1개**이고 조정할 수 없습니다. core network를 둘 쓰려면 global network를 둘 만들어야 합니다. 계정당 global network는 5개까지입니다.
+- **리전당 edge는 1개**입니다. 한 리전에 core network edge를 둘 둘 수 없습니다. Transit Gateway를 리전에 여러 개 두던 방식과 다른 점입니다.
+- **core network당 경로 10,000개**는 모든 세그먼트의 경로를 합한 숫자입니다. 정적 경로, 공유로 받은 경로, 동적으로 배운 경로를 모두 셉니다. BGP로 받았지만 설치되지 않은 경로는 세지 않습니다.
+- 그 밖에 정책 문서 크기 1 MB(조정 불가), core network당 정책 버전 10,000개, 연결당 Connect peer 4개(조정 불가), core network당 Direct Connect 연결 40개(조정 가능), VPN을 통해 core network에 광고하는 경로 1,000개가 있습니다.
+
+- [AWS Cloud WAN quotas](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-quotas.html) — 원문. 조정 가능 여부가 항목마다 적혀 있습니다
