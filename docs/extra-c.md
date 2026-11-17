@@ -131,7 +131,10 @@ core network에는 **Events** 탭이 있습니다. 연결이 붙고 빠지거나
 | `CHANGE_SET_READY`, `CHANGE_SET_EXECUTED` | 정책 버전이 적용될 준비가 됐거나 적용된 순간 | **`detail.policyVersionId`** — 몇 번 버전인지 |
 | `SEGMENT_ROUTE_INSTALLED`, `SEGMENT_ROUTE_UNINSTALLED` | 그 결과로 경로가 깔리거나 걷힌 것 | 세그먼트, edge location, 그 경로의 **목적지 대역** |
 
-`policyVersionId` 는 **change set 이벤트에만 있습니다.** 경로 이벤트에는 없어서, 어느 버전 때문에 생긴 경로인지는 **바로 앞의 `CHANGE_SET_EXECUTED` 를 보고** 이어 맞춥니다.
+`policyVersionId` 는 **change set 이벤트에만 있습니다.** 경로 이벤트에는 없습니다.
+
+!!! info "경로 이벤트를 정책 버전과 짝지어 읽지 마세요"
+    경로가 깔리고 걷히는 이유는 둘입니다. **정책을 적용했거나, 연결이 붙거나 빠졌거나.** [3-4. 리소스 정리](extra-d.md)에서 연결을 지울 때도 경로 제거 이벤트가 무더기로 올라오는데, 그때는 대응하는 change set 이벤트가 **아예 없습니다.** 그래서 "바로 앞의 `CHANGE_SET_EXECUTED` 가 원인"이라고 단정할 수 없습니다. 원인을 가리려면 같은 시각의 **Attachments** 목록을 함께 봅니다.
 
 **정책 한 번에 경로 이벤트가 여러 개** 올라옵니다. 세그먼트와 edge뿐 아니라 **목적지 대역마다 따로** 세기 때문입니다. 위 그림에서 설치 6건이 나온 것도 그래서입니다 — 같은 `onprem` 세그먼트의 같은 서울 edge인데 `10.10.1.0/24` 와 `10.11.1.0/24` 가 각각 한 건입니다.
 
