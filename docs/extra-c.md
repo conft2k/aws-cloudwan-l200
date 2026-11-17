@@ -119,12 +119,21 @@ core network에는 **Events** 탭이 있습니다. 연결이 붙고 빠지거나
 
 6. 줄 왼쪽의 **삼각형**을 누르면 그 이벤트 한 건이 가진 값이 모두 펼쳐집니다.
 
-    ![Events 표에서 첫 줄을 펼친 모습. A change-set has been successfully executed for a Core Network policy. 줄 아래로 그 이벤트의 필드가 이름과 값으로 나열된다. @aws.account는 111122223333, @aws.region은 us-west-2, @log는 111122223333:/aws/events/networkmanagerloggroup, @logStream과 @logStreamId는 긴 식별자, @message는 원본 JSON 전체, detail-type은 Network Manager Policy Update, detail.changeDescription은 Message 열과 같은 문장, detail.changeType은 CHANGE_SET_EXECUTED, detail.coreNetworkArn은 core network의 ARN, detail.policyVersionId는 5다](images/console/extraC-07-events-detail.png){ .shot }
+    ![Events 표에서 첫 줄을 펼친 모습. A change-set has been successfully executed for a Core Network policy. 줄 아래로 그 이벤트의 필드가 이름과 값으로 나열된다. @aws.account는 111122223333, @aws.region은 us-west-2, @log는 111122223333:/aws/events/networkmanagerloggroup, @logStream과 @logStreamId는 긴 식별자, @message는 원본 JSON인데 칸이 좁아 뒷부분이 잘려 보이고, detail-type은 Network Manager Policy Update, detail.changeDescription은 Message 열과 같은 문장, detail.changeType은 CHANGE_SET_EXECUTED, detail.coreNetworkArn은 core network의 ARN, detail.policyVersionId는 5다](images/console/extraC-07-events-detail.png){ .shot }
 
     그림 3-3-7. 이벤트 한 건을 펼친 모습
     { .figcap }
 
-**읽는 법**은 `detail.changeType` 과 `detail.policyVersionId` 두 개면 충분합니다. `CHANGE_SET_EXECUTED` 는 정책이 적용된 순간이고 `SEGMENT_ROUTE_INSTALLED` / `SEGMENT_ROUTE_UNINSTALLED` 는 그 결과로 경로가 깔리거나 걷힌 것입니다. `policyVersionId` 가 몇 번 버전 때문인지 알려 줍니다. **정책 한 번에 경로 이벤트가 여러 개** 올라오는 것은 세그먼트와 edge마다 따로 세기 때문입니다.
+**읽는 법**은 `detail.changeType` 부터 봅니다. 종류는 크게 둘입니다.
+
+| `detail.changeType` | 뜻 | 함께 있는 값 |
+|---|---|---|
+| `CHANGE_SET_READY`, `CHANGE_SET_EXECUTED` | 정책 버전이 적용될 준비가 됐거나 적용된 순간 | **`detail.policyVersionId`** — 몇 번 버전인지 |
+| `SEGMENT_ROUTE_INSTALLED`, `SEGMENT_ROUTE_UNINSTALLED` | 그 결과로 경로가 깔리거나 걷힌 것 | 세그먼트, edge location, 그 경로의 **목적지 대역** |
+
+`policyVersionId` 는 **change set 이벤트에만 있습니다.** 경로 이벤트에는 없어서, 어느 버전 때문에 생긴 경로인지는 **바로 앞의 `CHANGE_SET_EXECUTED` 를 보고** 이어 맞춥니다.
+
+**정책 한 번에 경로 이벤트가 여러 개** 올라옵니다. 세그먼트와 edge뿐 아니라 **목적지 대역마다 따로** 세기 때문입니다. 위 그림에서 설치 6건이 나온 것도 그래서입니다 — 같은 `onprem` 세그먼트의 같은 서울 edge인데 `10.10.1.0/24` 와 `10.11.1.0/24` 가 각각 한 건입니다.
 
 **버튼 하나가 무엇을 만드나요.** 셋을 만듭니다. 전부 **오레곤**에 생깁니다. Cloud WAN이 이벤트를 그 리전에 발행하기 때문입니다([3-3-d](#c-d)의 지표와 같은 이유입니다).
 
