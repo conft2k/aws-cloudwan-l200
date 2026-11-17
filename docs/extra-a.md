@@ -150,7 +150,12 @@ rtt min/avg/max/mdev = 120.849/122.037/126.761/2.361 ms
 2. `segments`의 `dev` 항목에 `isolate-attachments`를 추가합니다.
 
     ```json
-    { "name": "dev", "description": "Development", "require-attachment-acceptance": false, "isolate-attachments": true }
+    {
+      "name": "dev",
+      "description": "Development",
+      "require-attachment-acceptance": false,
+      "isolate-attachments": true
+    }
     ```
 
 3. change set을 검토하고 실행합니다([2-4-b](lab3.md#lab3-b), [2-4-c](lab3.md#lab3-c)). [2-4](lab3.md)와 같은 종류의 변경이라 change set 생성과 실행에 각각 **1분 안팎** 걸립니다.

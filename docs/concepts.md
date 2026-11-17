@@ -18,10 +18,26 @@ AWS Cloud WAN에서 여러분이 다루는 것은 사실상 **core network polic
     ]
   },
   "segments": [
-    { "name": "prod", "description": "Production", "require-attachment-acceptance": false },
-    { "name": "dev", "description": "Development", "require-attachment-acceptance": false },
-    { "name": "shared", "description": "Shared services", "require-attachment-acceptance": false },
-    { "name": "onprem", "description": "On-premises", "require-attachment-acceptance": false }
+    {
+      "name": "prod",
+      "description": "Production",
+      "require-attachment-acceptance": false
+    },
+    {
+      "name": "dev",
+      "description": "Development",
+      "require-attachment-acceptance": false
+    },
+    {
+      "name": "shared",
+      "description": "Shared services",
+      "require-attachment-acceptance": false
+    },
+    {
+      "name": "onprem",
+      "description": "On-premises",
+      "require-attachment-acceptance": false
+    }
   ],
   "segment-actions": [
     {
