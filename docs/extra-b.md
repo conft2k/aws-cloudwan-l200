@@ -23,7 +23,10 @@
 
 리전이 늘어날 때 차이가 커집니다. 두 리전이면 peering은 1개이고 edge는 2개이지만, 리전이 4개가 되면 peering은 6개, edge는 4개입니다. Transit Gateway는 peering마다 양쪽 라우팅 테이블 경로도 맞춰 주어야 합니다.
 
-![리전 네 개를 Cloud WAN과 Transit Gateway로 각각 이었을 때를 나란히 놓은 비교도. 왼쪽은 AWS Cloud WAN이다. 보라색 파선의 core network 상자 안에 회색 파선의 segment prod 상자가 있고, 그 상자가 리전 A, B, C, D 네 개를 모두 품고 있다. 세그먼트 상자에는 전역 — 리전마다 만들지 않는다고 적혀 있다. 리전 상자마다 core network edge 아이콘이 하나씩 들어 있고 리전끼리 잇는 선은 하나도 그려져 있지 않다. 아래에 리전 4개 → edge 4개, edge끼리는 자동으로 연결됩니다, 세그먼트는 정책 한 곳에만 적습니다라고 적혀 있다. 오른쪽은 Transit Gateway다. 리전 A, B, C, D 네 상자가 2×2로 놓여 있고 상자마다 Transit Gateway 아이콘과 라우팅 테이블 아이콘이 따로 하나씩 들어 있다. 네 리전은 선 여섯 개로 모든 쌍이 이어져 있다. 가로 두 개, 세로 두 개, 가운데서 교차하는 대각선 두 개이며, A와 B를 잇는 선 위에만 TGW peering 아이콘과 이름이 붙어 있다. 아래에 리전 4개 → TGW 4개, peering 6개, 라우팅 테이블은 리전마다 따로 만듭니다, peering마다 양쪽 테이블에 경로를 넣습니다라고 적혀 있다. 그림 맨 아래 띠에는 리전이 n개일 때 늘어나는 것: core network edge n개 · Transit Gateway peering n(n−1)/2개라고 적혀 있다. 왼쪽은 선이 없고 오른쪽은 선이 여섯 개라는 모양 차이가 그대로 관리 부담의 차이다](images/diagrams/extra-b-compare.png)
+<figure markdown="span">
+  ![리전 네 개를 Cloud WAN과 Transit Gateway로 각각 이었을 때를 나란히 놓은 비교도. 왼쪽은 AWS Cloud WAN이다. 보라색 파선의 core network 상자 안에 회색 파선의 segment prod 상자가 있고, 그 상자가 리전 A, B, C, D 네 개를 모두 품고 있다. 세그먼트 상자에는 전역 — 리전마다 만들지 않는다고 적혀 있다. 리전 상자마다 core network edge 아이콘이 하나씩 들어 있고 리전끼리 잇는 선은 하나도 그려져 있지 않다. 아래에 리전 4개 → edge 4개, edge끼리는 자동으로 연결됩니다, 세그먼트는 정책 한 곳에만 적습니다라고 적혀 있다. 오른쪽은 Transit Gateway다. 리전 A, B, C, D 네 상자가 2×2로 놓여 있고 상자마다 Transit Gateway 아이콘과 라우팅 테이블 아이콘이 따로 하나씩 들어 있다. 네 리전은 선 여섯 개로 모든 쌍이 이어져 있다. 가로 두 개, 세로 두 개, 가운데서 교차하는 대각선 두 개이며, A와 B를 잇는 선 위에만 TGW peering 아이콘과 이름이 붙어 있다. 아래에 리전 4개 → TGW 4개, peering 6개, 라우팅 테이블은 리전마다 따로 만듭니다, peering마다 양쪽 테이블에 경로를 넣습니다라고 적혀 있다. 그림 맨 아래 띠에는 리전이 n개일 때 늘어나는 것: core network edge n개 · Transit Gateway peering n(n−1)/2개라고 적혀 있다. 왼쪽은 선이 없고 오른쪽은 선이 여섯 개라는 모양 차이가 그대로 관리 부담의 차이다](images/diagrams/extra-b-compare.png)
+  <figcaption>그림 1. Cloud WAN과 Transit Gateway로 같은 구성을 만들 때의 차이</figcaption>
+</figure>
 
 **결과**: 리전이 5개일 때 Transit Gateway peering은 10개, core network edge는 5개임을 계산할 수 있습니다.
 

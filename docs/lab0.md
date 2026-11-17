@@ -2,6 +2,13 @@
 
 이 페이지는 **이론 강의를 듣기 전에** 합니다. Cloud WAN의 core network는 처음 만들 때 최대 30분이 걸립니다([공식 문서](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-getting-started.html)). 그동안에는 attachment(연결)와 policy version(정책 버전)을 만들 수 없습니다. 그래서 스택 2개를 먼저 배포해 두고, 이론 강의를 듣는 동안 core network가 백그라운드로 완성되게 합니다. 배포가 끝나기를 기다리지 않습니다.
 
+지금부터 배포하는 스택 2개가 무엇을 만드는지 먼저 그림으로 봅니다. 분홍색 **CloudFormation** 표시가 붙은 것이 스택이 만드는 것이고, 주황색 **콘솔에서 직접** 표시가 붙은 넷이 여러분이 [2-2](lab1.md)부터 직접 만들 것입니다.
+
+<figure markdown="span">
+  ![AWS Cloud WAN L200 워크숍 전체 구성도. 그림은 왼쪽 아래의 온프레미스에서 시작해 오른쪽 위의 AWS로 이어진다. 생성 주체는 색이 다른 표시로 구분한다. 분홍색 CloudFormation 표시는 스택이 만드는 것, 주황색 콘솔에서 직접 표시는 참가자가 콘솔에서 만드는 것, 먹색 segment= 표시는 그 연결이 배정되는 세그먼트를 뜻한다. 왼쪽 아래, AWS Cloud 테두리 바깥에 회색 온프레미스 박스가 있다. 제목은 온프레미스이고 그 옆에 분홍색 CloudFormation 표시가 붙어 있어 이 박스 전체를 CloudFormation 스택이 만든다는 것을 나타낸다. 제목 아래에는 172.16.1.0/24와 실제로는 서울 리전의 모사 VPC라고 적혀 있다. 박스 안에는 온프레미스 VM 172.16.1.10과, strongSwan·FRR을 돌리며 Elastic IP와 ASN 65000을 가진 VPN 라우터 EC2가 선으로 이어져 있다. 라우터에서 오른쪽으로 인터넷 아이콘(아무도 만들지 않으므로 표시 없음)을 지나 Site-to-Site VPN 아이콘으로 가는데, 그 아래에는 IPsec 터널 2개와 BGP, 그리고 주황색 콘솔에서 직접 표시가 붙어 있다. 이 VPN 연결은 참가자가 콘솔에서 만든다. 거기서 선이 위로 올라가 AWS Cloud 안으로 들어간다. AWS Cloud 안에는 왼쪽에 서울 리전(아시아 태평양(서울) ap-northeast-2), 오른쪽에 오레곤 리전(미국 서부(오레곤) us-west-2)이 있다. 서울 리전 위쪽에는 VPC 세 개가 나란히 있다. prod VPC 10.10.1.0/24에 EC2 10.10.1.10, dev VPC 10.20.1.0/24에 EC2 10.20.1.10, shared VPC 10.30.1.0/24에 EC2 10.30.1.10이 각각 서브넷 안에 있다. 오레곤 리전 위쪽에는 VPC 두 개가 있다. prod VPC 10.11.1.0/24에 EC2 10.11.1.10, dev VPC 10.21.1.0/24에 EC2 10.21.1.10이다. 두 리전을 가로질러 보라색 점선 띠가 지나가는데 이것이 AWS Cloud WAN의 core network이고, 그 안에는 위에서부터 prod, dev, shared 세그먼트 행이 있고 그 아래 core network edge 행, 맨 아래 onprem 세그먼트 행이 있다. edge 행에는 서울 edge(ASN 64512)와 오레곤 edge(ASN 64513)가 있고 둘은 AWS 백본이라고 적힌 선으로 이어져 있다. 서울의 세 VPC에서 각각 선이 아래로 내려와 서울 edge에, 오레곤의 두 VPC에서 각각 선이 내려와 오레곤 edge에 연결된다. 각 선이 자기 세그먼트 행과 만나는 자리에는 회색 점이 찍혀 그 연결이 어느 세그먼트에 배정되는지를 보여 준다. dev 세그먼트 행에는 점이 둘 있는데, 서울 dev VPC와 오레곤 dev VPC가 같은 세그먼트에 들어가 리전을 넘어 통신한다는 뜻이다. 선마다 옆에 표시가 붙어 있다. 서울 prod는 segment=prod와 분홍 CloudFormation, 서울 dev는 segment=dev와 분홍 CloudFormation, 서울 shared는 segment=shared와 분홍 CloudFormation으로 세 연결 모두 CloudFormation이 만든다. 오레곤 prod는 segment=prod와 주황 콘솔에서 직접으로 참가자가 본편 실습에서 만들고, 오레곤 dev는 segment=dev, 주황 콘솔에서 직접, 그리고 추가 과제 3-1이라는 글귀가 붙어 참가자가 추가 과제에서 만든다. 온프레미스에서 올라온 선은 onprem 세그먼트 행에서 점을 찍고 서울 edge로 들어가며, 그 옆에 먹색 segment=onprem과 주황 콘솔에서 직접 표시가 붙어 있다. 이 VPN attachment도 참가자가 만든다. 정리하면 참가자가 콘솔에서 직접 만드는 것은 주황 표시가 붙은 네 가지다. VPN 연결, VPN attachment, 오레곤 prod 연결, 오레곤 dev 연결(추가 과제)이다. 나머지(온프레미스 환경 전체, 다섯 개 VPC와 EC2, 서울의 연결 세 개, core network와 세그먼트)는 CloudFormation 스택이 만든다. 그림 아래 범례는 네 가지를 설명한다. 연결선과 세그먼트 행이 만나는 점은 그 연결이 배정된 세그먼트이며 배정은 연결에 붙인 segment 태그로 결정된다는 것, AWS 백본은 두 core network edge 사이의 자동 연결이라 참가자가 만들 것이 없다는 것, 추가 과제 3-1은 본편 실습이 아니라 추가 과제에서 만드는 연결이라는 것, 그리고 CloudFormation은 스택이 만들고 콘솔에서 직접은 참가자가 만든다는 것이다](images/architecture.png)
+  <figcaption>그림 1. 워크숍 전체 구성 — 분홍색은 스택이, 주황색은 참가자가 만듭니다</figcaption>
+</figure>
+
 ## 2-1-a. 콘솔에 로그인하기 { #lab0-a }
 
 1. 강사가 알려 준 계정 정보로 AWS 콘솔에 로그인합니다.
@@ -76,6 +83,12 @@
 준비가 끝났는지는 스택 상태가 아니라 **Policy versions** 화면에서 봅니다. core network는 스택보다 먼저 준비되므로, 스택이 **CREATE_COMPLETE**가 되기를 기다릴 필요가 없습니다. 지금은 보는 법만 익히고, 실제 확인은 이론 강의가 끝난 뒤 실습 2-2 시작 전에 합니다.
 
 1. **Network Manager** 콘솔 → **Global networks**를 엽니다. Cloud WAN은 리전에 묶이지 않아서 오른쪽 위 리전 선택에 **Global** 이 뜹니다.
+
+    !!! tip "Network Manager 화면은 어디에 있나요"
+        서비스 목록에 **Network Manager** 라는 이름으로 따로 있지 않습니다. 둘 중 편한 쪽으로 가세요.
+
+        - 콘솔 맨 위 **검색창**에 `Cloud WAN` 을 칩니다. **Cloud WAN**(**VPC feature** 로 분류됩니다)이 나오면 그것을 누릅니다.
+        - 또는 **VPC** 콘솔을 열고 왼쪽 메뉴에서 **Get started with Network Manager** 를 누릅니다. Cloud WAN은 VPC 콘솔 안의 기능으로 들어가 있습니다.
 
     ![Network Manager의 Global networks 목록. 스택이 만든 global network 한 개가 ID와 이름 cwan-ws-global, 상태와 함께 한 줄로 보인다. 오른쪽 위에는 Create global network 버튼이 있다](images/console/lab0-cnet-00-global-networks.png){ .shot }
 

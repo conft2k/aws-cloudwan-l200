@@ -168,6 +168,11 @@ rtt min/avg/max/mdev = 1.066/1.655/3.945/1.144 ms
     !!! info "core network를 고르는 칸은 없습니다"
         이미 core network 안에서 연결을 만들고 있기 때문입니다. **Subnets** 칸은 **VPC** 를 고른 뒤에 나타납니다.
 
+    ![오레곤 스택 cloudwan-workshop-oregon의 Outputs 탭. 왼쪽 스택 목록에서 이 스택이 선택되어 있고 CREATE_COMPLETE다. Outputs (13) 표는 Key 오름차순이라 DevAppRouteTableId, DevCwanSubnetAId, DevCwanSubnetBId, DevInstanceId, DevInstancePrivateIp, DevVpcId 여섯 줄이 먼저 보이고, ProdAppRouteTableId는 화면 맨 아래에서 반쯤 잘려 있다. Description 열에 각 값을 어디에 쓰는지가 적혀 있다. 예를 들어 라우트 테이블 항목에는 attachment가 준비된 뒤 10.0.0.0/8과 172.16.0.0/12 경로를 이 테이블에 넣으라고 적혀 있다](images/console/lab1-route-01-outputs.png){ .shot }
+
+    !!! tip "`Prod…` 값은 아래로 스크롤해야 보입니다"
+        **Outputs** 표가 **Key** 오름차순이라 `Dev…` 로 시작하는 여섯 줄이 먼저 나옵니다. 위 그림에서도 `ProdAppRouteTableId` 는 맨 아래에 반쯤 걸려 있습니다. 표를 아래로 내리거나 **Search outputs** 에 `Prod` 를 넣어 거르세요.
+
 5. **Tags**에 태그 하나를 넣습니다. 빈 줄이 이미 하나 있으니 거기에 넣으면 됩니다.
 
     | Key | Value |
@@ -216,8 +221,12 @@ attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행
 
 오레곤 앱 서브넷의 라우트 테이블에 경로 2개를 넣습니다. 리전은 **US West (Oregon)** 그대로입니다.
 
-1. **CloudFormation** 콘솔에서 오레곤 스택 `cloudwan-workshop-oregon`의 **Outputs** 탭을 열고 `ProdAppRouteTableId` 값을 확인합니다.
-2. **VPC** 콘솔 → **Route tables**에서 그 ID의 라우트 테이블(`cwan-ws-prod-app`)을 엽니다.
+1. **VPC** 콘솔 → 왼쪽 메뉴 **Route tables** 를 엽니다.
+2. 표 위의 검색 칸에 `cwan-ws-prod-app` 을 넣어 거르고, 그 라우트 테이블의 이름을 눌러 엽니다. 이것이 오레곤 prod VPC의 **앱 서브넷** 라우트 테이블입니다.
+
+    !!! tip "이름으로 찾는 것이 실제 환경과 같습니다"
+        스택 **Outputs** 의 `ProdAppRouteTableId` 로도 같은 것을 찾을 수 있지만, 실무에서는 스택 출력이 아니라 **이름이나 태그로** 라우트 테이블을 찾습니다. 같은 VPC에 `cwan-ws-prod-cwan`(attachment 전용 서브넷용)도 있으니 **`-app` 으로 끝나는 쪽**인지 확인하세요.
+
 3. **Routes** 탭 → **Edit routes** → **Add route**를 누릅니다.
 4. 아래 두 경로를 넣습니다. 줄이 하나씩 생기므로 **Add route** 는 경로마다 한 번씩 누릅니다. 대상(**Target**)은 종류로 **Core Network** 를 고른 다음 core network를 고릅니다.
 
@@ -227,11 +236,6 @@ attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행
     | `172.16.0.0/12` | core network |
 
 5. **Save changes**를 누릅니다.
-
-![오레곤 스택 cloudwan-workshop-oregon의 Outputs 탭. 왼쪽 스택 목록에서 이 스택이 선택되어 있고 CREATE_COMPLETE다. Outputs (13) 표는 Key 오름차순이라 DevAppRouteTableId, DevCwanSubnetAId, DevCwanSubnetBId, DevInstanceId, DevInstancePrivateIp, DevVpcId 여섯 줄이 먼저 보이고, ProdAppRouteTableId는 화면 맨 아래에서 반쯤 잘려 있다. Description 열에 각 값을 어디에 쓰는지가 적혀 있다. 예를 들어 라우트 테이블 항목에는 attachment가 준비된 뒤 10.0.0.0/8과 172.16.0.0/12 경로를 이 테이블에 넣으라고 적혀 있다](images/console/lab1-route-01-outputs.png){ .shot }
-
-!!! tip "`Prod…` 값은 아래로 스크롤해야 보입니다"
-    표가 **Key** 오름차순이라 `Dev…` 로 시작하는 여섯 줄이 먼저 나옵니다. 위 그림에서도 `ProdAppRouteTableId` 는 맨 아래에 반쯤 걸려 있습니다. 표를 아래로 내리거나 **Search outputs** 에 `Prod` 를 넣어 거르세요.
 
 ![오레곤 앱 서브넷 라우트 테이블의 Edit routes 화면. 제목이 Edit routes: rtb-… / cwan-ws-prod-app이다. 첫 줄은 원래 있던 10.11.1.0/24가 Target local, Status Active로 있고, 그 아래 Add route로 추가한 두 줄이 Destination 10.0.0.0/8과 172.16.0.0/12, Target 종류는 모두 Core Network로 되어 있다. 새로 추가한 줄의 Status는 아직 비어 있고, 화면 아래에 Cancel, Preview, Save changes 버튼이 있다](images/console/lab1-route-02-edit.png){ .shot }
 ![저장이 끝난 라우트 테이블의 Routes 탭. 경로 세 개가 모두 Status Active다. 10.0.0.0/8과 172.16.0.0/12는 Target이 arn:aws:networkmanager로 시작하는 core network이고 Route Origin이 CreateRoute, 10.11.1.0/24는 Target이 local이고 Route Origin이 CreateRouteTable이다](images/console/lab1-route-03-saved.png){ .shot }
