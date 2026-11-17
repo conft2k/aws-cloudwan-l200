@@ -107,8 +107,24 @@ core network에는 **Events** 탭이 있습니다. 연결이 붙고 빠지거나
     그림 3-3-5. 켠 직후 — 아직 이벤트가 없습니다
     { .figcap }
 
-!!! info "켠 뒤의 이벤트만 쌓입니다"
-    이미 지나간 일은 나오지 않습니다. 그래서 [2-4](lab3.md)에서 실행한 change set은 여기에 없습니다. **앞으로 일어나는 것**을 보려면 [3-4. 리소스 정리](extra-d.md)에서 연결을 지울 때 이 탭을 다시 열어 보세요. 연결이 빠지면서 경로가 걷히는 이벤트가 올라옵니다.
+    !!! info "켠 뒤의 이벤트만 쌓입니다"
+        이미 지나간 일은 나오지 않습니다. 그래서 [2-4](lab3.md)에서 실행한 change set은 여기에 없습니다. **앞으로 일어나는 것**부터 쌓입니다.
+
+5. 정책을 적용하거나 연결을 지운 뒤 다시 와 보면 표가 채워져 있습니다. [3-4. 리소스 정리](extra-d.md)에서 연결을 지울 때가 그렇습니다.
+
+    ![이벤트가 쌓인 Events 표. 열은 #, Region, Message, Resource, Timestamp다. 줄마다 왼쪽에 펼치기 삼각형이 있고, Message에는 A change-set has been successfully executed for a Core Network policy., Routes in one or more Segments have been installed., Routes in one or more Segments have been uninstalled., A change-set is ready to execute for a Core Network policy. 네 종류가 섞여 있다. Resource는 모두 같은 core network의 ARN이고 Timestamp는 UTC다. 정책을 한 번 적용하면 change set 이벤트 하나와 세그먼트마다의 경로 설치 이벤트 여러 개가 함께 올라온다](images/console/extraC-06-events-list.png){ .shot }
+
+    그림 3-3-6. 이벤트가 쌓인 Events 표
+    { .figcap }
+
+6. 줄 왼쪽의 **삼각형**을 누르면 그 이벤트 한 건이 가진 값이 모두 펼쳐집니다.
+
+    ![Events 표에서 첫 줄을 펼친 모습. A change-set has been successfully executed for a Core Network policy. 줄 아래로 그 이벤트의 필드가 이름과 값으로 나열된다. @aws.account는 111122223333, @aws.region은 us-west-2, @log는 111122223333:/aws/events/networkmanagerloggroup, @logStream과 @logStreamId는 긴 식별자, @message는 원본 JSON 전체, detail-type은 Network Manager Policy Update, detail.changeDescription은 Message 열과 같은 문장, detail.changeType은 CHANGE_SET_EXECUTED, detail.coreNetworkArn은 core network의 ARN, detail.policyVersionId는 5다](images/console/extraC-07-events-detail.png){ .shot }
+
+    그림 3-3-7. 이벤트 한 건을 펼친 모습
+    { .figcap }
+
+**읽는 법**은 `detail.changeType` 과 `detail.policyVersionId` 두 개면 충분합니다. `CHANGE_SET_EXECUTED` 는 정책이 적용된 순간이고 `SEGMENT_ROUTE_INSTALLED` / `SEGMENT_ROUTE_UNINSTALLED` 는 그 결과로 경로가 깔리거나 걷힌 것입니다. `policyVersionId` 가 몇 번 버전 때문인지 알려 줍니다. **정책 한 번에 경로 이벤트가 여러 개** 올라오는 것은 세그먼트와 edge마다 따로 세기 때문입니다.
 
 **버튼 하나가 무엇을 만드나요.** 셋을 만듭니다. 전부 **오레곤**에 생깁니다. Cloud WAN이 이벤트를 그 리전에 발행하기 때문입니다([3-3-d](#c-d)의 지표와 같은 이유입니다).
 

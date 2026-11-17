@@ -1,16 +1,23 @@
 """3-3-e: the Events tab once events have arrived.
 
-    AWS_PROFILE=demo1 AWS_REGION=us-west-2 \
+    CWAN_GN=global-network-... AWS_PROFILE=demo1 AWS_REGION=us-west-2 \
       uv run --with playwright --with boto3 python tools/console.py \
       tools/shots/extra-events-list.py
 
 Run it while the log has something in it - deleting an attachment or executing a
-change set produces events within a minute. Read-only: it opens the tab, shoots
-the list, expands one row and shoots that. Nothing is created or deleted.
+change set produces events within a minute.
+
+The events table is NOT in the Network Manager page: the tab embeds a CloudWatch
+dashboard widget in its own iframe, which is why looking for the table in the
+main frame finds nothing however long you wait. This walks into that frame and
+clips the shot to the iframe element.
+
+Read-only: it opens the tab, shoots the list, expands one row and shoots that.
 """
+import os
+
+GN = os.environ.get("CWAN_GN", "")
 WAIT = 8000
-NETWORKS = ("https://us-west-2.console.aws.amazon.com"
-            "/networkmanager/home?region=us-west-2#/networks")
 
 
 def cookies():
@@ -24,74 +31,91 @@ def cookies():
                 return
 
 
-goto(NETWORKS)
+def widget():
+    """The frame holding the embedded CloudWatch dashboard, and its iframe box."""
+    for fr in page.frames:
+        if "cloudwatch/dashboard" in (fr.url or ""):
+            try:
+                return fr, fr.frame_element().bounding_box()
+            except Exception:
+                return fr, None
+    return None, None
+
+
+if GN:
+    goto("https://us-west-2.console.aws.amazon.com/networkmanager/home"
+         f"?region=us-west-2#/networks/{GN}/corenetwork/events")
+else:
+    goto("https://us-west-2.console.aws.amazon.com"
+         "/networkmanager/home?region=us-west-2#/networks")
+    page.wait_for_timeout(WAIT)
+    cookies()
+    close_tours()
+    core = app().get_by_role("link", name=re.compile(r"^core-network-"))
+    if not core.count():
+        raise SystemExit("!! core network 링크를 찾지 못했다")
+    core.first.click()
+    page.wait_for_timeout(WAIT)
+    close_tours()
+    for _ in range(8):
+        if [t for t in app().get_by_role("tab").all_inner_texts() if t.strip()]:
+            break
+        page.wait_for_timeout(5000)
+    tab = app().get_by_role("tab", name="Events", exact=True)
+    if not tab.count():
+        raise SystemExit("!! Events 탭이 없다")
+    tab.first.click()
+
 page.wait_for_timeout(WAIT)
 cookies()
 close_tours()
 
-f = app()
-core = f.get_by_role("link", name=re.compile(r"^core-network-"))
-if not core.count():
-    raise SystemExit("!! core network 링크를 찾지 못했다")
-core.first.click()
-page.wait_for_timeout(WAIT)
-close_tours()
-for _ in range(8):
-    f = app()
-    if [t for t in f.get_by_role("tab").all_inner_texts() if t.strip()]:
+# The rows are not reachable as `tbody tr` from the widget frame - whatever the
+# grid renders them as, the text is what to wait for.
+READY = re.compile(r"(have been uninstalled|Core Network policy)")
+fr = None
+for attempt in range(14):
+    fr, box = widget()
+    seen = False
+    for f2 in page.frames:
+        try:
+            if READY.search(f2.locator("body").inner_text()):
+                seen = True
+                break
+        except Exception:
+            pass
+    print(f"   위젯 프레임 {'있음' if fr else '없음'} | 이벤트 글자 {'보임' if seen else '아직'}"
+          f" (시도 {attempt + 1}/14)")
+    if fr is not None and seen:
         break
     page.wait_for_timeout(5000)
 
-tab = app().get_by_role("tab", name="Events", exact=True)
-print("Events 탭:", tab.count())
-if not tab.count():
-    raise SystemExit("!! Events 탭이 없다")
-tab.first.click()
-page.wait_for_timeout(WAIT)
-
-# The panel runs a Logs Insights query, so the rows arrive late. Do not touch the
-# range buttons - clicking one opens a custom-range popover whose own table looks
-# like rows. Find the events table by its Message column and wait for that.
-TABLE = 'table:has(th:text-is("Message"))'
-rows = None
-for attempt in range(12):
-    f = app()
-    rows = f.locator(f"{TABLE} tbody tr")
-    n = rows.count()
-    txt = body(f)
-    state = ("No data found" if "No data found" in txt else "?")
-    print(f"   이벤트 행 {n} | 패널 상태 {state} (시도 {attempt + 1}/12)")
-    if n:
-        break
-    if attempt == 3:
-        r = f.get_by_role("button", name=re.compile(r"[Rr]efresh"))
-        print("   새로 고침 버튼:", r.count())
-        if r.count():
-            r.first.click()
-    page.wait_for_timeout(5000)
-
-f = app()
-if not rows.count():
-    print("!! 이벤트가 아직 없다. 기간 선택(1h/12h)과 로그 그룹을 확인하라")
+if fr is None:
+    print("!! 위젯 프레임을 찾지 못했다")
     shot("extraC-06-events-list")
     raise SystemExit(1)
 
-print("첫 행:", rows.first.inner_text().replace("\n", " | ")[:120])
-panel = f.locator(TABLE).locator("xpath=ancestor::div[3]")
-print("   패널:", panel.count(), panel.first.bounding_box() if panel.count() else None)
-shot("extraC-06-events-list", clip=panel.first if panel.count() else None)
+fr, box = widget()
+print("   위젯 박스:", box)
+if box is None:
+    print("!! 위젯 위치를 재지 못했다")
+    shot("extraC-06-events-list")
+    raise SystemExit(1)
+clip = (box["x"], box["y"], box["x"] + box["width"], box["y"] + min(box["height"], 430))
+shot("extraC-06-events-list", clip=clip)
 
-# Expand one row to show the fields a single event carries.
-tog = rows.first.locator('button[aria-label], [role=button]')
-print("행 안의 버튼:", tog.count(),
-      [tog.nth(i).get_attribute("aria-label") for i in range(min(tog.count(), 4))])
-if tog.count():
-    tog.first.click()
-    page.wait_for_timeout(3500)
-    g = app()
-    print("펼친 뒤 첫 행:", g.locator("table tbody tr").first.inner_text()
-          .replace("\n", " | ")[:200])
-    gp = g.locator(TABLE).locator("xpath=ancestor::div[3]")
-    shot("extraC-07-events-detail", clip=gp.first if gp.count() else None)
+# The first row's disclosure triangle. Scope it to the row - a page-wide button
+# search hits the time-range buttons in the toolbar instead, which silently
+# changes the range to 1h.
+row1 = fr.get_by_role("row").nth(1)
+btns = row1.get_by_role("button")
+print("1행 안의 버튼:", btns.count(),
+      [btns.nth(i).get_attribute("aria-label") for i in range(min(btns.count(), 3))])
+if btns.count():
+    btns.first.click()
+    page.wait_for_timeout(4000)
+    fr, box = widget()
+    clip = (box["x"], box["y"], box["x"] + box["width"], box["y"] + min(box["height"], 600))
+    shot("extraC-07-events-detail", clip=clip)
 else:
     print("!! 행을 펼치는 버튼을 찾지 못했다")
