@@ -134,7 +134,7 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags:
-        - { Key: Name, Value: cwan-ws-vpc-prod }
+        - { Key: Name, Value: cwan-ws-prod-vpc }
 
   ProdAppSubnet:
     Type: AWS::EC2::Subnet
@@ -146,23 +146,23 @@ Resources:
         - { Key: Name, Value: cwan-ws-prod-app-az1 }
 
   # A Cloud WAN VPC attachment takes exactly one subnet per Availability Zone.
-  ProdCwanSubnetA:
+  ProdAttSubnetA:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref ProdVpc
       CidrBlock: 10.10.1.224/28
       AvailabilityZone: !Select [0, !GetAZs ""]
       Tags:
-        - { Key: Name, Value: cwan-ws-prod-cwan-az1 }
+        - { Key: Name, Value: cwan-ws-prod-att-az1 }
 
-  ProdCwanSubnetC:
+  ProdAttSubnetC:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref ProdVpc
       CidrBlock: 10.10.1.240/28
       AvailabilityZone: !Select [1, !GetAZs ""]
       Tags:
-        - { Key: Name, Value: cwan-ws-prod-cwan-az2 }
+        - { Key: Name, Value: cwan-ws-prod-att-az2 }
 
   ProdAppRouteTable:
     Type: AWS::EC2::RouteTable
@@ -177,24 +177,24 @@ Resources:
       SubnetId: !Ref ProdAppSubnet
       RouteTableId: !Ref ProdAppRouteTable
 
-  ProdCwanRouteTable:
+  ProdAttRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref ProdVpc
       Tags:
-        - { Key: Name, Value: cwan-ws-prod-cwan }
+        - { Key: Name, Value: cwan-ws-prod-att }
 
-  ProdCwanRouteTableAssocA:
+  ProdAttRouteTableAssocA:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref ProdCwanSubnetA
-      RouteTableId: !Ref ProdCwanRouteTable
+      SubnetId: !Ref ProdAttSubnetA
+      RouteTableId: !Ref ProdAttRouteTable
 
-  ProdCwanRouteTableAssocC:
+  ProdAttRouteTableAssocC:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref ProdCwanSubnetC
-      RouteTableId: !Ref ProdCwanRouteTable
+      SubnetId: !Ref ProdAttSubnetC
+      RouteTableId: !Ref ProdAttRouteTable
 
   ProdAttachment:
     Type: AWS::NetworkManager::VpcAttachment
@@ -202,8 +202,8 @@ Resources:
       CoreNetworkId: !GetAtt CoreNetwork.CoreNetworkId
       VpcArn: !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:vpc/${ProdVpc}"
       SubnetArns:
-        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${ProdCwanSubnetA}"
-        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${ProdCwanSubnetC}"
+        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${ProdAttSubnetA}"
+        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${ProdAttSubnetC}"
       Options:
         ApplianceModeSupport: false
         Ipv6Support: false
@@ -344,7 +344,7 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags:
-        - { Key: Name, Value: cwan-ws-vpc-dev }
+        - { Key: Name, Value: cwan-ws-dev-vpc }
 
   DevAppSubnet:
     Type: AWS::EC2::Subnet
@@ -355,23 +355,23 @@ Resources:
       Tags:
         - { Key: Name, Value: cwan-ws-dev-app-az1 }
 
-  DevCwanSubnetA:
+  DevAttSubnetA:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref DevVpc
       CidrBlock: 10.20.1.224/28
       AvailabilityZone: !Select [0, !GetAZs ""]
       Tags:
-        - { Key: Name, Value: cwan-ws-dev-cwan-az1 }
+        - { Key: Name, Value: cwan-ws-dev-att-az1 }
 
-  DevCwanSubnetC:
+  DevAttSubnetC:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref DevVpc
       CidrBlock: 10.20.1.240/28
       AvailabilityZone: !Select [1, !GetAZs ""]
       Tags:
-        - { Key: Name, Value: cwan-ws-dev-cwan-az2 }
+        - { Key: Name, Value: cwan-ws-dev-att-az2 }
 
   DevAppRouteTable:
     Type: AWS::EC2::RouteTable
@@ -386,24 +386,24 @@ Resources:
       SubnetId: !Ref DevAppSubnet
       RouteTableId: !Ref DevAppRouteTable
 
-  DevCwanRouteTable:
+  DevAttRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref DevVpc
       Tags:
-        - { Key: Name, Value: cwan-ws-dev-cwan }
+        - { Key: Name, Value: cwan-ws-dev-att }
 
-  DevCwanRouteTableAssocA:
+  DevAttRouteTableAssocA:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref DevCwanSubnetA
-      RouteTableId: !Ref DevCwanRouteTable
+      SubnetId: !Ref DevAttSubnetA
+      RouteTableId: !Ref DevAttRouteTable
 
-  DevCwanRouteTableAssocC:
+  DevAttRouteTableAssocC:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref DevCwanSubnetC
-      RouteTableId: !Ref DevCwanRouteTable
+      SubnetId: !Ref DevAttSubnetC
+      RouteTableId: !Ref DevAttRouteTable
 
   DevAttachment:
     Type: AWS::NetworkManager::VpcAttachment
@@ -411,8 +411,8 @@ Resources:
       CoreNetworkId: !GetAtt CoreNetwork.CoreNetworkId
       VpcArn: !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:vpc/${DevVpc}"
       SubnetArns:
-        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${DevCwanSubnetA}"
-        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${DevCwanSubnetC}"
+        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${DevAttSubnetA}"
+        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${DevAttSubnetC}"
       Options:
         ApplianceModeSupport: false
         Ipv6Support: false
@@ -552,7 +552,7 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags:
-        - { Key: Name, Value: cwan-ws-vpc-shared }
+        - { Key: Name, Value: cwan-ws-shared-vpc }
 
   SharedAppSubnet:
     Type: AWS::EC2::Subnet
@@ -563,23 +563,23 @@ Resources:
       Tags:
         - { Key: Name, Value: cwan-ws-shared-app-az1 }
 
-  SharedCwanSubnetA:
+  SharedAttSubnetA:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref SharedVpc
       CidrBlock: 10.30.1.224/28
       AvailabilityZone: !Select [0, !GetAZs ""]
       Tags:
-        - { Key: Name, Value: cwan-ws-shared-cwan-az1 }
+        - { Key: Name, Value: cwan-ws-shared-att-az1 }
 
-  SharedCwanSubnetC:
+  SharedAttSubnetC:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref SharedVpc
       CidrBlock: 10.30.1.240/28
       AvailabilityZone: !Select [1, !GetAZs ""]
       Tags:
-        - { Key: Name, Value: cwan-ws-shared-cwan-az2 }
+        - { Key: Name, Value: cwan-ws-shared-att-az2 }
 
   SharedAppRouteTable:
     Type: AWS::EC2::RouteTable
@@ -594,24 +594,24 @@ Resources:
       SubnetId: !Ref SharedAppSubnet
       RouteTableId: !Ref SharedAppRouteTable
 
-  SharedCwanRouteTable:
+  SharedAttRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref SharedVpc
       Tags:
-        - { Key: Name, Value: cwan-ws-shared-cwan }
+        - { Key: Name, Value: cwan-ws-shared-att }
 
-  SharedCwanRouteTableAssocA:
+  SharedAttRouteTableAssocA:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref SharedCwanSubnetA
-      RouteTableId: !Ref SharedCwanRouteTable
+      SubnetId: !Ref SharedAttSubnetA
+      RouteTableId: !Ref SharedAttRouteTable
 
-  SharedCwanRouteTableAssocC:
+  SharedAttRouteTableAssocC:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref SharedCwanSubnetC
-      RouteTableId: !Ref SharedCwanRouteTable
+      SubnetId: !Ref SharedAttSubnetC
+      RouteTableId: !Ref SharedAttRouteTable
 
   SharedAttachment:
     Type: AWS::NetworkManager::VpcAttachment
@@ -619,8 +619,8 @@ Resources:
       CoreNetworkId: !GetAtt CoreNetwork.CoreNetworkId
       VpcArn: !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:vpc/${SharedVpc}"
       SubnetArns:
-        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SharedCwanSubnetA}"
-        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SharedCwanSubnetC}"
+        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SharedAttSubnetA}"
+        - !Sub "arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${SharedAttSubnetC}"
       Options:
         ApplianceModeSupport: false
         Ipv6Support: false
@@ -725,7 +725,7 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags:
-        - { Key: Name, Value: cwan-ws-vpc-onprem }
+        - { Key: Name, Value: cwan-ws-onprem-vpc }
 
   OnPremIgw:
     Type: AWS::EC2::InternetGateway

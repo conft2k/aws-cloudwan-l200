@@ -50,23 +50,23 @@ Resources:
       Tags:
         - { Key: Name, Value: cwan-ws-prod-app-az1 }
 
-  ProdCwanSubnetA:
+  ProdAttSubnetA:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref ProdVpc
       CidrBlock: 10.11.1.224/28
       AvailabilityZone: !Select [0, !GetAZs ""]   # the Region's first AZ
       Tags:
-        - { Key: Name, Value: cwan-ws-prod-cwan-az1 }
+        - { Key: Name, Value: cwan-ws-prod-att-az1 }
 
-  ProdCwanSubnetB:
+  ProdAttSubnetB:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref ProdVpc
       CidrBlock: 10.11.1.240/28
       AvailabilityZone: !Select [1, !GetAZs ""]   # the Region's second AZ (attachment ENIs only)
       Tags:
-        - { Key: Name, Value: cwan-ws-prod-cwan-az2 }
+        - { Key: Name, Value: cwan-ws-prod-att-az2 }
 
   # The app route table has no Cloud WAN routes on purpose: the participant adds
   # 10.0.0.0/8 and 172.16.0.0/12 -> core network after creating the attachment.
@@ -83,24 +83,24 @@ Resources:
       SubnetId: !Ref ProdAppSubnet
       RouteTableId: !Ref ProdAppRouteTable
 
-  ProdCwanRouteTable:
+  ProdAttRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref ProdVpc
       Tags:
-        - { Key: Name, Value: cwan-ws-prod-cwan }
+        - { Key: Name, Value: cwan-ws-prod-att }
 
-  ProdCwanRouteTableAssocA:
+  ProdAttRouteTableAssocA:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref ProdCwanSubnetA
-      RouteTableId: !Ref ProdCwanRouteTable
+      SubnetId: !Ref ProdAttSubnetA
+      RouteTableId: !Ref ProdAttRouteTable
 
-  ProdCwanRouteTableAssocB:
+  ProdAttRouteTableAssocB:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref ProdCwanSubnetB
-      RouteTableId: !Ref ProdCwanRouteTable
+      SubnetId: !Ref ProdAttSubnetB
+      RouteTableId: !Ref ProdAttRouteTable
 
   ProdEiceSg:
     Type: AWS::EC2::SecurityGroup
@@ -214,23 +214,23 @@ Resources:
       Tags:
         - { Key: Name, Value: cwan-ws-dev-app-az1 }
 
-  DevCwanSubnetA:
+  DevAttSubnetA:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref DevVpc
       CidrBlock: 10.21.1.224/28
       AvailabilityZone: !Select [0, !GetAZs ""]   # the Region's first AZ
       Tags:
-        - { Key: Name, Value: cwan-ws-dev-cwan-az1 }
+        - { Key: Name, Value: cwan-ws-dev-att-az1 }
 
-  DevCwanSubnetB:
+  DevAttSubnetB:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref DevVpc
       CidrBlock: 10.21.1.240/28
       AvailabilityZone: !Select [1, !GetAZs ""]   # the Region's second AZ (attachment ENIs only)
       Tags:
-        - { Key: Name, Value: cwan-ws-dev-cwan-az2 }
+        - { Key: Name, Value: cwan-ws-dev-att-az2 }
 
   DevAppRouteTable:
     Type: AWS::EC2::RouteTable
@@ -245,24 +245,24 @@ Resources:
       SubnetId: !Ref DevAppSubnet
       RouteTableId: !Ref DevAppRouteTable
 
-  DevCwanRouteTable:
+  DevAttRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref DevVpc
       Tags:
-        - { Key: Name, Value: cwan-ws-dev-cwan }
+        - { Key: Name, Value: cwan-ws-dev-att }
 
-  DevCwanRouteTableAssocA:
+  DevAttRouteTableAssocA:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref DevCwanSubnetA
-      RouteTableId: !Ref DevCwanRouteTable
+      SubnetId: !Ref DevAttSubnetA
+      RouteTableId: !Ref DevAttRouteTable
 
-  DevCwanRouteTableAssocB:
+  DevAttRouteTableAssocB:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref DevCwanSubnetB
-      RouteTableId: !Ref DevCwanRouteTable
+      SubnetId: !Ref DevAttSubnetB
+      RouteTableId: !Ref DevAttRouteTable
 
   DevEc2Sg:
     Type: AWS::EC2::SecurityGroup
@@ -354,12 +354,12 @@ Outputs:
   ProdVpcId:
     Description: Prod VPC (10.11.1.0/24). Select it when you create the prod Cloud WAN VPC attachment (tag segment=prod).
     Value: !Ref ProdVpc
-  ProdCwanSubnetAId:
+  ProdAttSubnetAId:
     Description: Prod subnet for the attachment, AZ 1 (10.11.1.224/28).
-    Value: !Ref ProdCwanSubnetA
-  ProdCwanSubnetBId:
+    Value: !Ref ProdAttSubnetA
+  ProdAttSubnetBId:
     Description: Prod subnet for the attachment, AZ 2 (10.11.1.240/28).
-    Value: !Ref ProdCwanSubnetB
+    Value: !Ref ProdAttSubnetB
   ProdInstancePrivateIp:
     Description: Private IP of the prod test EC2.
     Value: !GetAtt ProdInstance.PrivateIp
@@ -374,12 +374,12 @@ Outputs:
   DevVpcId:
     Description: Dev VPC (10.21.1.0/24). Select it when you create the dev Cloud WAN VPC attachment (tag segment=dev) in the extra exercise.
     Value: !Ref DevVpc
-  DevCwanSubnetAId:
+  DevAttSubnetAId:
     Description: Dev subnet for the attachment, AZ 1 (10.21.1.224/28).
-    Value: !Ref DevCwanSubnetA
-  DevCwanSubnetBId:
+    Value: !Ref DevAttSubnetA
+  DevAttSubnetBId:
     Description: Dev subnet for the attachment, AZ 2 (10.21.1.240/28).
-    Value: !Ref DevCwanSubnetB
+    Value: !Ref DevAttSubnetB
   DevInstancePrivateIp:
     Description: Private IP of the dev test EC2.
     Value: !GetAtt DevInstance.PrivateIp
