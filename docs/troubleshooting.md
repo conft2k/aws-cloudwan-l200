@@ -18,6 +18,7 @@
 | 정책을 고치려는데 JSON은 없고 입력 폼만 나온다 | **Choose policy view mode** | 기본값이 **Visual editor** 입니다. **JSON** 으로 바꾸면 현재 정책 전체가 줄 번호가 달린 편집기에 나옵니다([2-4-a](lab3.md#lab3-a)) |
 | change set이 **Out of date** 라서 실행할 수 없다 | core network → **Policy versions** | 다른 버전이 먼저 적용되어 그 change set은 쓸 수 없게 된 것입니다. **LIVE** 버전을 골라 **Edit** 로 새 버전을 다시 만드세요([2-4-a](lab3.md#lab3-a)) |
 | VPN 연결을 만들어 두었는데 Cloud WAN에 붙일 수 없다 | VPN 연결을 만들 때 고른 두 값 | Cloud WAN에 붙일 VPN 연결은 **Target gateway type** 이 **Not associated** 이고 **Routing options** 가 **Dynamic (requires BGP)** 여야 합니다. 다르게 만들었다면 그 VPN 연결을 지우고 다시 만듭니다([2-3-a](lab2.md#lab2-a)) |
+| 터널 설정 스크립트가 `FAILED at: waiting for the IPsec security associations` 로 끝난다 | core network → **Attachments** 에서 VPN 연결의 상태 | 거의 언제나 **attachment가 아직 `Available` 이 아닌 것**입니다. `Pending network update` 면 아직입니다. 화면은 보안 그룹과 customer gateway 주소를 의심하라고 알려 주지만, 스택이 만든 보안 그룹은 UDP 500·4500을 이미 열어 두었습니다. `Available` 이 된 뒤 **같은 명령을 그대로 다시 실행**하면 됩니다([2-3-b](lab2.md#lab2-b)) |
 | VPN 터널이 올라오지 않는다 | VPN 연결 → **Tunnel details** | Cloud WAN VPN은 attachment를 붙인 **뒤에** AWS 쪽 터널 엔드포인트가 생깁니다. 순서가 [2-3-a](lab2.md#lab2-a) → [2-3-b](lab2.md#lab2-b) → [2-3-c](lab2.md#lab2-c) 인 이유입니다. attachment가 **Available** 인지 먼저 봅니다 |
 | 터널 설정 스크립트가 실패한다 | 스크립트가 출력한 `FAILED at:` 줄 | 어느 단계에서 멈췄는지 알려 줍니다. VPN 연결 ID를 제대로 넣었는지, attachment가 **Available** 인지 확인하고 다시 실행합니다 |
 | BGP 세션이 올라오지 않는다 | 라우터에서 `sudo vtysh -c 'show bgp summary'` | attachment가 없으면 AWS 쪽 BGP 이웃이 생기지 않습니다. attachment 상태를 먼저 봅니다. 올라온 이웃은 **Up/Down** 열이 시간으로 세어지고, 아직이면 그 자리에 `Active` 나 `Connect` 가 나옵니다([2-3-c](lab2.md#lab2-c)) |

@@ -78,14 +78,17 @@ attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 at
 
 ![core network의 Attachments 목록. 맨 윗줄에 cwan-ws-att-onprem-apne2가 생겨 모두 다섯 줄이다. 이 줄만 Resource type이 VPN이고 나머지 네 줄은 VPC다. 새 줄은 Edge location이 ap-northeast-2, State가 초록색 Available, Segment가 onprem이다. 아래 네 줄은 2-2-d까지 만든 연결로 cwan-ws-att-prod-apne2가 prod, cwan-ws-att-prod-usw2가 us-west-2의 prod, cwan-ws-att-dev-apne2가 dev, cwan-ws-att-shared-apne2가 shared다](images/console/lab2-attach-02-available.png){ .shot }
 
-**결과**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. `Available` 이 되기까지 **3~4분** 걸립니다.
+**결과**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. `Available` 이 되기까지 **5분 안팎** 걸립니다. 상태는 `Creating` → `Pending network update` → `Available` 순으로 바뀝니다.
+
+!!! warning "`Pending network update` 는 아직 끝난 것이 아닙니다"
+    이 글자가 보이면 core network가 이 연결을 반영하는 중입니다. **여기서 [2-3-c](#lab2-c)로 넘어가면 터널이 올라오지 않습니다.** 그런데 실패 화면은 보안 그룹과 customer gateway 주소를 의심하라고 알려 주기 때문에, 멀쩡한 곳을 뒤지게 됩니다. **`Available` 글자를 눈으로 본 뒤에** 넘어가세요.
 
 ## 2-3-c. 온프레미스 라우터에 터널 설정하기 { #lab2-c }
 
 !!! info "순서가 a → b → c인 이유"
     AWS 쪽 VPN 터널 엔드포인트는 attachment를 붙인 뒤에 만들어집니다. 그 전에는 customer gateway 장비(여기서는 VPN 라우터)를 설정할 수 없습니다. ([Cloud WAN Site-to-Site VPN attachment](https://docs.aws.amazon.com/network-manager/latest/cloudwan/cloudwan-s2s-vpn-attachment.html)) 그래서 VPN 연결을 만들고(a), attachment를 붙이고(b), 그다음에 라우터를 설정합니다(c).
 
-    [2-3-b](#lab2-b)의 attachment가 **Available** 이 된 것을 확인한 뒤에 시작하세요. attachment가 없으면 AWS 쪽에 BGP 상대가 없어서, 터널은 올라와도 BGP 단계에서 멈춥니다.
+    [2-3-b](#lab2-b)의 attachment가 **Available** 이 된 것을 확인한 뒤에 시작하세요. `Pending network update` 는 아직입니다. 일찍 시작하면 스크립트가 2분을 기다린 끝에 `FAILED at: waiting for the IPsec security associations` 로 끝납니다. 이때는 고친 곳이 없으니 **attachment가 `Available` 이 된 뒤 같은 명령을 다시 실행하면 됩니다.**
 
 VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는 스크립트가 들어 있습니다. VPN 연결 ID만 넣고 실행합니다.
 

@@ -1615,10 +1615,14 @@ Mappings:
         fi
         if [ "$UP" -lt 1 ]; then
             printf '    no security association came up after two minutes.\n'
-            printf '    Check: the security group allows UDP 500 and 4500 from the AWS tunnel\n'
-            printf '    outside addresses %s and %s, and the VPN connection uses customer\n' \
+            printf '    First: is the Cloud WAN VPN attachment Available yet? Network Manager\n'
+            printf '    -> core network -> Attachments. "Pending network update" is not ready,\n'
+            printf '    and starting early fails exactly like this. Nothing is broken - wait for\n'
+            printf '    Available and run this same command again.\n'
+            printf '    Only if it was already Available: the security group must allow UDP 500\n'
+            printf '    and 4500 from the AWS tunnel outside addresses %s and %s,\n' \
                 "$T1_AWS_OUTSIDE" "$T2_AWS_OUTSIDE"
-            printf '    gateway address %s.\n' "$PUBLIC_IP"
+            printf '    and the VPN connection must use customer gateway address %s.\n' "$PUBLIC_IP"
             die "no IPsec tunnel came up. Run 'swanctl --list-sas' and 'journalctl -u ${SWAN_UNIT}'"
         fi
         ok "${UP} IPsec security association(s) established"
