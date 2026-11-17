@@ -38,7 +38,10 @@
 
 4. **Create VPN connection**을 누릅니다.
 
-![Create VPN connection 화면의 Details 패널. Name tag - optional에 cwan-ws-vpn이 들어 있다. Target gateway type은 Virtual private gateway, Transit gateway, Site-to-Site VPN Concentrator, Not associated 네 가지 중 맨 아래 Not associated가 선택되어 있다. Customer gateway는 Existing이 선택되고 Customer gateway ID에 스택이 만든 cgw-로 시작하는 값이 들어 있다. Routing options는 Dynamic (requires BGP)가 선택되어 있고 Static은 선택되지 않았다. 그 아래 Pre-shared key storage, Tunnel bandwidth, Tunnel inside IP version은 모두 기본값이다](images/console/lab2-vpn-01-create.png){ .shot }
+<figure markdown="span">
+  ![Create VPN connection 화면의 Details 패널. Name tag - optional에 cwan-ws-vpn이 들어 있다. Target gateway type은 Virtual private gateway, Transit gateway, Site-to-Site VPN Concentrator, Not associated 네 가지 중 맨 아래 Not associated가 선택되어 있다. Customer gateway는 Existing이 선택되고 Customer gateway ID에 스택이 만든 cgw-로 시작하는 값이 들어 있다. Routing options는 Dynamic (requires BGP)가 선택되어 있고 Static은 선택되지 않았다. 그 아래 Pre-shared key storage, Tunnel bandwidth, Tunnel inside IP version은 모두 기본값이다](images/console/lab2-vpn-01-create.png){ .shot }
+  <figcaption>그림 2. Site-to-Site VPN 연결 만들기 화면</figcaption>
+</figure>
 
 !!! info "Target gateway type을 `Not associated`로 두는 이유"
     VPN 연결은 보통 Transit Gateway나 가상 프라이빗 게이트웨이에 연결해 만듭니다. Cloud WAN에 붙일 VPN 연결은 어느 게이트웨이에도 연결하지 않은 상태로 만들고, 다음 단계(2-3-b)에서 core network에 attachment로 붙입니다.
@@ -72,11 +75,17 @@
 
 5. **Create attachment**를 누릅니다.
 
-![Create attachment 화면의 Attachment settings 패널. Name - optional에 cwan-ws-att-onprem-apne2가 들어 있고, Attachment type 드롭다운이 VPN, Edge location 드롭다운이 Asia Pacific (Seoul)로 되어 있다. VPN 연결을 고르는 VPN ID 칸은 종류를 VPN으로 바꾼 뒤에 이 아래에 나타난다](images/console/lab2-attach-01-form.png){ .shot }
+<figure markdown="span">
+  ![Create attachment 화면의 Attachment settings 패널. Name - optional에 cwan-ws-att-onprem-apne2가 들어 있고, Attachment type 드롭다운이 VPN, Edge location 드롭다운이 Asia Pacific (Seoul)로 되어 있다. VPN 연결을 고르는 VPN ID 칸은 종류를 VPN으로 바꾼 뒤에 이 아래에 나타난다](images/console/lab2-attach-01-form.png){ .shot }
+  <figcaption>그림 3. core network 연결(attachment) 만들기 화면</figcaption>
+</figure>
 
 attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 attachment를 배정합니다. 그래서 이 태그 하나로 VPN이 `onprem` 세그먼트에 들어갑니다.
 
-![core network의 Attachments 목록. 맨 윗줄에 cwan-ws-att-onprem-apne2가 생겨 모두 다섯 줄이다. 이 줄만 Resource type이 VPN이고 나머지 네 줄은 VPC다. 새 줄은 Edge location이 ap-northeast-2, State가 초록색 Available, Segment가 onprem이다. 아래 네 줄은 2-2-d까지 만든 연결로 cwan-ws-att-prod-apne2가 prod, cwan-ws-att-prod-usw2가 us-west-2의 prod, cwan-ws-att-dev-apne2가 dev, cwan-ws-att-shared-apne2가 shared다](images/console/lab2-attach-02-available.png){ .shot }
+<figure markdown="span">
+  ![core network의 Attachments 목록. 맨 윗줄에 cwan-ws-att-onprem-apne2가 생겨 모두 다섯 줄이다. 이 줄만 Resource type이 VPN이고 나머지 네 줄은 VPC다. 새 줄은 Edge location이 ap-northeast-2, State가 초록색 Available, Segment가 onprem이다. 아래 네 줄은 2-2-d까지 만든 연결로 cwan-ws-att-prod-apne2가 prod, cwan-ws-att-prod-usw2가 us-west-2의 prod, cwan-ws-att-dev-apne2가 dev, cwan-ws-att-shared-apne2가 shared다](images/console/lab2-attach-02-available.png){ .shot }
+  <figcaption>그림 4. core network의 Attachments 목록</figcaption>
+</figure>
 
 **결과**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. `Available` 이 되기까지 **5분 안팎** 걸립니다. 상태는 `Creating` → `Pending network update` → `Available` 순으로 바뀝니다.
 
@@ -188,7 +197,10 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
 5. 콘솔에서도 확인합니다. **VPC** 콘솔 → **Site-to-Site VPN connections** → 2-3-a에서 만든 연결 → **Tunnel details** 탭을 엽니다. 그 안의 **Tunnel state** 표를 봅니다.
 
-![Site-to-Site VPN 연결의 Tunnel details 탭에 있는 Tunnel state 표. 두 줄이 Tunnel 1과 Tunnel 2이고, 각각 AWS 쪽 Outside IP address와 Inside IPv4 CIDR(169.254.x.x/30)을 가진다. 둘 다 Status가 초록색 Up, Provisioning status가 Available이고 Details 열에 1 BGP ROUTES라고 적혀 있다. Inside IPv4 CIDR의 두 대역이 라우터에서 본 BGP 이웃 주소가 나온 자리다](images/console/lab2-vpn-02-tunnels.png){ .shot }
+<figure markdown="span">
+  ![Site-to-Site VPN 연결의 Tunnel details 탭에 있는 Tunnel state 표. 두 줄이 Tunnel 1과 Tunnel 2이고, 각각 AWS 쪽 Outside IP address와 Inside IPv4 CIDR(169.254.x.x/30)을 가진다. 둘 다 Status가 초록색 Up, Provisioning status가 Available이고 Details 열에 1 BGP ROUTES라고 적혀 있다. Inside IPv4 CIDR의 두 대역이 라우터에서 본 BGP 이웃 주소가 나온 자리다](images/console/lab2-vpn-02-tunnels.png){ .shot }
+  <figcaption>그림 5. VPN 연결의 Tunnel details 탭</figcaption>
+</figure>
 
 **결과**
 
@@ -215,9 +227,15 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
     ![core network Routes 탭에서 Segment를 onprem, Edge location을 ap-northeast-2로 조회한 결과. 경로가 두 개뿐이다. 10.30.1.0/24는 Destinations가 서울 shared attachment와 그 VPC이고, 172.16.1.0/24는 Destinations가 VPN attachment와 vpn 연결 ID다. 둘 다 Route type이 PROPAGATED, Route state가 ACTIVE다. prod 대역 10.10.1.0/24는 이 표에 없다](images/console/lab2-routes-01-onprem-segment.png){ .shot }
 
+    그림 6. onprem 세그먼트의 Routes 조회 결과
+    { .figcap }
+
 3. 같은 방법으로 **Segment** 를 `shared` 로 바꿔 다시 조회합니다.
 
     ![같은 Routes 탭에서 Segment만 shared로 바꿔 조회한 결과. 경로가 다섯 개다. 서울 prod 10.10.1.0/24, shared 10.30.1.0/24, dev 10.20.1.0/24가 각자 attachment와 VPC를 가리키고, 172.16.1.0/24는 VPN attachment를, 10.11.1.0/24는 shared | us-west-2를 가리킨다. 다섯 줄 모두 Route type이 PROPAGATED, Route state가 ACTIVE다. 온프레미스가 광고한 172.16.1.0/24가 여기까지 전파된 것이 보인다](images/console/lab2-routes-02-shared-segment.png){ .shot }
+
+    그림 7. shared 세그먼트의 Routes 조회 결과
+    { .figcap }
 
 **결과**
 

@@ -17,6 +17,9 @@
 
     ![콘솔 오른쪽 위를 잘라낸 화면. 위쪽 줄에 CloudShell, 알림, 도움말 아이콘에 이어 파란색으로 켜진 톱니바퀴 아이콘이 있고 그 오른쪽에 리전 선택 메뉴 Asia Pacific (Seoul)이 있다. 톱니바퀴 아래로 Current user settings 창이 열려 있다. 창 안에는 Language 항목에 Browser default가 선택된 드롭다운이 있고, 그 아래 Visual mode - beta 항목에 Browser default, Light, Dark 세 개의 라디오 버튼이 있으며 Light가 선택되어 있다. 맨 아래에는 See all user settings 링크가 있다. 언어는 이 창에서 바꾸고, 콘솔 아래쪽 푸터에는 언어를 바꾸는 항목이 없다](images/console/lab0-login-01-region-language.png){ .shot }
 
+    그림 2. 콘솔 오른쪽 위의 Current user settings 창
+    { .figcap }
+
     !!! tip "기본값이 **Browser default** 라서 이 단계가 필요합니다"
         브라우저가 한국어면 콘솔도 한국어로 나옵니다. 콘솔 **아래쪽 푸터에는 언어를 바꾸는 항목이 없습니다**. 더 많은 설정은 같은 창의 **See all user settings** 에 있습니다.
 
@@ -40,9 +43,15 @@
 
     ![CloudFormation의 Create stack 1단계 Specify template 패널. Template source에서 Amazon S3 URL, Upload a template file, Sync from Git 세 가지 중 가운데 Upload a template file이 선택되어 있고, 그 아래 Choose file 버튼 옆 칸에 고른 파일 이름 cloudwan-workshop-seoul.yaml이 들어 있다. 패널 맨 아래에는 콘솔이 템플릿을 올려 둔 S3 URL이 표시된다](images/console/lab0-cfn-01-upload.png){ .shot }
 
+    그림 3. Create stack의 Specify template 패널
+    { .figcap }
+
 5. **Stack name**에 `cloudwan-workshop-seoul`을 넣습니다. **Parameters**는 그대로 두고 **Next**를 누릅니다.
 
     ![Create stack 2단계 Specify stack details 화면. 위쪽 Provide a stack name 패널의 Stack name 칸에 cloudwan-workshop-seoul이 입력되어 있다. 아래 Parameters 패널은 Nothing to enter - deploy with the defaults와 Addresses and ASNs (leave the defaults) 두 묶음으로 나뉘고, ImageId와 RouterImageId는 Amazon Linux 2023 arm64 SSM 파라미터 경로가, InstanceType은 t4g.micro가, ProdVpcCidr은 10.10.1.0/24가 기본값으로 채워져 있다. 참가자가 고칠 값은 없다](images/console/lab0-cfn-02-parameters.png){ .shot }
+
+    그림 4. Create stack의 Specify stack details 화면
+    { .figcap }
 
 6. **Configure stack options** 화면에서도 **Next**를 누릅니다. 마지막 **Review and create** 화면 맨 아래 **Capabilities** 에 다음이 나옵니다.
 
@@ -52,11 +61,17 @@
 
     ![Review and create 화면 맨 아래 Capabilities 패널. The following resource(s) require capabilities: [AWS::IAM::Role]이라는 안내와 함께 I acknowledge that AWS CloudFormation might create IAM resources. 확인란이 하나 있고 파란색으로 체크되어 있다. 이 확인란이 Capabilities 패널의 유일한 선택 항목이다](images/console/lab0-cfn-03-ack.png){ .shot }
 
+    그림 5. Review and create 화면의 Capabilities 패널
+    { .figcap }
+
 7. **Submit** 을 누릅니다.
 
 **결과**: 스택 상태가 **CREATE_IN_PROGRESS**입니다. **CREATE_COMPLETE** 까지 **20분 안팎** 걸립니다. 다만 다음 실습으로 넘어가는 기준은 스택 완료가 아니라 core network 준비입니다. core network 는 **15분쯤** 지나면 쓸 수 있고, 스택은 EC2 부트스트랩과 VPC attachment 생성 때문에 그 뒤로도 한동안 **CREATE_IN_PROGRESS** 입니다. 보는 법은 [2-1-d](#lab0-d)에 있습니다.
 
-![서울 스택 cloudwan-workshop-seoul의 Overview 패널. Status가 CREATE_IN_PROGRESS이고, Description에는 이 스택이 만드는 것(global network, core network, 세그먼트 네 개, edge 두 곳, 서울 VPC 세 개와 EC2, 온프레미스 모사 VPC와 VPN 라우터, customer gateway)이 적혀 있다. Termination protection은 Deactivated, Drift status는 NOT_CHECKED다](images/console/lab0-cfn-04-in-progress-seoul.png){ .shot }
+<figure markdown="span">
+  ![서울 스택 cloudwan-workshop-seoul의 Overview 패널. Status가 CREATE_IN_PROGRESS이고, Description에는 이 스택이 만드는 것(global network, core network, 세그먼트 네 개, edge 두 곳, 서울 VPC 세 개와 EC2, 온프레미스 모사 VPC와 VPN 라우터, customer gateway)이 적혀 있다. Termination protection은 Deactivated, Drift status는 NOT_CHECKED다](images/console/lab0-cfn-04-in-progress-seoul.png){ .shot }
+  <figcaption>그림 6. 서울 스택의 Overview 패널</figcaption>
+</figure>
 
 ## 2-1-c. 오레곤 스택 배포하기 { #lab0-c }
 
@@ -71,12 +86,18 @@
 
     ![오레곤 리전에서 연 Create stack 1단계 Specify template 패널. 서울 때와 같은 화면이고 다른 것은 고른 파일 이름뿐이다. Upload a template file이 선택되어 있고 파일 칸에 cloudwan-workshop-oregon.yaml이 들어 있다](images/console/lab0-cfn-05-upload-oregon.png){ .shot }
 
+    그림 7. 오레곤 스택의 Specify template 패널
+    { .figcap }
+
 4. **Stack name**에 `cloudwan-workshop-oregon`을 넣습니다. **Parameters**는 그대로 두고 **Next**를 누릅니다.
 5. **Next** 를 두 번 더 눌러 **Review and create** 까지 간 다음 **Submit** 을 누릅니다. 이 스택은 IAM 리소스를 만들지 않으므로 서울 스택에서 봤던 **Capabilities** 확인란은 **나오지 않습니다**. 바로 넘어갑니다.
 
 **결과**: 오레곤 리전에서 스택 상태가 **CREATE_IN_PROGRESS**입니다.
 
-![오레곤 스택 cloudwan-workshop-oregon의 Overview 패널. Status가 CREATE_IN_PROGRESS다. 서울 스택과 같은 화면이며 스택 이름과 Description만 다르다](images/console/lab0-cfn-06-in-progress-oregon.png){ .shot }
+<figure markdown="span">
+  ![오레곤 스택 cloudwan-workshop-oregon의 Overview 패널. Status가 CREATE_IN_PROGRESS다. 서울 스택과 같은 화면이며 스택 이름과 Description만 다르다](images/console/lab0-cfn-06-in-progress-oregon.png){ .shot }
+  <figcaption>그림 8. 오레곤 스택의 Overview 패널</figcaption>
+</figure>
 
 ## 2-1-d. core network가 준비됐는지 보는 법 { #lab0-d }
 
@@ -92,10 +113,16 @@
 
     ![Network Manager의 Global networks 목록. 스택이 만든 global network 한 개가 ID와 이름 cwan-ws-global, 상태와 함께 한 줄로 보인다. 오른쪽 위에는 Create global network 버튼이 있다](images/console/lab0-cnet-00-global-networks.png){ .shot }
 
+    그림 9. Network Manager의 Global networks 목록
+    { .figcap }
+
 2. `cwan-ws-global`을 엽니다. **global network** 는 Cloud WAN 리소스를 담는 바깥 상자입니다. 그 안에 core network가 들어 있습니다. 스택을 배포한 직후에는 core network가 아직 목록에 없거나 생성 중으로 보일 수 있습니다.
 3. 왼쪽 메뉴에서 **Policy versions** 를 엽니다.
 
     ![core network의 Policy versions 화면. 버전이 하나뿐이고, Policy version - 1 행의 Alias가 LIVE, LATEST, Change set state가 초록색 Execution succeeded, Description이 Initial version.이다. 이 두 값이 core network를 쓸 준비가 끝났다는 신호다](images/console/lab0-cnet-01-policy-versions.png){ .shot }
+
+    그림 10. core network의 Policy versions 화면
+    { .figcap }
 
 4. 정책이 **LIVE** 이고 **Change set state** 가 **Execution succeeded** 이면 준비가 끝난 것입니다. 위 그림의 **Alias** 와 **Change set state** 열에서 봅니다.
 

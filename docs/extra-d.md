@@ -24,7 +24,10 @@
     !!! warning "오레곤 연결을 하나라도 남기면 뒤 단계가 막힙니다"
         오레곤 VPC 연결이 남아 있으면 오레곤 스택의 VPC가 지워지지 않고, 서울 스택의 core network도 지워지지 않습니다.
 
-![attachment 삭제 확인 창. 제목이 Delete attachment-…? 이고 본문에 Delete attachment-… permanently? This action cannot be undone. 이라고 적혀 있다. 버튼은 Cancel과 Delete 두 개다. 창 밖은 잘라 냈다](images/console/extraD-01-delete-attachment.png){ .shot }
+<figure markdown="span">
+  ![attachment 삭제 확인 창. 제목이 Delete attachment-…? 이고 본문에 Delete attachment-… permanently? This action cannot be undone. 이라고 적혀 있다. 버튼은 Cancel과 Delete 두 개다. 창 밖은 잘라 냈다](images/console/extraD-01-delete-attachment.png){ .shot }
+  <figcaption>그림 1. attachment 삭제 확인 창</figcaption>
+</figure>
 
 **결과**: 연결이 목록에서 사라지거나 삭제된 상태가 됩니다. 오레곤 VPC 연결이 **하나도** 보이지 않을 때까지 기다린 뒤 다음으로 넘어갑니다.
 
@@ -32,7 +35,10 @@
 
 같은 **Attachments** 화면에서 온프레미스 쪽 Site-to-Site VPN 연결([2-3-b](lab2.md#lab2-b)에서 만든 `cwan-ws-att-onprem-apne2`, `segment=onprem`)을 고르고 **Actions** → **Delete** 로 지웁니다.
 
-![Site-to-Site VPN attachment를 지울 때 나오는 같은 모양의 확인 창. 제목의 attachment ID만 다르다](images/console/extraD-02-delete-vpn-attachment.png){ .shot }
+<figure markdown="span">
+  ![Site-to-Site VPN attachment를 지울 때 나오는 같은 모양의 확인 창. 제목의 attachment ID만 다르다](images/console/extraD-02-delete-vpn-attachment.png){ .shot }
+  <figcaption>그림 2. VPN attachment 삭제 확인 창</figcaption>
+</figure>
 
 **결과**: VPN attachment가 목록에서 사라지거나 삭제된 상태가 됩니다. 이 단계가 끝나면 core network에는 서울 VPC 연결 3개만 남습니다(스택이 만든 연결입니다).
 
