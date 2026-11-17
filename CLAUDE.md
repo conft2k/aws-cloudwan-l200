@@ -1,4 +1,4 @@
-# ws-aws-cloudwan-l200
+# aws-cloudwan-l200
 
 AWS Cloud WAN L200 워크숍입니다. 이론 1시간(별도 저장소 `conft2k/deck-aws-cloudwan`의 deck), 실습 1시간입니다.
 
@@ -44,7 +44,7 @@ uv run --with pillow python shots/crop.py
 
 ## 사이트
 
-mkdocs-material로 빌드해 GitHub Pages로 <https://ws.nettfc.net/ws-aws-cloudwan-l200/>에 올립니다. `main`에 push하면 `.github/workflows/pages.yml`이 배포합니다.
+mkdocs-material로 빌드해 GitHub Pages로 <https://ws.nettfc.net/aws-cloudwan-l200/>에 올립니다. `main`에 push하면 `.github/workflows/pages.yml`이 배포합니다.
 
 ```bash
 uv run --with mkdocs-material==9.8.0 mkdocs serve

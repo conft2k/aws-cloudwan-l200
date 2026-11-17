@@ -2,7 +2,7 @@
 
 운영(prod)·개발(dev)·공유(shared) 환경과 온프레미스를 AWS Cloud WAN 하나로 글로벌 연결하는 2시간 워크숍입니다. 이론 1시간, 실습 1시간입니다.
 
-사이트: <https://ws.nettfc.net/ws-aws-cloudwan-l200/>
+사이트: <https://ws.nettfc.net/aws-cloudwan-l200/>
 
 ## 이 저장소에 있는 것
 

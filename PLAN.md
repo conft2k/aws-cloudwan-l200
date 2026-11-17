@@ -1,7 +1,7 @@
 # AWS Cloud WAN L200 워크숍 계획
 
-- 저장소: `conft2k/ws-aws-cloudwan-l200`
-- 사이트: https://ws.nettfc.net/ws-aws-cloudwan-l200/
+- 저장소: `conft2k/aws-cloudwan-l200`
+- 사이트: https://ws.nettfc.net/aws-cloudwan-l200/
 - 형식: 2시간 (이론 1시간 + 실습 1시간)
 - 레벨: 200
 - 작성 시작: 2026-11-16
@@ -443,7 +443,7 @@ edge ASN을 파라미터가 아니라 정수 리터럴로 적은 이유가 있�
 재리뷰는 같은 세션을 이어 쓴다. 템플릿을 이미 읽은 맥락이 남아 있어 변경분만 보면 되므로 빠르다.
 
 ```bash
-cd /home/ec2-user/dev/ws-aws-cloudwan-l200
+cd /home/ec2-user/dev/aws-cloudwan-l200
 codex exec resume 01a1e2eb-b20e-7a51-bf40-5e7eb2911c41 \
   -m global.openai.gpt-6-astra -c model_reasoning_effort='"high"' -c model_context_window=272000 \
   - < ~/.cache/codex-review-cwan-seoul/prompt-recheck.md

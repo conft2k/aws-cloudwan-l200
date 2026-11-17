@@ -1,8 +1,8 @@
 site_name: AWS Cloud WAN 워크숍
 site_description: 운영·개발·공유 환경과 온프레미스를 AWS Cloud WAN 하나로 글로벌 연결하는 실습(L200)
-site_url: https://ws.nettfc.net/ws-aws-cloudwan-l200/
-repo_url: https://github.com/conft2k/ws-aws-cloudwan-l200
-repo_name: ws-aws-cloudwan-l200
+site_url: https://ws.nettfc.net/aws-cloudwan-l200/
+repo_url: https://github.com/conft2k/aws-cloudwan-l200
+repo_name: aws-cloudwan-l200
 edit_uri: ""
 copyright: MIT License
 
