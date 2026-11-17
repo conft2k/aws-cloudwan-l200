@@ -92,7 +92,7 @@
 [2-2-d](lab1.md#lab1-d)에서 오레곤 prod VPC를 붙인 것과 같은 절차입니다. 다른 점은 대상 VPC와 태그 값입니다.
 
 1. 리전을 **US West (Oregon)** 으로 바꾸고, **Network Manager** 콘솔에서 core network의 **Attachments** 탭으로 가 VPC attachment를 만듭니다([2-2-d](lab1.md#lab1-d)의 1~4단계).
-2. 값은 오레곤 스택 `cloudwan-workshop-oregon`의 **Outputs**에서 고릅니다. VPC는 `DevVpcId`, 서브넷은 `DevCwanSubnetAId`와 `DevCwanSubnetBId` 두 개입니다. **prod VPC가 아닙니다.**
+2. **VPC ID** 드롭다운에서 `cwan-ws-dev-vpc` 를 고릅니다. **prod VPC가 아닙니다.** 고르고 나면 **Subnet IDs** 표가 가용 영역마다 한 줄씩 나오고 콘솔이 `cwan-ws-dev-cwan-az1`, `cwan-ws-dev-cwan-az2` 를 미리 채워 줍니다. 값만 확인하면 됩니다.
 3. **Tags**에 두 개를 넣습니다. `Name` = `cwan-ws-att-dev-usw2`, `segment` = `dev`. 오레곤 prod를 붙였을 때의 `segment` 값은 `prod`였습니다. 태그 값이 세그먼트 이름과 대소문자까지 같아야 합니다. 이름에 리전을 넣는 이유는 [2-2-d](lab1.md#lab1-d)와 같습니다 — `dev` 세그먼트에도 서울과 오레곤 연결이 둘 다 들어갑니다.
 
     ![오레곤 dev VPC를 붙이는 Create attachment 화면의 Attachment settings 패널. Name에 cwan-ws-att-dev-usw2, Attachment type에 VPC, Edge location에 United States (Oregon)이 들어 있다. 2-2-d에서 prod를 붙일 때와 같은 화면이고 이름과 VPC, 태그 값만 다르다](images/console/extraA-01-oregon-dev-attachment.png){ .shot }
@@ -101,7 +101,7 @@
     { .figcap }
 
 4. attachment가 `Available`이 되면 상세 화면에서 **Segment**가 `dev`인지 확인합니다. [2-2-d](lab1.md#lab1-d)의 오레곤 prod attachment와 똑같은 작업이고, 그쪽과 비슷하게 **4분쯤** 걸립니다.
-5. 오레곤 dev 앱 서브넷의 라우트 테이블에 core network 경로를 넣습니다([2-2-e](lab1.md#lab1-e)와 같습니다). 라우트 테이블 ID는 오레곤 스택 **Outputs**의 dev용 항목에서 찾습니다.
+5. 오레곤 dev 앱 서브넷의 라우트 테이블에 core network 경로를 넣습니다([2-2-e](lab1.md#lab1-e)와 같습니다). **VPC** 콘솔 → **Route tables** 에서 `cwan-ws-dev-app` 을 검색해 엽니다. `-cwan` 으로 끝나는 쪽이 아니라 **`-app`** 입니다.
 
     | Destination | Target |
     |---|---|

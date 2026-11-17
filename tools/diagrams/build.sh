@@ -14,7 +14,8 @@ segments|segments.py|diagrams/segments.draft.svg
 lab1-global|lab1_global.py|diagrams/lab1-global.draft.svg
 lab2-onprem|lab2_onprem.py|diagrams/lab2-onprem.draft.svg
 lab3-policy|lab3_policy.py|diagrams/lab3-policy.draft.svg
-extra-b-compare|extra_b.py|diagrams/extra-b-compare.draft.svg"
+extra-b-compare|extra_b.py|diagrams/extra-b-compare.draft.svg
+cloudwan-components|cloudwan_components.py|diagrams/cloudwan-components.draft.svg"
 
 CHECK=0
 if [[ ${1:-} == --check ]]; then CHECK=1; shift; fi

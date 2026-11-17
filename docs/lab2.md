@@ -20,7 +20,7 @@
 시작하기 전에 확인합니다.
 
 - 스택 `cloudwan-workshop-seoul`이 **CREATE_COMPLETE**인가요?
-- 스택 **Outputs** 탭에 `CustomerGatewayId`, `CoreNetworkId`, `OnPremEiceId`가 보이나요?
+- **VPC** 콘솔 → **Customer gateways** 에 `cwan-ws-onprem-cgw` 가 있나요? 스택이 만들어 둔 것이고, [2-3-a](#lab2-a)에서 이것을 고릅니다.
 - 콘솔 리전이 **Asia Pacific (Seoul) ap-northeast-2**인가요? (VPN 연결과 라우터는 서울에 있습니다.)
 
 ## 2-3-a. VPN 연결 만들기 { #lab2-a }
@@ -104,7 +104,7 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 1. **EC2** 콘솔 → **Instances**에서 `cwan-ws-onprem-router`를 골라 **Connect**를 누릅니다.
 2. **Connect to Linux instance** 화면의 **In web browser** 탭에서 **Private subnet access** 의 **EC2 Instance Connect Endpoint** 를 고르고 **Connect** 를 누릅니다. [2-2-b](lab1.md#lab1-b)와 같은 화면이고 대상 인스턴스만 다르므로 그림은 그쪽을 보세요.
 
-3. 아래 명령을 **VPN 라우터(`cwan-ws-onprem-router`)** 에서 실행합니다. `<VPN 연결 ID>`는 2-3-a에서 메모한 `vpn-…` 값입니다.
+3. 아래 명령을 **VPN 라우터(`cwan-ws-onprem-router`)** 에서 실행합니다. `<VPN 연결 ID>`는 **VPC** 콘솔 → **Site-to-Site VPN connections** 에서 `cwan-ws-vpn` 을 고르고 **Details** 탭의 **VPN ID** 에서 복사합니다(`vpn-` 으로 시작합니다).
 
     ```bash
     sudo /opt/onprem/setup-tunnels.sh <VPN 연결 ID>

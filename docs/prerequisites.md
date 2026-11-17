@@ -20,22 +20,20 @@
 
 ## 1-2-b. 내 값 적어 두기 { #notes }
 
-실습에서 계속 쓰는 값입니다. 스택을 배포한 뒤 적어 두면 편합니다. 값은 CloudFormation 스택의 **Outputs** 탭에서 찾습니다. 스택은 서울과 오레곤 두 리전에 하나씩 있으므로, 값마다 어느 리전의 스택인지 확인하세요.
+실습에서 계속 쓰는 값입니다. **값은 그 리소스를 가진 서비스 화면에서 직접 확인합니다.** CloudFormation 스택의 **Outputs** 탭에도 같은 값이 있지만, 실무에서 그렇게 찾지 않습니다. 각 서비스에서 찾는 연습이 그대로 남습니다.
 
 | 값 | 예 | 찾는 곳 |
 |---|---|---|
-| core network ID | `core-network-0123456789abcdef0` | **서울** 스택 Outputs의 `CoreNetworkId` |
-| global network ID | `global-network-0123456789abcdef0` | **서울** 스택 Outputs의 `GlobalNetworkId` |
-| 오레곤 attachment용 서브넷 ID 2개 | `subnet-0123456789abcdef0`, `subnet-0fedcba9876543210` | **오레곤** 스택 Outputs의 `ProdCwanSubnetAId` 와 `ProdCwanSubnetBId` |
-| 오레곤 prod 앱 서브넷의 라우트 테이블 ID | `rtb-0123456789abcdef0` | **오레곤** 스택 Outputs의 `ProdAppRouteTableId` |
-| VPN 라우터 Elastic IP | `203.0.113.10` | **서울** 스택 Outputs의 `OnPremRouterPublicIp` |
-| customer gateway ID | `cgw-0123456789abcdef0` | **서울** 스택 Outputs의 `CustomerGatewayId` |
-| VPN 연결 ID | `vpn-0123456789abcdef0` | VPN 연결을 만든 뒤 VPC 콘솔의 **Site-to-Site VPN connections** (스택에는 없습니다. 실습 [2-3](lab2.md)에서 직접 만듭니다) |
+| global network ID | `global-network-0123456789abcdef0` | **Network Manager** → **Global networks** 목록([2-1-d](lab0.md#lab0-d)) |
+| core network ID | `core-network-0123456789abcdef0` | **Network Manager** → core network 화면([2-1-d](lab0.md#lab0-d)) |
+| VPN 연결 ID | `vpn-0123456789abcdef0` | **VPC** 콘솔 → **Site-to-Site VPN connections** → 그 연결의 **Details** 탭 → **VPN ID**. 실습 [2-3-a](lab2.md#lab2-a)에서 직접 만든 뒤에 생깁니다 |
+| customer gateway ID | `cgw-0123456789abcdef0` | 같은 **Details** 탭의 **Customer gateway**. 또는 **VPC** 콘솔 → **Customer gateways** 의 `cwan-ws-onprem-cgw` |
+| VPN 라우터 Elastic IP | `203.0.113.10` | 같은 **Details** 탭의 **Customer gateway address**. AWS가 터널을 걸 상대 주소가 이 값입니다 |
 
 예는 모두 형식을 보여 주는 가짜 값입니다. VPN 연결 ID만 지금은 비워 둡니다.
 
-!!! tip "Outputs 표는 **Key** 오름차순입니다"
-    오레곤 스택에는 `Dev…` 로 시작하는 키가 여섯 개 있어서 `Prod…` 는 아래로 밀립니다. 표를 내리거나 **Search outputs** 에 찾는 이름을 넣어 거르세요.
+!!! tip "VPN 연결 **Details** 탭 하나에 세 값이 모두 있습니다"
+    [2-3-a](lab2.md#lab2-a)에서 VPN 연결을 만들고 나면, 그 연결의 **Details** 탭에 **VPN ID**, **Customer gateway**, **Customer gateway address** 가 나란히 있습니다. **Core network ARN** 과 **Core network attachment ARN** 도 [2-3-b](lab2.md#lab2-b) 뒤에 같은 화면에 채워집니다.
 
 ## 1-2-c. 브라우저 준비 { #browser }
 

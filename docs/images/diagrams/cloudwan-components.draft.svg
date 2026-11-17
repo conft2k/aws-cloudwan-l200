@@ -1,0 +1,79 @@
+<svg viewBox="0 0 1020 1124" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans CJK KR', 'Pretendard', Arial, sans-serif">
+<defs></defs>
+<rect width="1020" height="1124" fill="#FFFFFF"/>
+<rect x="16" y="16" width="988" height="894" fill="none" stroke="#232F3E" stroke-width="2"/>
+<image href="bundle:group/AWS-Cloud-logo_32" x="16" y="16" width="32" height="32"/>
+<text x="58" y="39" font-size="19" font-weight="600" fill="#232F3E">AWS Cloud</text>
+<rect x="32" y="56" width="956" height="838" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<text x="44" y="77" font-size="18" font-weight="600" fill="#7D8998">global network</text>
+<text x="44" y="95" font-size="16" fill="#3B4552">Network Manager</text>
+<rect x="240" y="108" width="336" height="610" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="3,3"/>
+<image href="bundle:group/Region_32" x="240" y="108" width="28" height="28"/>
+<text x="276" y="129" font-size="18" font-weight="600" fill="#00A4A6">ap-northeast-2</text>
+<text x="276" y="147" font-size="16" fill="#232F3E">edge location · 서울</text>
+<rect x="600" y="108" width="336" height="610" fill="none" stroke="#00A4A6" stroke-width="2" stroke-dasharray="3,3"/>
+<image href="bundle:group/Region_32" x="600" y="108" width="28" height="28"/>
+<text x="636" y="129" font-size="18" font-weight="600" fill="#00A4A6">us-west-2</text>
+<text x="636" y="147" font-size="16" fill="#232F3E">edge location · 오레곤</text>
+<rect x="56" y="280" width="908" height="422" fill="none" stroke="#8C4FFF" stroke-width="2" stroke-dasharray="6,4"/>
+<image href="bundle:service/AWS-Cloud-WAN" x="56" y="280" width="24" height="24"/>
+<text x="88" y="301" font-size="18" font-weight="600" fill="#8C4FFF">core network</text>
+<rect x="64" y="316" width="880" height="56" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="64" y="316" width="24" height="24"/>
+<text x="96" y="337" font-size="18" font-weight="600" fill="#7D8998">segment prod</text>
+<text x="96" y="357" font-size="16" fill="#3B4552">운영 환경</text>
+<rect x="64" y="382" width="880" height="56" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="64" y="382" width="24" height="24"/>
+<text x="96" y="403" font-size="18" font-weight="600" fill="#7D8998">segment dev</text>
+<text x="96" y="423" font-size="16" fill="#3B4552">개발 환경</text>
+<rect x="64" y="448" width="880" height="56" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="64" y="448" width="24" height="24"/>
+<text x="96" y="469" font-size="18" font-weight="600" fill="#7D8998">segment shared</text>
+<text x="96" y="489" font-size="16" fill="#3B4552">공유 서비스</text>
+<rect x="64" y="630" width="880" height="56" fill="none" stroke="#7D8998" stroke-width="1.5" stroke-dasharray="6,4"/>
+<image href="bundle:resource/AWS-Cloud-WAN_Segment-Network" x="64" y="630" width="24" height="24"/>
+<text x="96" y="651" font-size="18" font-weight="600" fill="#7D8998">segment onprem</text>
+<text x="96" y="671" font-size="16" fill="#3B4552">온프레미스</text>
+<polyline points="346,184 398,184 398,518" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<circle cx="398" cy="344" r="4.5" fill="#7D8998"/>
+<polyline points="470,184 418,184 418,518" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<circle cx="418" cy="476" r="4.5" fill="#7D8998"/>
+<polyline points="716,184 768,184 768,518" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<circle cx="768" cy="410" r="4.5" fill="#7D8998"/>
+<polyline points="316,922 316,546 380,546" fill="none" stroke="#232F3E" stroke-width="1.5"/>
+<circle cx="316" cy="658" r="4.5" fill="#7D8998"/>
+<line x1="436" y1="546" x2="740" y2="546" stroke="#232F3E" stroke-width="1.5"/>
+<text x="444" y="536" font-size="16" fill="#3B4552">AWS 백본</text>
+<image href="bundle:resource/AWS-Cloud-WAN_Core-Network-Edge" x="384" y="522" width="48" height="48"/>
+<text x="408" y="590" font-size="18" text-anchor="middle" fill="#232F3E">Core network edge</text>
+<text x="408" y="612" font-size="16" text-anchor="middle" fill="#3B4552">서울 edge</text>
+<image href="bundle:resource/AWS-Cloud-WAN_Core-Network-Edge" x="744" y="522" width="48" height="48"/>
+<text x="768" y="590" font-size="18" text-anchor="middle" fill="#232F3E">Core network edge</text>
+<text x="768" y="612" font-size="16" text-anchor="middle" fill="#3B4552">오레곤 edge</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="294" y="160" width="48" height="48"/>
+<text x="318" y="228" font-size="18" text-anchor="middle" fill="#232F3E">VPC</text>
+<text x="318" y="250" font-size="16" text-anchor="middle" fill="#3B4552">VPC attachment</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="474" y="160" width="48" height="48"/>
+<text x="498" y="228" font-size="18" text-anchor="middle" fill="#232F3E">VPC</text>
+<text x="498" y="250" font-size="16" text-anchor="middle" fill="#3B4552">VPC attachment</text>
+<image href="bundle:service/Amazon-Virtual-Private-Cloud" x="664" y="160" width="48" height="48"/>
+<text x="688" y="228" font-size="18" text-anchor="middle" fill="#232F3E">VPC</text>
+<text x="688" y="250" font-size="16" text-anchor="middle" fill="#3B4552">VPC attachment</text>
+<image href="bundle:service/AWS-Site-to-Site-VPN" x="292" y="926" width="48" height="48"/>
+<text x="316" y="994" font-size="18" text-anchor="middle" fill="#232F3E">Site-to-Site VPN</text>
+<text x="316" y="1016" font-size="16" text-anchor="middle" fill="#3B4552">Site-to-Site VPN attachment</text>
+<rect x="435" y="742" width="529" height="136" fill="none" stroke="#8C4FFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+<text x="447" y="766" font-size="18" font-weight="600" fill="#8C4FFF">core network policy</text>
+<text x="447" y="798" font-size="18" font-weight="600" fill="#232F3E">edge-locations</text>
+<text x="447" y="818" font-size="16" fill="#3B4552">edge 를 둘 리전</text>
+<text x="705.4" y="798" font-size="18" font-weight="600" fill="#232F3E">segments</text>
+<text x="705.4" y="818" font-size="16" fill="#3B4552">prod · dev · shared · onprem</text>
+<text x="447" y="844" font-size="18" font-weight="600" fill="#232F3E">attachment policy</text>
+<text x="447" y="864" font-size="16" fill="#3B4552">attachment 의 세그먼트 배정</text>
+<text x="705.4" y="844" font-size="18" font-weight="600" fill="#232F3E">segment actions</text>
+<text x="705.4" y="864" font-size="16" fill="#3B4552">세그먼트끼리의 통신 (share)</text>
+<polyline points="588,742 588,702" fill="none" stroke="#8C4FFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+<rect x="16" y="1040" width="988" height="68" fill="#F8F9F9" stroke="#D5DBDB" stroke-width="1"/>
+<text x="28" y="1068" font-size="16" font-weight="600" fill="#232F3E">회색 점 = 그 attachment 이 속한 세그먼트. attachment 하나는 세그먼트 하나에만 들어갑니다.</text>
+<text x="28" y="1092" font-size="16" font-weight="600" fill="#232F3E">세그먼트 행은 리전 상자를 가로지릅니다. 세그먼트는 전역이고 core network edge 만 리전마다 생깁니다.</text>
+</svg>

@@ -4,6 +4,19 @@
 
 ## 1-3-a. Cloud WAN 관련 { #cloudwan }
 
+표를 읽기 전에 **무엇이 무엇 안에 들어 있는지**부터 봅니다. 아래 용어가 모두 이 그림 안에 있습니다.
+
+<figure markdown="span">
+  ![AWS Cloud WAN의 구성요소와 포함 관계를 보여 주는 그림. 가장 바깥이 AWS Cloud 상자이고 그 안에 global network(Network Manager) 상자가 있다. global network 안에는 서울 ap-northeast-2와 오레곤 us-west-2 두 리전 상자가 나란히 서 있고, 각 리전 상자의 제목 아래에 edge location이라고 적혀 있다. 두 리전 상자를 가로로 가로지르는 보라색 파선 상자가 core network다. core network 안에는 세그먼트 네 개가 가로 행으로 놓여 있다. 위에서부터 segment prod(운영 환경), segment dev(개발 환경), segment shared(공유 서비스)가 있고, 가운데 edge 행을 사이에 두고 그 아래에 segment onprem(온프레미스)이 있다. 세그먼트 행은 리전 상자의 경계를 넘어 두 리전에 걸쳐 있다. 가운데 줄에는 리전마다 하나씩 Core network edge가 있는데 왼쪽이 서울 edge, 오른쪽이 오레곤 edge이고 둘은 AWS 백본이라고 적힌 선으로 이어져 있다. core network 바깥에는 attachment가 붙는다. 서울 리전 위쪽에 VPC 아이콘 두 개가 있어 각각 VPC attachment라고 적혀 있고, 왼쪽 VPC에서 내려온 선은 segment prod 행에서, 오른쪽 VPC에서 내려온 선은 segment shared 행에서 회색 점을 찍은 뒤 서울 edge로 들어간다. 오레곤 리전 위쪽의 VPC 하나는 segment dev 행에서 점을 찍고 오레곤 edge로 들어간다. AWS Cloud 상자 바깥 아래에는 Site-to-Site VPN 아이콘이 있고 Site-to-Site VPN attachment라고 적혀 있으며, 거기서 올라온 선이 segment onprem 행에서 점을 찍고 서울 edge로 들어간다. 회색 점은 그 attachment가 어느 세그먼트에 속하는지를 뜻하고, 점이 없이 선이 지나가기만 한 행은 그 세그먼트에 속하지 않는다는 뜻이다. 오른쪽 아래에는 core network policy 상자가 보라색 파선으로 core network와 이어져 있고, 그 안에 네 가지가 적혀 있다. edge-locations는 edge를 둘 리전, segments는 prod·dev·shared·onprem, attachment policy는 attachment의 세그먼트 배정, segment actions는 세그먼트끼리의 통신(share)이다. 정책 하나가 리전과 세그먼트와 배정과 통신 범위를 모두 정한다는 뜻이다. 주소나 ASN은 적혀 있지 않다. 그림 아래 범례는 회색 점이 그 attachment가 속한 세그먼트이며 attachment 하나는 세그먼트 하나에만 들어간다는 것과, 세그먼트 행이 리전 상자를 가로지르는 것은 세그먼트가 전역이고 core network edge만 리전마다 생기기 때문이라는 것을 설명한다](images/diagrams/cloudwan-components.png)
+  <figcaption>그림 1. Cloud WAN 구성요소와 포함 관계</figcaption>
+</figure>
+
+그림에서 먼저 잡아 둘 것은 셋입니다.
+
+- **세그먼트는 리전을 가로지릅니다.** 세그먼트 행이 두 리전 상자를 꿰뚫고 지나가는 것이 그 뜻입니다. 리전마다 생기는 것은 **core network edge** 뿐입니다.
+- **attachment는 core network 밖에 있습니다.** VPC와 VPN이 core network에 *붙는* 것이지, 그 안에 들어 있는 것이 아닙니다. 선이 세그먼트 행에서 찍는 **회색 점**이 그 attachment가 속한 세그먼트입니다.
+- **정책 하나가 전부를 정합니다.** 오른쪽 아래 **core network policy** 상자의 네 항목이 리전·세그먼트·배정·통신 범위입니다. 이 워크숍에서 참가자가 고치는 것이 바로 이 문서입니다([2-4](lab3.md)).
+
 | 용어 | 콘솔 이름 | 뜻 |
 |---|---|---|
 | global network | Global network | Network Manager에서 네트워크 리소스를 한데 모아 관리하는 가장 큰 상자. core network는 global network 안에 만듭니다 |
