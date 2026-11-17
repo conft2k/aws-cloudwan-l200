@@ -20,13 +20,17 @@
         왼쪽 메뉴에도 **Policies**라는 항목이 있지만 그것은 VPC IP Address Manager 쪽이라 전혀 다른 화면입니다. core network 안의 **Policy versions**로 가세요.
 
 3. **Alias** 가 **LIVE** 인 버전 행의 **선택 버튼**을 누르고, 표 위쪽의 **Edit** 를 누릅니다. **Create policy** 화면이 열립니다.
-4. **Choose policy view mode** 에서 **JSON** 을 고릅니다.
+4. **Details** 의 **Description** 에 나중에 알아볼 수 있는 설명을 적습니다. 예: `Lab 2-4: share onprem with prod`. 정책 버전 목록에서 이 설명으로 버전을 구분합니다.
+5. `segment-actions` 에 share 하나를 넣습니다. **아래 두 방식 중 하나**를 쓰면 됩니다. 결과는 같습니다.
+6. **Create policy** 를 누릅니다. 새 버전이 만들어지고, Cloud WAN이 현재 **LIVE** 버전과 비교해 change set을 만들기 시작합니다.
 
-    !!! warning "기본값은 **Visual editor** 입니다"
-        그대로 두면 폼으로 한 칸씩 채우는 화면이 나옵니다. 아래 JSON 조각을 붙여 넣으려면 **JSON** 으로 바꿔야 합니다. 바꾸면 현재 정책 전체가 줄 번호가 달린 편집기에 그대로 들어 있습니다.
+5단계를 어떻게 하는지가 두 가지입니다. **Choose policy view mode** 에서 고릅니다.
 
-5. **Details** 의 **Description** 에 나중에 알아볼 수 있는 설명을 적습니다. 예: `Lab 2-4: share onprem with prod`. 정책 버전 목록에서 이 설명으로 버전을 구분합니다.
-6. **JSON** 편집기에서 `segment-actions` 배열에 다음 항목을 추가합니다.
+=== "JSON으로 넣기"
+
+    **Choose policy view mode** 에서 **JSON** 을 고릅니다. 기본값은 **Visual editor** 라서 그대로 두면 폼 화면이 나옵니다. **JSON** 으로 바꾸면 현재 정책 전체가 줄 번호가 달린 편집기에 그대로 들어 있습니다.
+
+    `segment-actions` 배열에 다음 항목을 추가합니다.
 
     ```json
     {
@@ -58,25 +62,48 @@
 
     `share-with`에 `dev`는 넣지 않습니다. 고객 요구사항은 온프레미스가 개발 환경에 닿지 않는 것입니다.
 
-    !!! info "한 줄이면 됩니다. `share` 는 양방향입니다"
-        `onprem` 쪽에만 적었는데 `prod` → `onprem` 방향은 따로 적지 않아도 되는지 궁금할 수 있습니다. **적지 않습니다.** `share` 는 두 세그먼트가 서로에게 경로를 광고하게 만듭니다(공식 문서의 표현은 "create mutual advertisements"입니다). 반대 방향을 위한 항목은 없습니다.
+=== "Visual editor로 넣기"
 
-        [2-4-d](#lab3-d)에서 양쪽 경로 테이블을 보면 확인됩니다. `prod` 에 온프레미스 대역 `172.16.1.0/24` 가 들어오고, `onprem` 에 운영 대역 `10.10.1.0/24` 가 들어옵니다. **한 줄이 양쪽을 다 만든 것입니다.**
+    **Choose policy view mode** 를 **Visual editor**(기본값) 그대로 둡니다. JSON을 쓰지 않고 폼으로 같은 것을 넣습니다.
 
-        콘솔의 **Visual editor** → **Segment actions** 탭에서는 이 공유가 `onprem` 한 줄로만 보입니다(**Shared with segments** 열에 `prod`). 한쪽 방향처럼 보이지만 그 한 줄이 양방향입니다. 더 자세한 것은 [4-1-d. segment-actions](concepts.md#actions)에 있습니다.
+    1. **Segment actions - optional** 탭을 누릅니다. 탭이 많아 가려져 있으면 탭 줄 양끝의 화살표로 넘깁니다.
+    2. **Sharing** 패널 오른쪽 위의 **Create** 를 누릅니다. 이 탭에는 **Create** 가 패널마다 하나씩 있으니 **Sharing** 패널의 것인지 확인하세요.
+    3. **Create sharing** 창에 아래를 넣고 **Create sharing** 을 누릅니다.
 
-7. **Create policy** 를 누릅니다. 새 버전이 만들어지고, Cloud WAN이 현재 **LIVE** 버전과 비교해 change set을 만들기 시작합니다.
+        | 항목 | 값 |
+        |---|---|
+        | Segment from | `onprem` |
+        | Segment to | **Allow selected** |
+        | Allow segment list | `prod` |
+        | Routing policy - optional | 비워 둡니다 |
+
+        ![Visual editor의 Create sharing 창. 제목 아래에 Share/Filter routes across segments라고 적혀 있다. Segment from 드롭다운에 onprem이 선택되어 있고, Segment to는 Allow all, Allow selected, Deny selected 세 라디오 중 Allow selected가 켜져 있다. 그 아래 Allow segment list 드롭다운은 Choose segments로 비어 보이지만 바로 아래에 prod 토큰이 하나 붙어 있어 prod가 선택된 상태다. 맨 아래 Routing policy - optional은 Choose routing policies로 비어 있고, 오른쪽 아래에 Cancel과 Create sharing 버튼이 있다](images/console/lab3-policy-08-visual-create-sharing.png){ .shot }
+
+        그림 2-4-2. Visual editor의 Create sharing 창
+        { .figcap }
+
+        !!! info "**Allow segment list** 는 **Allow selected** 를 고른 뒤에 나타납니다"
+            **Allow all** 인 동안에는 세그먼트를 고르는 칸이 없습니다. 모든 세그먼트와 공유한다는 뜻이기 때문입니다. 이 실습은 `prod` 하고만 공유하므로 **Allow selected** 를 고릅니다. `dev` 는 넣지 않습니다 — 고객 요구사항은 온프레미스가 개발 환경에 닿지 않는 것입니다.
+
+    4. **Sharing** 표에 `onprem` 줄이 생기고 **Shared with segments** 가 `prod` 인지 확인합니다.
+
+!!! info "한 줄이면 됩니다. `share` 는 양방향입니다"
+    `onprem` 쪽에만 적었는데 `prod` → `onprem` 방향은 따로 적지 않아도 되는지 궁금할 수 있습니다. **적지 않습니다.** `share` 는 두 세그먼트가 서로에게 경로를 광고하게 만듭니다(공식 문서의 표현은 "create mutual advertisements"입니다). 반대 방향을 위한 항목은 없습니다.
+
+    [2-4-d](#lab3-d)에서 양쪽 경로 테이블을 보면 확인됩니다. `prod` 에 온프레미스 대역 `172.16.1.0/24` 가 들어오고, `onprem` 에 운영 대역 `10.10.1.0/24` 가 들어옵니다. **한 줄이 양쪽을 다 만든 것입니다.**
+
+    **Visual editor** 의 **Sharing** 표에서도 이 공유는 `onprem` 한 줄로만 보입니다(**Shared with segments** 열에 `prod`). 한쪽 방향처럼 보이지만 그 한 줄이 양방향입니다. 더 자세한 것은 [4-1-d. segment-actions](concepts.md#actions)에 있습니다.
 
 <figure markdown="span">
   ![정책 편집기 화면. 제목이 Create policy이고 오른쪽 위에 Cancel과 Create policy 버튼이 있다. Details 패널의 Description 칸에 설명이 들어 있고, Choose policy view mode 패널에서 Visual editor와 JSON 중 JSON이 선택되어 있다. 그 아래 JSON 패널에 현재 정책 전체가 줄 번호가 달린 편집기에 들어 있고, version과 core-network-configuration, asn-ranges, edge-locations가 차례로 보인다](images/console/lab3-policy-01-edit.png){ .shot }
-  <figcaption>그림 2-4-2. 정책 편집기의 JSON 보기</figcaption>
+  <figcaption>그림 2-4-3. 정책 편집기의 JSON 보기</figcaption>
 </figure>
 
 **결과**: 정책 버전 목록에 새 버전이 보입니다.
 
 <figure markdown="span">
   ![새 버전을 만든 직후의 Policy versions 목록. 두 줄이 있고 Policy version - 1은 Alias가 LIVE에 Change set state가 초록색 Execution succeeded, Policy version - 2는 Alias가 LATEST에 Change set state가 파란색 Ready to execute다. 아직 적용되지 않았다는 뜻이다](images/console/lab3-policy-02-versions.png){ .shot }
-  <figcaption>그림 2-4-3. 새 버전 생성 직후의 Policy versions 목록</figcaption>
+  <figcaption>그림 2-4-4. 새 버전 생성 직후의 Policy versions 목록</figcaption>
 </figure>
 
 ## 2-4-b. change set 검토하기 { #lab3-b }
@@ -97,7 +124,7 @@
 
 <figure markdown="span">
   ![Policy version - 2 change sets 화면. 제목 옆에 변경 개수 7이 적혀 있고 오른쪽 위에 Compare policy versions와 Apply change set 버튼이 있다. 표에는 Type이 Core network segment이고 Action이 Modify인 줄이 네 개, Type이 Attachment route propagation이고 Action이 Add인 줄이 세 개 있다. Identifier 열은 모두 비어 있고, 구체적인 내용은 New values의 Details 링크로 본다](images/console/lab3-policy-03-changeset.png){ .shot }
-  <figcaption>그림 2-4-4. change set의 변경 목록</figcaption>
+  <figcaption>그림 2-4-5. change set의 변경 목록</figcaption>
 </figure>
 
 `share` 한 줄을 넣었을 뿐인데 변경은 **7건** 나옵니다. 무엇이 바뀌는지 읽어 보면 이렇습니다.
@@ -126,12 +153,12 @@ change set을 실행해 새 버전을 적용합니다.
 
 <figure markdown="span">
   ![change set을 실행한 직후의 Policy versions 목록. Policy version - 2의 Change set state가 Executing으로 바뀌었고 Alias는 아직 LATEST다. Policy version - 1이 여전히 LIVE를 달고 있다](images/console/lab3-policy-04-executing.png){ .shot }
-  <figcaption>그림 2-4-5. change set 실행 중의 Policy versions 목록</figcaption>
+  <figcaption>그림 2-4-6. change set 실행 중의 Policy versions 목록</figcaption>
 </figure>
 
 <figure markdown="span">
   ![실행이 끝난 뒤의 Policy versions 목록. Policy version - 2의 Alias가 LIVE, LATEST가 되고 Change set state가 Execution succeeded다. Policy version - 1에는 Alias가 없다. 새 정책이 적용됐다는 뜻이다](images/console/lab3-policy-05-live.png){ .shot }
-  <figcaption>그림 2-4-6. 실행이 끝난 Policy versions 목록</figcaption>
+  <figcaption>그림 2-4-7. 실행이 끝난 Policy versions 목록</figcaption>
 </figure>
 
 **결과**: change set 상태가 **Execution succeeded**이고, 새 정책 버전이 **LIVE**로 표시됩니다.

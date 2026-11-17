@@ -130,10 +130,71 @@ if g is None:
     raise SystemExit("!! sharing 창을 여는 Create 를 찾지 못했다")
 
 print("대화상자:", g.get_by_role("dialog").count())
-report("Create sharing 창", g)
-print("   라디오:", names("radio", g, 8))
+report("Create sharing 창 (비어 있음)", g)
 dlg = g.get_by_role("dialog")
-shot("lab3-policy-08-visual-create-sharing", clip=dlg.last if dlg.count() else None)
+print("   창 크기:", dlg.last.bounding_box() if dlg.count() else None)
+
+
+def pick(trigger_text, option):
+    """Open the dropdown whose trigger reads `trigger_text` and choose `option`."""
+    h = app()
+    t = h.locator("button").filter(has_text=re.compile(rf"^{re.escape(trigger_text)}$"))
+    print(f"   {trigger_text!r} 트리거: {t.count()}")
+    if not t.count():
+        return False
+    t.last.click()
+    page.wait_for_timeout(2500)
+    h = app()
+    opts = [o.strip() for o in h.get_by_role("option").all_inner_texts() if o.strip()]
+    print(f"     선택지: {opts[:10]}")
+    o = h.get_by_role("option", name=re.compile(rf"^{re.escape(option)}$"))
+    if not o.count():
+        page.keyboard.press("Escape")
+        return False
+    o.first.click()
+    page.wait_for_timeout(2000)
+    return True
+
+
+# Fill it exactly as 2-4-a tells the reader to.
+pick("Choose segment", "onprem")
+
+h = app()
+sel = h.get_by_text("Allow selected", exact=True)
+print("   'Allow selected': ", sel.count())
+if sel.count():
+    sel.first.click()
+    page.wait_for_timeout(2000)
+
+# The segment list only appears once "Allow selected" is chosen.
+pick("Choose segments", "prod")
+# Close the dropdown - while it is open it is itself a role=dialog and would be
+# what gets photographed instead of the form.
+page.keyboard.press("Escape")
+page.wait_for_timeout(1500)
+
+g = app()
+report("Create sharing 창 (채운 뒤)", g)
+# role=dialog is the full-screen overlay; the panel inside it is what to clip to.
+box = None
+for how, sel in (("awsui_dialog", 'div[class*="awsui_dialog"]'),
+                 ("awsui_container", '[role=dialog] div[class*="awsui_container"]'),
+                 ("heading ancestor",
+                  'xpath=//h2[contains(., "Create sharing")]/ancestor::div[3]')):
+    l = g.locator(sel)
+    if not l.count():
+        print(f"   {how}: 0")
+        continue
+    b = l.first.bounding_box()
+    print(f"   {how}: {l.count()} -> {b}")
+    if b and b["width"] < 1300 and b["height"] > 200:
+        box = b
+        print(f"   -> {how!r} 로 자른다")
+        break
+print("   창 크기:", box)
+shot("lab3-policy-08-visual-create-sharing",
+     clip=(box["x"] - 8, box["y"] - 8, box["x"] + box["width"] + 8,
+           box["y"] + box["height"] + 8) if box else None)
 
 # Leave without creating anything.
 cancel = g.get_by_role("button", name="Cancel", exact=True)
