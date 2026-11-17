@@ -51,12 +51,12 @@
 
 <figure markdown="span">
   ![core network의 Attachments 목록. 방금 만든 cwan-ws-att-dev-usw2 한 줄만 State가 주황색 경고 아이콘과 함께 Pending attachment acceptance이고, 나머지 줄은 모두 초록색 Available이다. Segment 열은 오른쪽에 있어 이 그림에서는 잘려 있다](images/console/extraA-b1-pending-acceptance.png){ .shot }
-  <figcaption>그림 1. Attachments 목록의 승인 대기 연결</figcaption>
+  <figcaption>그림 3-1-1. Attachments 목록의 승인 대기 연결</figcaption>
 </figure>
 
 <figure markdown="span">
   ![승인 대기 중인 연결의 행을 선택하고 Actions 메뉴를 연 모습. 선택된 cwan-ws-att-dev-usw2 줄은 State가 Pending attachment acceptance이고, 메뉴에는 Accept, Reject, Edit, Delete, Manage 1:1 NAT 다섯 항목이 있다. 승인은 Accept, 거절은 Reject이며, Edit과 Delete는 흐리게 비활성되어 있어 승인 대기 상태에서는 고치거나 지울 수 없다는 것을 보여 준다](images/console/extraA-b2-accept-attachment.png){ .shot }
-  <figcaption>그림 2. Actions 메뉴의 Accept 항목</figcaption>
+  <figcaption>그림 3-1-2. Actions 메뉴의 Accept 항목</figcaption>
 </figure>
 
 !!! warning "승인하기 전에는 VPC 라우트를 넣을 수 없습니다"
@@ -97,7 +97,7 @@
 
     ![오레곤 dev VPC를 붙이는 Create attachment 화면의 Attachment settings 패널. Name에 cwan-ws-att-dev-usw2, Attachment type에 VPC, Edge location에 United States (Oregon)이 들어 있다. 2-2-d에서 prod를 붙일 때와 같은 화면이고 이름과 VPC, 태그 값만 다르다](images/console/extraA-01-oregon-dev-attachment.png){ .shot }
 
-    그림 3. Create attachment 화면의 설정 패널
+    그림 3-1-3. Create attachment 화면의 설정 패널
     { .figcap }
 
 4. attachment가 `Available`이 되면 상세 화면에서 **Segment**가 `dev`인지 확인합니다. [2-2-d](lab1.md#lab1-d)의 오레곤 prod attachment와 똑같은 작업이고, 그쪽과 비슷하게 **4분쯤** 걸립니다.
@@ -110,7 +110,7 @@
 
 <figure markdown="span">
   ![core network Routes 탭에서 Segment를 dev, Edge location을 ap-northeast-2로 조회한 결과. 경로가 세 개다. 10.20.1.0/24는 서울 dev attachment를, 10.30.1.0/24는 서울 shared attachment를 가리키고, 10.21.1.0/24는 dev | us-west-2로 오레곤 쪽 dev 세그먼트를 가리킨다. 셋 다 Route type이 PROPAGATED, Route state가 ACTIVE다. prod 대역은 없다](images/console/extraA-02-oregon-dev-route.png){ .shot }
-  <figcaption>그림 4. dev 세그먼트의 서울 라우트 조회 결과</figcaption>
+  <figcaption>그림 3-1-4. dev 세그먼트의 서울 라우트 조회 결과</figcaption>
 </figure>
 
 **결과**: attachment가 `Available`이고 **Segment**가 `dev`입니다. 오레곤 dev 라우트 테이블의 경로 2개가 `Active`입니다.
@@ -162,12 +162,12 @@ rtt min/avg/max/mdev = 120.849/122.037/126.761/2.361 ms
 
     ![isolate-attachments를 켠 정책 버전을 실행하는 중의 Policy versions 목록. 새 버전의 Alias가 LATEST이고 Change set state가 파란색 Executing이며, 그 전 버전이 아직 LIVE를 달고 있다. 실행이 끝나야 LIVE가 새 버전으로 넘어온다. 그림에서는 2-4와 승인 과제까지 했기 때문에 버전이 네 개이고 3번이 LIVE, 4번이 Executing이다. 만든 버전 수는 어떤 과제를 했는지에 따라 다르다](images/console/extraA-04b-isolate-executing.png){ .shot }
 
-    그림 5. 정책 버전 실행 중인 Policy versions 목록
+    그림 3-1-5. 정책 버전 실행 중인 Policy versions 목록
     { .figcap }
 
     ![isolate-attachments를 켠 정책 버전의 change set 화면. 변경이 두 건뿐이고, 하나는 Type이 Segments configuration에 Action이 Modify, 다른 하나는 Type이 Attachment route propagation에 Action이 Remove다. share를 추가했던 2-4의 일곱 건과 대비된다](images/console/extraA-04-isolate-change-set.png){ .shot }
 
-    그림 6. isolate-attachments 정책의 change set
+    그림 3-1-6. isolate-attachments 정책의 change set
     { .figcap }
 
 4. `Execution succeeded`가 된 뒤 서울 dev EC2에서 두 곳으로 보냅니다.

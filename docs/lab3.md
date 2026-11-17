@@ -4,7 +4,7 @@
 
 <figure markdown="span">
   ![AWS Cloud WAN 실습 2-4의 정책 변경 전후 비교 구성도. 위쪽은 정책 변경 전이다. 왼쪽에 온프레미스 LAN을 나타내는 AWS Site-to-Site VPN이 있고, 그 attachment가 segment=onprem 태그로 core network 안의 onprem 세그먼트에 배정되어 있다. core network 안에는 세그먼트 네 개가 있다. prod 세그먼트는 서울 prod VPC와 오레곤 prod VPC 두 개를 담고, dev 세그먼트도 서울 dev VPC와 오레곤 dev VPC 두 개를 담으며, shared 세그먼트는 서울 shared VPC 하나를, onprem 세그먼트는 Site-to-Site VPN attachment 하나를 담는다. 변경 전 통신 상태는 onprem과 shared는 통신됨, onprem과 prod는 차단, onprem과 dev는 차단, prod와 dev는 차단, shared와 prod는 통신됨, shared와 dev는 통신됨이다. 가운데 밴드는 참가자가 정책의 segment-actions에 추가하는 JSON 조각을 보여 준다. action은 share, mode는 attachment-route, segment는 onprem, share-with는 prod 하나다. 반영 순서는 policy version 생성, change set 검토, 실행이며, 리전별 설정 없이 서울과 오레곤 prod 양쪽이 함께 열리고 dev 격리는 그대로 둔다고 적혀 있다. 아래쪽은 정책 변경 후이며 위쪽과 배치가 완전히 같다. 달라진 것은 onprem과 prod 사이 선 하나뿐으로, 빨간 점선 차단이 굵은 초록 실선 통신됨으로 바뀌고 정책에서 바뀐 부분이라는 표시가 붙는다. 이 한 선으로 온프레미스는 서울 prod VPC와 오레곤 prod VPC 양쪽에 모두 닿는다. 나머지는 그대로다. 온프레미스는 서울 dev VPC와 오레곤 dev VPC 어느 쪽에도 닿지 않고, prod와 dev도 여전히 차단이며, onprem과 shared는 그대로 통신됨, shared와 prod, dev도 그대로 통신됨이다](images/diagrams/lab3-policy.png)
-  <figcaption>그림 1. 정책 한 줄로 바뀌는 것</figcaption>
+  <figcaption>그림 2-4-1. 정책 한 줄로 바뀌는 것</figcaption>
 </figure>
 
 [2-3](lab2.md)에서 온프레미스 VM `172.16.1.10`은 서울 shared EC2에는 닿았지만 서울 prod EC2에는 닿지 못했습니다. `onprem` 세그먼트가 `prod`와 아무것도 공유하지 않았기 때문입니다. 이번에는 정책에 `onprem`과 `prod`의 share를 넣어 이 둘을 연결합니다.
@@ -69,14 +69,14 @@
 
 <figure markdown="span">
   ![정책 편집기 화면. 제목이 Create policy이고 오른쪽 위에 Cancel과 Create policy 버튼이 있다. Details 패널의 Description 칸에 설명이 들어 있고, Choose policy view mode 패널에서 Visual editor와 JSON 중 JSON이 선택되어 있다. 그 아래 JSON 패널에 현재 정책 전체가 줄 번호가 달린 편집기에 들어 있고, version과 core-network-configuration, asn-ranges, edge-locations가 차례로 보인다](images/console/lab3-policy-01-edit.png){ .shot }
-  <figcaption>그림 2. 정책 편집기의 JSON 보기</figcaption>
+  <figcaption>그림 2-4-2. 정책 편집기의 JSON 보기</figcaption>
 </figure>
 
 **결과**: 정책 버전 목록에 새 버전이 보입니다.
 
 <figure markdown="span">
   ![새 버전을 만든 직후의 Policy versions 목록. 두 줄이 있고 Policy version - 1은 Alias가 LIVE에 Change set state가 초록색 Execution succeeded, Policy version - 2는 Alias가 LATEST에 Change set state가 파란색 Ready to execute다. 아직 적용되지 않았다는 뜻이다](images/console/lab3-policy-02-versions.png){ .shot }
-  <figcaption>그림 3. 새 버전 생성 직후의 Policy versions 목록</figcaption>
+  <figcaption>그림 2-4-3. 새 버전 생성 직후의 Policy versions 목록</figcaption>
 </figure>
 
 ## 2-4-b. change set 검토하기 { #lab3-b }
@@ -97,7 +97,7 @@
 
 <figure markdown="span">
   ![Policy version - 2 change sets 화면. 제목 옆에 변경 개수 7이 적혀 있고 오른쪽 위에 Compare policy versions와 Apply change set 버튼이 있다. 표에는 Type이 Core network segment이고 Action이 Modify인 줄이 네 개, Type이 Attachment route propagation이고 Action이 Add인 줄이 세 개 있다. Identifier 열은 모두 비어 있고, 구체적인 내용은 New values의 Details 링크로 본다](images/console/lab3-policy-03-changeset.png){ .shot }
-  <figcaption>그림 4. change set의 변경 목록</figcaption>
+  <figcaption>그림 2-4-4. change set의 변경 목록</figcaption>
 </figure>
 
 `share` 한 줄을 넣었을 뿐인데 변경은 **7건** 나옵니다. 무엇이 바뀌는지 읽어 보면 이렇습니다.
@@ -126,12 +126,12 @@ change set을 실행해 새 버전을 적용합니다.
 
 <figure markdown="span">
   ![change set을 실행한 직후의 Policy versions 목록. Policy version - 2의 Change set state가 Executing으로 바뀌었고 Alias는 아직 LATEST다. Policy version - 1이 여전히 LIVE를 달고 있다](images/console/lab3-policy-04-executing.png){ .shot }
-  <figcaption>그림 5. change set 실행 중의 Policy versions 목록</figcaption>
+  <figcaption>그림 2-4-5. change set 실행 중의 Policy versions 목록</figcaption>
 </figure>
 
 <figure markdown="span">
   ![실행이 끝난 뒤의 Policy versions 목록. Policy version - 2의 Alias가 LIVE, LATEST가 되고 Change set state가 Execution succeeded다. Policy version - 1에는 Alias가 없다. 새 정책이 적용됐다는 뜻이다](images/console/lab3-policy-05-live.png){ .shot }
-  <figcaption>그림 6. 실행이 끝난 Policy versions 목록</figcaption>
+  <figcaption>그림 2-4-6. 실행이 끝난 Policy versions 목록</figcaption>
 </figure>
 
 **결과**: change set 상태가 **Execution succeeded**이고, 새 정책 버전이 **LIVE**로 표시됩니다.

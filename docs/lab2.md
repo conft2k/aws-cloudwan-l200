@@ -2,11 +2,11 @@
 
 온프레미스 모사 환경을 Site-to-Site VPN으로 Cloud WAN에 연결합니다. VPN 연결은 직접 만들고, 온프레미스 라우터(VPN 라우터 EC2)의 터널 설정은 스크립트가 해 줍니다.
 
-아래 그림 1의 번호 순서로 진행합니다. 처음 보는 용어는 [1-3. 용어 풀이](glossary.md)를 보세요.
+아래 그림 2-3-1의 번호 순서로 진행합니다. 처음 보는 용어는 [1-3. 용어 풀이](glossary.md)를 보세요.
 
 <figure markdown="span">
   ![실습 2-3의 온프레미스 연결 과정을 다섯 단계로 보여 주는 구성도. 왼쪽 위에는 다섯 단계를 적은 설명 패널이 있고, 그 아래 온프레미스 박스(172.16.1.0/24)에 온프레미스 VM 172.16.1.10과 strongSwan·FRR이 설치된 VPN 라우터 EC2(Elastic IP)가 들어 있다. 온프레미스에서 오른쪽으로 Customer Gateway(ASN 65000, VPN 라우터의 Elastic IP), 인터넷, Site-to-Site VPN(Not Associated, 게이트웨이 미연결)이 차례로 놓이고, 이 셋은 AWS Cloud 박스 밖에 있다. 오른쪽 AWS Cloud 안에는 보라색 점선의 core network(AWS Cloud WAN) 박스가 있고 그 안에는 core network edge와 세그먼트만 있다. 서울 edge(ASN 64512)가 가운데 줄에, 오레곤 edge(ASN 64513)가 아래에 있으며, 두 edge는 세로 선으로 dev, shared, onprem, prod 네 개의 회색 점선 세그먼트 박스에 모두 연결된다. VPC는 core network 밖의 리전 박스 안에 있다. 서울(ap-northeast-2) 박스에는 dev VPC(10.20.1.0/24), shared VPC(10.30.1.0/24, EC2 10.30.1.10), prod VPC(10.10.1.0/24, EC2 10.10.1.10)가 있고, 오레곤(us-west-2) 박스에는 prod VPC(10.11.1.0/24)와 dev VPC(10.21.1.0/24)가 있다. 각 VPC는 VPC attachment 선 한 줄로 자기 세그먼트 박스에 연결된다. 오레곤 dev VPC만 선이 없고 attachment 없음, 추가 과제 3-1이라고 적혀 있다. 아직 core network에 붙지 않았고 추가 과제 3-1에서 참가자가 dev 세그먼트에 붙인다는 뜻이다. 온프레미스 모사 VPC도 VPC attachment 없이 VPN으로만 연결된다. 1에서 참가자가 Site-to-Site VPN 연결을 Target Gateway Type = Not Associated 상태로 만든다. Customer Gateway는 VPN 라우터의 Elastic IP이고 ASN은 65000이다. 2에서 참가자가 Cloud WAN에서 Site-to-Site VPN attachment를 만들고 segment=onprem 태그를 붙이면, edge location ap-northeast-2의 서울 edge에 붙고 attachment policy의 tag-exists 규칙이 onprem 세그먼트에 배정한다. 서울 edge로 들어가는 선 위에 segment=onprem 태그가 붙어 있다. 3에서 attachment를 붙인 뒤에야 AWS 쪽 터널 엔드포인트(외부 IP 2개)가 생기고, VPN 라우터 EC2에서 setup-tunnels.sh에 VPN 연결 ID를 주어 실행하면 온프레미스 라우터와 AWS 사이에 IPsec 터널 2개와 BGP 세션 2개(AS 65000과 64512)가 올라오면서 온프레미스가 172.16.1.0/24를 광고한다. 터널은 Customer Gateway에서 인터넷을 지나 Site-to-Site VPN으로 가는 평행선 두 줄로 그려져 있다. 4에서 온프레미스 VM 172.16.1.10에서 서울 shared VPC의 EC2 10.30.1.10으로 보내는 통신은 성공한다. 정책에서 shared 세그먼트가 onprem에도 share되어 있기 때문이며, onprem 세그먼트에서 shared 세그먼트로 올라가는 초록 화살표에 성공 레이블이 붙어 있다. 5에서 같은 VM에서 서울 prod VPC의 EC2 10.10.1.10으로 보내는 통신은 실패한다. onprem 세그먼트는 아직 prod와 공유되어 있지 않기 때문이며, onprem에서 prod 세그먼트로 내려가는 빨간 점선 화살표에 차단, 실패 레이블이 붙어 있다. 이 공유는 실습 2-4에서 정책에 share 한 줄을 추가해 연다](images/diagrams/lab2-onprem.png)
-  <figcaption>그림 1. 실습 2-3에서 하는 일</figcaption>
+  <figcaption>그림 2-3-1. 실습 2-3에서 하는 일</figcaption>
 </figure>
 
 | 번호 | 단계 | 내용 |
@@ -40,7 +40,7 @@
 
 <figure markdown="span">
   ![Create VPN connection 화면의 Details 패널. Name tag - optional에 cwan-ws-vpn이 들어 있다. Target gateway type은 Virtual private gateway, Transit gateway, Site-to-Site VPN Concentrator, Not associated 네 가지 중 맨 아래 Not associated가 선택되어 있다. Customer gateway는 Existing이 선택되고 Customer gateway ID에 스택이 만든 cgw-로 시작하는 값이 들어 있다. Routing options는 Dynamic (requires BGP)가 선택되어 있고 Static은 선택되지 않았다. 그 아래 Pre-shared key storage, Tunnel bandwidth, Tunnel inside IP version은 모두 기본값이다](images/console/lab2-vpn-01-create.png){ .shot }
-  <figcaption>그림 2. Site-to-Site VPN 연결 만들기 화면</figcaption>
+  <figcaption>그림 2-3-2. Site-to-Site VPN 연결 만들기 화면</figcaption>
 </figure>
 
 !!! info "Target gateway type을 `Not associated`로 두는 이유"
@@ -77,14 +77,14 @@
 
 <figure markdown="span">
   ![Create attachment 화면의 Attachment settings 패널. Name - optional에 cwan-ws-att-onprem-apne2가 들어 있고, Attachment type 드롭다운이 VPN, Edge location 드롭다운이 Asia Pacific (Seoul)로 되어 있다. VPN 연결을 고르는 VPN ID 칸은 종류를 VPN으로 바꾼 뒤에 이 아래에 나타난다](images/console/lab2-attach-01-form.png){ .shot }
-  <figcaption>그림 3. core network 연결(attachment) 만들기 화면</figcaption>
+  <figcaption>그림 2-3-3. core network 연결(attachment) 만들기 화면</figcaption>
 </figure>
 
 attachment policy는 `segment` 태그 값과 같은 이름의 세그먼트에 attachment를 배정합니다. 그래서 이 태그 하나로 VPN이 `onprem` 세그먼트에 들어갑니다.
 
 <figure markdown="span">
   ![core network의 Attachments 목록. 맨 윗줄에 cwan-ws-att-onprem-apne2가 생겨 모두 다섯 줄이다. 이 줄만 Resource type이 VPN이고 나머지 네 줄은 VPC다. 새 줄은 Edge location이 ap-northeast-2, State가 초록색 Available, Segment가 onprem이다. 아래 네 줄은 2-2-d까지 만든 연결로 cwan-ws-att-prod-apne2가 prod, cwan-ws-att-prod-usw2가 us-west-2의 prod, cwan-ws-att-dev-apne2가 dev, cwan-ws-att-shared-apne2가 shared다](images/console/lab2-attach-02-available.png){ .shot }
-  <figcaption>그림 4. core network의 Attachments 목록</figcaption>
+  <figcaption>그림 2-3-4. core network의 Attachments 목록</figcaption>
 </figure>
 
 **결과**: attachment 목록에서 **Attachment state**가 **Available**이 되고, **Segment**(또는 세그먼트 열)가 `onprem`입니다. `Available` 이 되기까지 **5분 안팎** 걸립니다. 상태는 `Creating` → `Pending network update` → `Available` 순으로 바뀝니다.
@@ -199,7 +199,7 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
 <figure markdown="span">
   ![Site-to-Site VPN 연결의 Tunnel details 탭에 있는 Tunnel state 표. 두 줄이 Tunnel 1과 Tunnel 2이고, 각각 AWS 쪽 Outside IP address와 Inside IPv4 CIDR(169.254.x.x/30)을 가진다. 둘 다 Status가 초록색 Up, Provisioning status가 Available이고 Details 열에 1 BGP ROUTES라고 적혀 있다. Inside IPv4 CIDR의 두 대역이 라우터에서 본 BGP 이웃 주소가 나온 자리다](images/console/lab2-vpn-02-tunnels.png){ .shot }
-  <figcaption>그림 5. VPN 연결의 Tunnel details 탭</figcaption>
+  <figcaption>그림 2-3-5. VPN 연결의 Tunnel details 탭</figcaption>
 </figure>
 
 **결과**
@@ -227,14 +227,14 @@ VPN 라우터 EC2에는 strongSwan(IPsec)과 FRR(BGP) 설정을 만들어 주는
 
     ![core network Routes 탭에서 Segment를 onprem, Edge location을 ap-northeast-2로 조회한 결과. 경로가 두 개뿐이다. 10.30.1.0/24는 Destinations가 서울 shared attachment와 그 VPC이고, 172.16.1.0/24는 Destinations가 VPN attachment와 vpn 연결 ID다. 둘 다 Route type이 PROPAGATED, Route state가 ACTIVE다. prod 대역 10.10.1.0/24는 이 표에 없다](images/console/lab2-routes-01-onprem-segment.png){ .shot }
 
-    그림 6. onprem 세그먼트의 Routes 조회 결과
+    그림 2-3-6. onprem 세그먼트의 Routes 조회 결과
     { .figcap }
 
 3. 같은 방법으로 **Segment** 를 `shared` 로 바꿔 다시 조회합니다.
 
     ![같은 Routes 탭에서 Segment만 shared로 바꿔 조회한 결과. 경로가 다섯 개다. 서울 prod 10.10.1.0/24, shared 10.30.1.0/24, dev 10.20.1.0/24가 각자 attachment와 VPC를 가리키고, 172.16.1.0/24는 VPN attachment를, 10.11.1.0/24는 shared | us-west-2를 가리킨다. 다섯 줄 모두 Route type이 PROPAGATED, Route state가 ACTIVE다. 온프레미스가 광고한 172.16.1.0/24가 여기까지 전파된 것이 보인다](images/console/lab2-routes-02-shared-segment.png){ .shot }
 
-    그림 7. shared 세그먼트의 Routes 조회 결과
+    그림 2-3-7. shared 세그먼트의 Routes 조회 결과
     { .figcap }
 
 **결과**

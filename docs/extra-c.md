@@ -14,7 +14,7 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 
 <figure markdown="span">
   ![prod 세그먼트를 서울 edge에서 조회한 경로 테이블. 경로가 네 개다. 10.10.1.0/24와 10.30.1.0/24는 Destinations가 서울 attachment와 그 VPC로 직접 적혀 있고, 172.16.1.0/24는 VPN attachment를, 10.11.1.0/24는 prod | us-west-2를 가리킨다. 같은 리전의 것은 attachment 이름으로, 다른 리전의 것은 세그먼트와 리전 이름으로 나타난다는 차이가 보인다](images/console/extraC-01-route-table-prod-seoul.png){ .shot }
-  <figcaption>그림 1. prod 세그먼트의 서울 edge 경로 테이블</figcaption>
+  <figcaption>그림 3-3-1. prod 세그먼트의 서울 edge 경로 테이블</figcaption>
 </figure>
 
 경로 한 줄에서 볼 것은 다음과 같습니다.
@@ -48,7 +48,7 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 
 <figure markdown="span">
   ![dev 세그먼트를 서울 edge에서 조회한 경로 테이블. 경로가 세 개다. 10.20.1.0/24는 서울 dev attachment, 10.30.1.0/24는 서울 shared attachment, 10.21.1.0/24는 dev | us-west-2를 가리킨다. prod 대역 10.10.1.0/24와 온프레미스 대역 172.16.1.0/24가 모두 없는 것이 prod 쪽 표와 다른 점이다](images/console/extraA-02-oregon-dev-route.png){ .shot }
-  <figcaption>그림 2. dev 세그먼트의 서울 edge 경로 테이블</figcaption>
+  <figcaption>그림 3-3-2. dev 세그먼트의 서울 edge 경로 테이블</figcaption>
 </figure>
 
 !!! info "그림의 세 번째 줄은 추가 과제 [3-1](extra-a.md)을 한 경우입니다"
@@ -66,7 +66,7 @@ Cloud WAN은 세그먼트마다 경로 테이블을 하나씩 가집니다. 경�
 
 <figure markdown="span">
   ![같은 prod 세그먼트를 이번에는 오레곤 edge에서 조회한 경로 테이블. 경로가 네 개인데 Destinations의 모양이 서울 쪽과 반대다. 오레곤에 있는 10.11.1.0/24만 attachment와 VPC로 직접 적혀 있고, 10.10.1.0/24와 10.30.1.0/24, 172.16.1.0/24는 모두 prod | ap-northeast-2로 서울 edge를 가리킨다. 다른 리전의 것은 개별 연결이 아니라 그 리전의 세그먼트를 거쳐 간다는 뜻이다](images/console/extraC-03-prod-oregon-route.png){ .shot }
-  <figcaption>그림 3. prod 세그먼트의 오레곤 edge 경로 테이블</figcaption>
+  <figcaption>그림 3-3-3. prod 세그먼트의 오레곤 edge 경로 테이블</figcaption>
 </figure>
 
 연결 태그 한 줄로 경로가 세그먼트에 들어왔고, 서울과 오레곤 양쪽의 같은 세그먼트 경로 테이블에 서로의 대역이 나타납니다. 정책은 바꾸지 않았습니다.
@@ -96,7 +96,7 @@ core network에는 **Events** 탭이 있습니다. 연결이 붙고 빠지거나
 
     ![core network의 Events 탭을 켜기 전 화면. 파란색 안내 상자에 Unable to show events라는 제목과 함께, 이벤트를 보려면 Network Manager에서 CloudWatch Logs로 CloudWatch Events 전달을 켜라는 설명이 있다. 그 아래 줄에는 이 페이지의 이벤트가 CloudWatch Logs Insights 쿼리로 분석되며 CloudWatch Logs 요금이 추가로 발생한다고 적혀 있다. 상자 맨 아래에 검은색 Onboard to CloudWatch Logs Insights 버튼이 하나 있다](images/console/extraC-04-events-off.png){ .shot }
 
-    그림 4. 켜기 전의 Events 탭
+    그림 3-3-4. 켜기 전의 Events 탭
     { .figcap }
 
 3. **Onboard to CloudWatch Logs Insights** 를 누릅니다. **확인 창은 나오지 않고 바로 켜집니다.**
@@ -104,7 +104,7 @@ core network에는 **Events** 탭이 있습니다. 연결이 붙고 빠지거나
 
     ![Onboard to CloudWatch Logs Insights를 누른 직후의 Events 탭. 안내 상자가 사라지고 Events 패널이 나타났다. 패널 위에는 3h, 1d, 1w, 12h 기간 선택과 UTC timezone 선택, 새로 고침 버튼이 있고, 그 아래 표 영역 가운데에 No data found.와 Try adjusting the dashboard time range or log query.라고 적혀 있다. 켠 뒤에 생기는 이벤트만 기록되므로 켠 직후에는 비어 있는 것이 정상이다](images/console/extraC-05-events-on.png){ .shot }
 
-    그림 5. 켠 직후 — 아직 이벤트가 없습니다
+    그림 3-3-5. 켠 직후 — 아직 이벤트가 없습니다
     { .figcap }
 
 !!! info "켠 뒤의 이벤트만 쌓입니다"
