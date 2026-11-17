@@ -101,7 +101,12 @@
     { .figcap }
 
 4. attachment가 `Available`이 되면 상세 화면에서 **Segment**가 `dev`인지 확인합니다. [2-2-d](lab1.md#lab1-d)의 오레곤 prod attachment와 똑같은 작업이고, 그쪽과 비슷하게 **4분쯤** 걸립니다.
-5. 오레곤 dev 앱 서브넷의 라우트 테이블에 core network 경로를 넣습니다([2-2-e](lab1.md#lab1-e)와 같습니다). **VPC** 콘솔 → **Route tables** 에서 `cwan-ws-dev-app` 을 검색해 엽니다. `-cwan` 으로 끝나는 쪽이 아니라 **`-app`** 입니다.
+5. **오레곤 dev 앱 서브넷의 라우트 테이블에 core network 경로를 넣습니다.** [2-2-e](lab1.md#lab1-e)와 같은 작업이고, **여기서도 빠뜨리기 쉬운 자리입니다.**
+
+    !!! danger "이것을 빼면 [3-1-e](#a-e)의 ping이 실패합니다"
+        attachment가 `Available` 이고 **Segment** 가 `dev` 여도, **dev VPC의 앱 서브넷 라우트 테이블에 경로가 없으면 트래픽은 core network에 닿지 않습니다.** 격리 옵션 때문에 막힌 것으로 오해하기 쉬운데, 그 전에 라우트부터 확인하세요.
+
+    **VPC** 콘솔 → **Route tables** 에서 `cwan-ws-dev-app` 을 검색해 엽니다. `-cwan` 으로 끝나는 쪽이 아니라 **`-app`** 입니다. 리전은 **US West (Oregon)** 입니다.
 
     | Destination | Target |
     |---|---|

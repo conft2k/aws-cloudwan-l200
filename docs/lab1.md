@@ -237,8 +237,14 @@ attachment 상태가 `Available` 이 되면 **Attachments** 목록에서 그 행
 
 ## 2-2-e. 오레곤 VPC에 경로 넣기 { #lab1-e }
 
-!!! info "연결을 붙이는 것과 VPC 라우트를 넣는 것은 다른 일입니다"
-    attachment는 VPC와 core network 사이에 길을 놓습니다. 하지만 VPC 안의 서브넷이 그 길로 트래픽을 보내려면, 서브넷의 라우트 테이블에 "이 대역은 core network로 보내라"는 경로가 따로 있어야 합니다. 경로가 없으면 attachment가 `Available`이어도 트래픽은 core network에 닿지 않습니다.
+!!! danger "이 소절을 건너뛰면 다음 소절의 ping이 실패합니다"
+    **가장 많이 빠뜨리는 자리입니다.** attachment를 만들고 `Available` 까지 확인하고 나면 연결이 끝난 것처럼 보이기 때문입니다.
+
+    **연결을 붙이는 것과 VPC 라우트를 넣는 것은 다른 일입니다.** attachment는 VPC와 core network 사이에 길을 놓습니다. 하지만 VPC 안의 **서브넷**이 그 길로 트래픽을 보내려면, 그 서브넷의 **라우트 테이블**에 "이 대역은 core network로 보내라"는 경로가 따로 있어야 합니다. 경로가 없으면 attachment가 `Available` 이어도 트래픽은 core network에 닿지 않습니다.
+
+    증상은 이렇습니다 — **연결 상태도 초록색이고 세그먼트도 맞는데 ping만 안 됩니다.** 이럴 때 제일 먼저 볼 곳이 라우트 테이블입니다([4-3-a](troubleshooting.md#by-symptom)).
+
+    Cloud WAN을 쓰든 Transit Gateway를 쓰든 같습니다. **AWS는 VPC 라우트 테이블을 대신 고쳐 주지 않습니다.**
 
 오레곤 앱 서브넷의 라우트 테이블에 경로 2개를 넣습니다. **여기서는 리전을 바꿉니다.** 라우트 테이블은 Cloud WAN과 달리 리전마다 따로 있어서, 콘솔 오른쪽 위에서 리전을 **US West (Oregon)** 으로 바꿔야 오레곤 것이 보입니다.
 
