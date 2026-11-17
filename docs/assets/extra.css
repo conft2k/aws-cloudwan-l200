@@ -82,8 +82,14 @@
 .md-typeset pre > code { padding: 0.9em 1.1em; font-size: 0.84rem; line-height: 1.65; }
 .md-typeset pre { border-radius: 0.6rem; border: 1px solid var(--cwan-line); }
 
-/* tables: same size as body, light grid, rounded */
+/* tables: same size as body, light grid, rounded.
+   The table must fill the content column and wrap, not grow past it: the
+   rounded corners need overflow:hidden, which CLIPS anything wider than the
+   container instead of letting Material's wrapper scroll it. A three-column
+   table of prose (4-3-a) lost its last column that way. */
+.md-typeset__table { display: block; width: 100%; }
 .md-typeset table:not([class]) {
+  display: table; width: 100%; table-layout: auto;
   font-size: 0.8rem; line-height: 1.65; border: 1px solid var(--cwan-line);
   border-radius: 0.6rem; box-shadow: none; overflow: hidden;
 }
@@ -93,8 +99,21 @@
   word-break: keep-all; overflow-wrap: break-word;   /* break Korean at spaces, not inside words */
 }
 .md-typeset table:not([class]) tr:first-child th { border-top: 0; }
-.md-typeset table:not([class]) code { white-space: nowrap; }
+/* Code in a table cell must be allowed to wrap. Keeping it on one line sets a
+   min-content width the column cannot go below, which is what pushed 4-3-a's
+   table past the content column. */
+.md-typeset table:not([class]) code { white-space: normal; overflow-wrap: break-word; }
 .md-typeset table:not([class]) tbody tr:hover { background-color: var(--md-accent-fg-color--transparent); }
+
+/* On a phone the cell padding alone costs ~50px across three columns, which is
+   most of what still pushed a few tables past the screen. */
+@media screen and (max-width: 480px) {
+  .md-typeset table:not([class]) { font-size: 0.72rem; }
+  .md-typeset table:not([class]) th, .md-typeset table:not([class]) td {
+    padding: 0.6em 0.5em;
+  }
+  .md-typeset table:not([class]) code { overflow-wrap: anywhere; }
+}
 
 /* admonitions and collapsible notes: body-sized text, soft card */
 .md-typeset .admonition, .md-typeset details {
